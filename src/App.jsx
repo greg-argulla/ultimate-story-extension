@@ -14,10 +14,10 @@ const Text = (props) => {
 
 const newPlayer = () => {
   return {
-    name: "",
+    name: "Winter White",
     level: 5,
     traits: {
-      identity: "",
+      identity: "A eccentric and naive former slave mage who lost her home",
       theme: "",
       origin: "",
     },
@@ -34,6 +34,10 @@ const newPlayer = () => {
       ins: "d8",
       mig: "d8",
       wil: "d8",
+      currentdex: "d8",
+      currentins: "d8",
+      currentmig: "d8",
+      currentwil: "d8",
     },
     debuff: {
       slow: false,
@@ -50,6 +54,7 @@ const newPlayer = () => {
       hpMod: 0,
       mpMod: 0,
       ipMod: 0,
+      fabula: 0,
       experience: 0,
     },
     items: {
@@ -72,11 +77,6 @@ const newPlayer = () => {
         categoryInfo: "",
         items: [{ name: "", info: "", detail: "" }],
       },
-      {
-        categoryName: "",
-        categoryInfo: "",
-        items: [{ name: "", info: "", detail: "" }],
-      },
     ],
     actions: [
       {
@@ -87,19 +87,38 @@ const newPlayer = () => {
         diceTwo: "dex",
         bonus: 0,
         damage: 0,
+        hr: true,
       },
     ],
   };
+};
+
+const getDiceStat = (dice) => {
+  if (dice === "d6") {
+    return 6;
+  }
+  if (dice === "d8") {
+    return 8;
+  }
+  if (dice === "d10") {
+    return 10;
+  }
+  if (dice === "d12") {
+    return 12;
+  }
 };
 
 function App() {
   const [isOBRReady, setIsOBRReady] = useState(false);
   const [name, setName] = useState("");
   const [id, setId] = useState("");
-  const [role, setRole] = useState("PLAYER");
   const [metadata, setMetadata] = useState([]);
-  const [playerList, setPlayerList] = useState({});
-  const [player, setPlayer] = useState({});
+  const [playerList, setPlayerList] = useState([
+    newPlayer(),
+    newPlayer(),
+    newPlayer(),
+  ]);
+  const [player, setPlayer] = useState(newPlayer());
   const [tab, setTab] = useState("stats");
 
   useEffect(() => {
@@ -116,7 +135,6 @@ function App() {
       OBR.player.onChange(async (player) => {
         setName(await OBR.player.getName());
       });
-      setRole(await OBR.player.getRole());
     });
   }, []);
 
@@ -124,72 +142,6 @@ function App() {
     if (isOBRReady) {
     }
   }, [isOBRReady]);
-
-  const addRoll = () => {
-    const newMessage = {
-      id: Date.now(),
-      user: name,
-      diceOneResult,
-      diceTwoResult,
-      diceLabelOne: role === "GM" ? "" : diceLabelOne,
-      diceLabelTwo: role === "GM" ? "" : diceLabelTwo,
-      damage,
-      bonus,
-      useHR,
-    };
-    const newChat = [...myChat, newMessage];
-
-    let metadataChange = { ...metadata };
-    metadataChange[id] = newChat;
-
-    OBR.scene.setMetadata({
-      "last.fable.extension/metadata": metadataChange,
-    });
-  };
-
-  const generateRandomNumber = (end) => {
-    var range = end;
-    var randomNum = Math.floor(Math.random() * range) + 1;
-
-    return randomNum;
-  };
-
-  const getRandomNumberByDice = (dice) => {
-    if (dice === "d4") {
-      return generateRandomNumber(4);
-    }
-    if (dice === "d6") {
-      return generateRandomNumber(6);
-    }
-    if (dice === "d8") {
-      return generateRandomNumber(8);
-    }
-    if (dice === "d10") {
-      return generateRandomNumber(10);
-    }
-    if (dice === "d12") {
-      return generateRandomNumber(12);
-    }
-    if (dice === "d20") {
-      return generateRandomNumber(20);
-    }
-  };
-
-  const saveStats = (replace) => {
-    localStorage.setItem(
-      "last.fable.extension/metadata",
-      JSON.stringify({
-        dex,
-        ins,
-        mig,
-        wil,
-        damage,
-        bonus,
-        preparedDice,
-        ...replace,
-      })
-    );
-  };
 
   const [windowInnerHeight, setWindowInnerHeight] = useState(
     window.innerHeight
@@ -209,6 +161,112 @@ function App() {
     // Return a function to disconnect the event listener
     return () => window.removeEventListener("resize", autoResize);
   }, []);
+
+  const renderPlayerList = () => {
+    return playerList.map((data) => {
+      return (
+        <div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: 5,
+              marginTop: 5,
+            }}
+          >
+            <div style={{ width: 42 }}>
+              <Text>Name: </Text>
+            </div>
+            <input
+              className="input-stat"
+              style={{
+                width: 120,
+                color: "white",
+              }}
+              value={data.name}
+              readOnly={true}
+            />
+
+            <Text>HP:</Text>
+            <input
+              className="input-stat"
+              style={{
+                width: 20,
+                color: "Red",
+              }}
+              readOnly={true}
+              value={
+                getDiceStat(data.attributes.mig) * 5 +
+                data.stats.hpMod +
+                data.level
+              }
+            />
+            <Text>MP: </Text>
+            <input
+              className="input-stat"
+              style={{
+                width: 20,
+                color: "LightBlue",
+              }}
+              readOnly={true}
+              value={
+                getDiceStat(data.attributes.wil) * 5 +
+                data.stats.mpMod +
+                data.level
+              }
+            />
+            <Text>IP: </Text>
+            <input
+              className="input-stat"
+              style={{
+                width: 20,
+                color: "Orange",
+              }}
+              readOnly={true}
+              value={6 + data.stats.ipMod}
+            />
+
+            <Text>DEF: </Text>
+            <input
+              className="input-stat"
+              type="number"
+              style={{
+                width: 20,
+                color: "violet",
+              }}
+              value={data.stats.defense}
+              readOnly={true}
+            />
+            <Text>M.DEF: </Text>
+            <input
+              className="input-stat"
+              type="number"
+              style={{
+                width: 20,
+                color: "cyan",
+              }}
+              value={data.stats.mDefense}
+              readOnly={true}
+            />
+          </div>
+
+          <Text>Identity: </Text>
+
+          <input
+            className="input-stat"
+            style={{
+              width: 300,
+              color: "white",
+            }}
+            value={data.traits.identity}
+            readOnly={true}
+          />
+          <hr />
+        </div>
+      );
+    });
+  };
 
   const renderNav = () => {
     return (
@@ -248,10 +306,11 @@ function App() {
             color: "Red",
           }}
           readOnly={true}
-          value={"60"}
-          onChange={(evt) => {
-            //setText(evt.target.value);
-          }}
+          value={
+            getDiceStat(player.attributes.mig) * 5 +
+            player.stats.hpMod +
+            player.level
+          }
         />
         <Text>MP: </Text>
         <input
@@ -261,10 +320,11 @@ function App() {
             color: "LightBlue",
           }}
           readOnly={true}
-          value={"40"}
-          onChange={(evt) => {
-            //setText(evt.target.value);
-          }}
+          value={
+            getDiceStat(player.attributes.wil) * 5 +
+            player.stats.mpMod +
+            player.level
+          }
         />
         <Text>IP: </Text>
         <input
@@ -274,10 +334,7 @@ function App() {
             color: "Orange",
           }}
           readOnly={true}
-          value={"8"}
-          onChange={(evt) => {
-            //setText(evt.target.value);
-          }}
+          value={6 + player.stats.ipMod}
         />
         <button
           className="button"
@@ -302,7 +359,6 @@ function App() {
           style={{
             display: "flex",
             flexDirection: "row",
-            paddingTop: 5,
             alignItems: "center",
           }}
         >
@@ -315,10 +371,13 @@ function App() {
               width: 160,
               color: "white",
             }}
-            value={"Lux Von Carnage"}
+            value={player.name}
             onChange={(evt) => {
-              //setText(evt.target.value);
+              const playerGet = { ...player };
+              playerGet.name = evt.target.value;
+              setPlayer(playerGet);
             }}
+            placeholder="How your character is addressed. Add pronouns if you wish."
           />
           <div style={{ width: 40 }}>
             <Text>Theme: </Text>
@@ -329,10 +388,13 @@ function App() {
               width: 70,
               color: "white",
             }}
-            value={"Belonging"}
+            value={player.traits.theme}
             onChange={(evt) => {
-              //setText(evt.target.value);
+              const playerGet = { ...player };
+              playerGet.traits.theme = evt.target.value;
+              setPlayer(playerGet);
             }}
+            placeholder="A strong ideal"
           />
           <div style={{ width: 35 }}>
             <Text>Origin: </Text>
@@ -343,10 +405,13 @@ function App() {
               width: 130,
               color: "white",
             }}
-            value={"Axis City"}
+            value={player.traits.origin}
             onChange={(evt) => {
-              //setText(evt.target.value);
+              const playerGet = { ...player };
+              playerGet.traits.origin = evt.target.value;
+              setPlayer(playerGet);
             }}
+            placeholder={"Where the character's from"}
           />
         </div>
         <div
@@ -366,10 +431,13 @@ function App() {
               width: 380,
               color: "white",
             }}
-            value={"A eccentric and naive former slave mage who lost her home"}
+            value={player.traits.identity}
             onChange={(evt) => {
-              //setText(evt.target.value);
+              const playerGet = { ...player };
+              playerGet.traits.identity = evt.target.value;
+              setPlayer(playerGet);
             }}
+            placeholder="This is a short sentence that sums up your character's general concept"
           />
 
           <Text>LVL:</Text>
@@ -379,9 +447,12 @@ function App() {
               width: 20,
               color: "white",
             }}
-            value={"10"}
+            type="number"
+            value={player.level}
             onChange={(evt) => {
-              //setText(evt.target.value);
+              const playerGet = { ...player };
+              playerGet.level = parseInt(evt.target.value);
+              setPlayer(playerGet);
             }}
           />
         </div>
@@ -389,7 +460,15 @@ function App() {
     );
   };
 
-  const Bond = () => {
+  const bond = (index) => {
+    const bond = player.bonds[index];
+
+    const updateBond = (bond, index) => {
+      const playerGet = { ...player };
+      playerGet.bonds[index] = bond;
+      setPlayer(playerGet);
+    };
+
     return (
       <div>
         <input
@@ -400,16 +479,21 @@ function App() {
             marginLeft: 0,
             fontSize: 8,
           }}
-          value={"Lucas Von Vanguard"}
+          value={bond.name}
+          placeholder="Bond"
           onChange={(evt) => {
-            //setText(evt.target.value);
+            const bondGet = { ...bond };
+            bondGet.name = evt.target.value;
+            updateBond(bondGet, index);
           }}
         />
         <select
           className="bond-stat"
-          value={"Admiration"}
+          value={bond.emotionOne}
           onChange={(evt) => {
-            //setText(evt.target.value);
+            const bondGet = { ...bond };
+            bondGet.emotionOne = evt.target.value;
+            updateBond(bondGet, index);
           }}
         >
           <option value=""></option>
@@ -418,9 +502,11 @@ function App() {
         </select>
         <select
           className="bond-stat"
-          value={"Loyalty"}
+          value={bond.emotionTwo}
           onChange={(evt) => {
-            //setText(evt.target.value);
+            const bondGet = { ...bond };
+            bondGet.emotionTwo = evt.target.value;
+            updateBond(bondGet, index);
           }}
         >
           <option value=""></option>
@@ -429,9 +515,11 @@ function App() {
         </select>
         <select
           className="bond-stat"
-          value={"Affection"}
+          value={bond.emotionThree}
           onChange={(evt) => {
-            //setText(evt.target.value);
+            const bondGet = { ...bond };
+            bondGet.emotionThree = evt.target.value;
+            updateBond(bondGet, index);
           }}
         >
           <option value=""></option>
@@ -445,28 +533,78 @@ function App() {
   const renderBonds = () => {
     return (
       <div className="bonds">
-        <Bond></Bond>
-        <Bond></Bond>
-        <Bond></Bond>
-        <Bond></Bond>
-        <Bond></Bond>
-        <Bond></Bond>
+        {bond(0)}
+        {bond(1)}
+        {bond(2)}
+        {bond(3)}
+        {bond(4)}
+        {bond(5)}
       </div>
     );
   };
 
+  const getCurrentAttribute = (attr) => {
+    if (attr == "dex") {
+      let stat = getDiceStat(player.attributes.dex);
+      if (player.debuff.slow) {
+        stat = stat - 2;
+      }
+      if (player.debuff.enraged) {
+        stat = stat - 2;
+      }
+      if (stat < 6) stat = 6;
+      return "d" + stat;
+    }
+    if (attr == "ins") {
+      let stat = getDiceStat(player.attributes.ins);
+      if (player.debuff.dazed) {
+        stat = stat - 2;
+      }
+      if (player.debuff.enraged) {
+        stat = stat - 2;
+      }
+      if (stat < 6) stat = 6;
+      return "d" + stat;
+    }
+    if (attr == "mig") {
+      let stat = getDiceStat(player.attributes.mig);
+      if (player.debuff.weak) {
+        stat = stat - 2;
+      }
+      if (player.debuff.poisoned) {
+        stat = stat - 2;
+      }
+      if (stat < 6) stat = 6;
+      return "d" + stat;
+    }
+    if (attr == "wil") {
+      let stat = getDiceStat(player.attributes.wil);
+      if (player.debuff.shaken) {
+        stat = stat - 2;
+      }
+      if (player.debuff.poisoned) {
+        stat = stat - 2;
+      }
+      if (stat < 6) stat = 6;
+      return "d" + stat;
+    }
+  };
+
   const Attribute = (props) => {
-    const { stat, condition } = props;
+    const { stat, condition, label } = props;
     return (
       <div>
         <div>
-          <Text>{stat}:</Text>
+          <Text>{label}:</Text>
         </div>
         <select
           className="attribute-stat"
-          value={"d12"}
+          value={player.attributes[stat]}
           onChange={(evt) => {
-            //setText(evt.target.value);
+            const playerGet = { ...player };
+            player.attributes[stat] = evt.target.value;
+            playerGet.attributes["current" + stat] = getCurrentAttribute(stat);
+            setPlayer(playerGet);
           }}
         >
           <option value="d12">d12</option>
@@ -474,10 +612,28 @@ function App() {
           <option value="d8">d8</option>
           <option value="d6">d6</option>
         </select>
-        <Text>d12</Text>
+        <span
+          className="outline"
+          style={{ display: "inline-block", width: 19, fontSize: 11 }}
+        >
+          {player.attributes["current" + stat]}
+        </span>
         <button
           className="button"
-          style={{ marginLeft: 4, fontSize: 8, width: 40 }}
+          style={{
+            marginLeft: 4,
+            fontSize: 8,
+            width: 40,
+            textTransform: "capitalize",
+            backgroundColor: player.debuff[condition] ? "darkred" : "#222",
+            color: player.debuff[condition] ? "white" : "#ffd433",
+          }}
+          onClick={() => {
+            const playerGet = { ...player };
+            playerGet.debuff[condition] = !player.debuff[condition];
+            playerGet.attributes["current" + stat] = getCurrentAttribute(stat);
+            setPlayer(playerGet);
+          }}
         >
           {condition}
         </button>
@@ -494,10 +650,10 @@ function App() {
           flexDirection: "column",
         }}
       >
-        <Attribute stat="Dexterity" condition="Slow" />
-        <Attribute stat="Insight" condition="Dazed" />
-        <Attribute stat="Might" condition="Weak" />
-        <Attribute stat="Willpower" condition="Shaken" />
+        <Attribute stat="dex" label="Dexterity" condition="slow" />
+        <Attribute stat="ins" label="Insight" condition="dazed" />
+        <Attribute stat="mig" label="Might" condition="weak" />
+        <Attribute stat="wil" label="Willpower" condition="shaken" />
       </div>
     );
   };
@@ -519,6 +675,16 @@ function App() {
             marginRight: 10,
             fontSize: 8,
             width: 40,
+            textTransform: "capitalize",
+            backgroundColor: player.debuff.enraged ? "darkred" : "#222",
+            color: player.debuff.enraged ? "white" : "#ffd433",
+          }}
+          onClick={() => {
+            const playerGet = { ...player };
+            playerGet.debuff.enraged = !player.debuff.enraged;
+            playerGet.attributes["currentdex"] = getCurrentAttribute("dex");
+            playerGet.attributes["currentins"] = getCurrentAttribute("ins");
+            setPlayer(playerGet);
           }}
         >
           Enraged
@@ -531,6 +697,16 @@ function App() {
             marginRight: 10,
             fontSize: 8,
             width: 40,
+            textTransform: "capitalize",
+            backgroundColor: player.debuff.poisoned ? "darkred" : "#222",
+            color: player.debuff.poisoned ? "white" : "#ffd433",
+          }}
+          onClick={() => {
+            const playerGet = { ...player };
+            playerGet.debuff.poisoned = !player.debuff.poisoned;
+            playerGet.attributes["currentmig"] = getCurrentAttribute("mig");
+            playerGet.attributes["currentwil"] = getCurrentAttribute("wil");
+            setPlayer(playerGet);
           }}
         >
           Poisoned
@@ -560,9 +736,11 @@ function App() {
               margin: 0,
               fontSize: 10,
             }}
-            value={""}
+            value={player.items.accessory}
             onChange={(evt) => {
-              //setText(evt.target.value);
+              const playerGet = { ...player };
+              playerGet.items.accessory = evt.target.value;
+              setPlayer(playerGet);
             }}
           />
         </div>
@@ -578,9 +756,11 @@ function App() {
               margin: 0,
               fontSize: 10,
             }}
-            value={"Sage Robe DEF Dex + 1 M.DEF Ins +2 150z"}
+            value={player.items.armor}
             onChange={(evt) => {
-              //setText(evt.target.value);
+              const playerGet = { ...player };
+              playerGet.items.armor = evt.target.value;
+              setPlayer(playerGet);
             }}
           />
         </div>
@@ -596,11 +776,11 @@ function App() {
               margin: 0,
               fontSize: 10,
             }}
-            value={
-              "Valencia (Heavy Spear) 500 z 【DEX + MIG】+1【HR + 16】physical two-handed (Extra Damage, Extra Accuracy)"
-            }
+            value={player.items.mainhand}
             onChange={(evt) => {
-              //setText(evt.target.value);
+              const playerGet = { ...player };
+              playerGet.items.mainhand = evt.target.value;
+              setPlayer(playerGet);
             }}
           />
         </div>
@@ -609,7 +789,6 @@ function App() {
             <Text>Off Hand: </Text>
           </div>
           <input
-            autocomplete="off"
             className="input-stat"
             style={{
               width: 322,
@@ -617,9 +796,11 @@ function App() {
               margin: 0,
               fontSize: 10,
             }}
-            value={""}
+            value={player.items.offhand}
             onChange={(evt) => {
-              //setText(evt.target.value);
+              const playerGet = { ...player };
+              playerGet.items.offhand = evt.target.value;
+              setPlayer(playerGet);
             }}
           />
         </div>
@@ -633,62 +814,79 @@ function App() {
         <Text>Defense: </Text>
         <input
           className="input-stat"
+          type="number"
           style={{
             width: 20,
             color: "violet",
           }}
-          value={"12"}
+          value={player.stats.defense}
           onChange={(evt) => {
-            //setText(evt.target.value);
+            const playerGet = { ...player };
+            playerGet.stats.defense = parseInt(evt.target.value);
+            setPlayer(playerGet);
           }}
         />
         <Text>Magic Defense: </Text>
         <input
           className="input-stat"
+          type="number"
           style={{
             width: 20,
             color: "cyan",
           }}
-          value={"10"}
+          value={player.stats.mDefense}
           onChange={(evt) => {
-            //setText(evt.target.value);
+            const playerGet = { ...player };
+            playerGet.stats.mDefense = parseInt(evt.target.value);
+            setPlayer(playerGet);
           }}
         />
-        <Text>Init. Modifier: </Text>
+        <Text>Initiative Modifier: </Text>
         <input
           className="input-stat"
+          type="number"
           style={{
             width: 20,
             color: "lightgrey",
           }}
-          value={"-2"}
+          value={player.stats.initMod}
           onChange={(evt) => {
-            //setText(evt.target.value);
+            const playerGet = { ...player };
+            if (evt.target.value != "") {
+              playerGet.stats.initMod = parseInt(evt.target.value, "");
+            } else playerGet.stats.initMod = "";
+            setPlayer(playerGet);
+          }}
+        />
+        <Text>Fabula: </Text>
+        <input
+          className="input-stat"
+          type="number"
+          style={{
+            width: 20,
+            color: "Magenta",
+          }}
+          value={player.stats.fabula}
+          onChange={(evt) => {
+            const playerGet = { ...player };
+            playerGet.stats.fabula = parseInt(evt.target.value);
+            setPlayer(playerGet);
           }}
         />
         <Text>Experience: </Text>
         <input
           className="input-stat"
+          type="number"
           style={{
             width: 20,
-            color: "lightgrey",
-          }}
-          value={"9"}
-          onChange={(evt) => {
-            //setText(evt.target.value);
-          }}
-        />
-        <Text>Zenit: </Text>
-        <input
-          className="input-stat"
-          style={{
-            width: 54,
-            color: "gold",
+            color: "lightgreen",
             marginRight: 0,
           }}
-          value={"1000"}
+          value={player.stats.experience}
           onChange={(evt) => {
-            //setText(evt.target.value);
+            const playerGet = { ...player };
+            playerGet.stats.experience = parseInt(evt.target.value);
+            setPlayer(playerGet);
           }}
         />
       </div>
@@ -705,10 +903,12 @@ function App() {
             width: 182,
             color: "white",
           }}
-          value={""}
+          value={player.items.martialRitual}
           placeholder={"Melee/Armor/Ritualism/Elementalism/Etc."}
           onChange={(evt) => {
-            //setText(evt.target.value);
+            const playerGet = { ...player };
+            playerGet.items.martialRitual = evt.target.value;
+            setPlayer(playerGet);
           }}
         />
         <Text>Modifiers - </Text>
@@ -721,9 +921,11 @@ function App() {
             color: "Red",
             marginRight: 4,
           }}
-          value={"5"}
+          value={player.stats.hpMod}
           onChange={(evt) => {
-            //setText(evt.target.value);
+            const playerGet = { ...player };
+            playerGet.stats.hpMod = parseInt(evt.target.value);
+            setPlayer(playerGet);
           }}
         />
         <Text>MP: </Text>
@@ -735,9 +937,11 @@ function App() {
             color: "LightBlue",
             marginRight: 4,
           }}
-          value={"5"}
+          value={player.stats.mpMod}
           onChange={(evt) => {
-            //setText(evt.target.value);
+            const playerGet = { ...player };
+            playerGet.stats.mpMod = parseInt(evt.target.value);
+            setPlayer(playerGet);
           }}
         />
         <Text
@@ -757,9 +961,11 @@ function App() {
             color: "Orange",
             marginRight: 0,
           }}
-          value={"2"}
+          value={player.stats.ipMod}
           onChange={(evt) => {
-            //setText(evt.target.value);
+            const playerGet = { ...player };
+            playerGet.stats.ipMod = parseInt(evt.target.value);
+            setPlayer(playerGet);
           }}
         />
       </div>
@@ -771,13 +977,33 @@ function App() {
       <textarea
         className="input-stat"
         rows="40"
-        cols="88"
-        style={{ textAlign: "left", color: "#FFF", height: 150 }}
+        cols="89"
+        style={{ textAlign: "left", color: "#FFF", height: 150, margin: 0 }}
+        value={player.items.notes}
+        onChange={(evt) => {
+          const playerGet = { ...player };
+          playerGet.items.notes = evt.target.value;
+          setPlayer(playerGet);
+        }}
       ></textarea>
     );
   };
 
-  const Skill = () => {
+  const addSkill = (index) => {
+    const playerGet = { ...player };
+    playerGet.skills[index].items.push({ name: "", info: "", detail: "" }),
+      setPlayer(playerGet);
+  };
+
+  const removeSkill = (index, itemIndex) => {
+    if (confirm("Are you sure you want to delete the skill?") == true) {
+      const playerGet = { ...player };
+      playerGet.skills[index].items.splice(itemIndex, 1);
+      setPlayer(playerGet);
+    }
+  };
+
+  const skill = (data, index, itemIndex) => {
     return (
       <div>
         <div style={{ display: "flex", alignItems: "center" }}>
@@ -788,9 +1014,12 @@ function App() {
               width: 120,
               color: "lightgrey",
             }}
-            value={"Counter Attack"}
+            value={data.name}
+            placeholder="Skill/Spell/Arcana/Etc."
             onChange={(evt) => {
-              //setText(evt.target.value);
+              const playerGet = { ...player };
+              playerGet.skills[index].items[itemIndex].name = evt.target.value;
+              setPlayer(playerGet);
             }}
           />
           <Text>Info: </Text>
@@ -800,16 +1029,24 @@ function App() {
               width: 240,
               color: "lightgrey",
             }}
-            value={""}
+            value={data.info}
             placeholder="Level/Target/MP Cost/Duration/Damage/Other"
             onChange={(evt) => {
-              //setText(evt.target.value);
+              const playerGet = { ...player };
+              playerGet.skills[index].items[itemIndex].info = evt.target.value;
+              setPlayer(playerGet);
             }}
           />
           <button className="button" style={{ marginRight: 4 }}>
             Show
           </button>
-          <button className="button" style={{ width: 25, color: "darkred" }}>
+          <button
+            className="button"
+            style={{ width: 25, color: "darkred" }}
+            onClick={() => {
+              removeSkill(index, itemIndex);
+            }}
+          >
             ✖
           </button>
         </div>
@@ -825,26 +1062,61 @@ function App() {
             marginTop: 4,
             width: 485,
           }}
-          onChange={() => {}}
-          value={
-            "After an enemy hits or misses you with a melee attack, if the Result of their Accuracy Check was an even number, you may perform a free attack against that enemy (after their attack has been fully resolved). This attack must be a melee attack and must have that enemy as its only target; treat your High Roll (HR) as 0 when calculating damage dealt by this attack."
-          }
+          placeholder="Add Description Here"
+          onChange={(evt) => {
+            const playerGet = { ...player };
+            playerGet.skills[index].items[itemIndex].detail = evt.target.value;
+            setPlayer(playerGet);
+          }}
+          value={data.detail}
         ></textarea>
       </div>
     );
   };
 
-  const renderSkills = () => {
-    return (
-      <div>
-        <Skill></Skill>
-        <Skill></Skill>
-        <Skill></Skill>
-      </div>
-    );
+  const addCategory = () => {
+    const playerGet = { ...player };
+    playerGet.skills.push({
+      categoryName: "",
+      categoryInfo: "",
+      items: [{ name: "", info: "", detail: "" }],
+    });
+    setPlayer(playerGet);
   };
 
-  const Category = () => {
+  const removeCategory = (index) => {
+    if (confirm("Are you sure you want to delete the category?") == true) {
+      const playerGet = { ...player };
+      playerGet.skills.splice(index, 1);
+      setPlayer(playerGet);
+    }
+  };
+
+  const category = (data, index) => {
+    const categorySearched =
+      searchSkills !== "" &&
+      data.categoryName.toLowerCase().includes(searchSkills.toLowerCase());
+
+    let items = [];
+
+    if (categorySearched) {
+      items = data.items;
+    } else {
+      items = data.items.filter((item) => {
+        if (searchSkills !== "") {
+          if (item.name.toLowerCase().includes(searchSkills.toLowerCase())) {
+            return true;
+          } else return false;
+        } else {
+          return true;
+        }
+      });
+    }
+
+    if (searchSkills !== "" && items.length < 1 && searchSkills) {
+      return "";
+    }
+
     return (
       <div style={{ marginBottom: 20 }}>
         <hr />
@@ -856,10 +1128,12 @@ function App() {
               width: 200,
               color: "lightgrey",
             }}
-            value={""}
+            value={data.categoryName}
             placeholder="Class/Spells/Projects/Skills/Other"
             onChange={(evt) => {
-              //setText(evt.target.value);
+              const playerGet = { ...player };
+              playerGet.skills[index].categoryName = evt.target.value;
+              setPlayer(playerGet);
             }}
           />
           <Text>Info: </Text>
@@ -869,16 +1143,21 @@ function App() {
               width: 190,
               color: "lightgrey",
             }}
-            value={""}
+            value={data.categoryInfo}
             placeholder="Free Benefits/Tracker/Other"
             onChange={(evt) => {
-              //setText(evt.target.value);
+              const playerGet = { ...player };
+              playerGet.skills[index].categoryInfo = evt.target.value;
+              setPlayer(playerGet);
             }}
           />
           <div style={{ display: "flex", justifyContent: "center" }}>
             <button
               className="button"
               style={{ fontWeight: "bolder", width: 25, marginRight: 4 }}
+              onClick={() => {
+                addSkill(index);
+              }}
             >
               +
             </button>
@@ -886,15 +1165,22 @@ function App() {
           <button
             className="button"
             style={{ fontWeight: "bolder", width: 25, color: "darkred" }}
+            onClick={() => {
+              removeCategory(index);
+            }}
           >
             ✖
           </button>
         </div>
         <hr style={{ marginBottom: 10 }} />
-        {renderSkills()}
+        {items.map((item, itemIndex) => {
+          return skill(item, index, itemIndex);
+        })}
       </div>
     );
   };
+
+  const [searchSkills, setSearchSkills] = useState("");
 
   const renderCategory = () => {
     return (
@@ -904,34 +1190,89 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 120,
+              width: 150,
               color: "lightgrey",
             }}
-            value={""}
+            value={searchSkills}
             onChange={(evt) => {
-              //setText(evt.target.value);
+              setSearchSkills(evt.target.value);
             }}
           />
-          <button
-            className="button"
-            style={{ fontWeight: "bolder", width: 40 }}
-          >
-            Clear
-          </button>
+          {searchSkills !== "" && (
+            <button
+              className="button"
+              style={{ fontWeight: "bolder", width: 40 }}
+              onClick={() => {
+                setSearchSkills("");
+              }}
+            >
+              Clear
+            </button>
+          )}
           <button
             className="button"
             style={{ fontWeight: "bolder", width: 80, float: "right" }}
+            onClick={() => addCategory()}
           >
             Add Category
           </button>
         </div>
-        <Category />
-        <Category />
+
+        {player.skills.map((item, index) => {
+          return category(item, index);
+        })}
       </div>
     );
   };
 
-  const Action = () => {
+  const addAction = () => {
+    const playerGet = { ...player };
+    playerGet.actions.push({
+      name: "",
+      info: "",
+      detail: "",
+      diceOne: "dex",
+      diceTwo: "dex",
+      bonus: 0,
+      damage: 0,
+      hr: true,
+    });
+    setPlayer(playerGet);
+  };
+
+  const removeAction = (index) => {
+    if (confirm("Are you sure you want to delete the action?") == true) {
+      const playerGet = { ...player };
+      playerGet.actions.splice(index, 1);
+      setPlayer(playerGet);
+    }
+  };
+
+  const sortUp = (index) => {
+    if (index !== 0) {
+      const playerGet = { ...player };
+      const actionOne = playerGet.actions[index];
+      const actionTwo = playerGet.actions[index - 1];
+      playerGet.actions[index] = actionTwo;
+      playerGet.actions[index - 1] = actionOne;
+      setPlayer(playerGet);
+    }
+  };
+
+  const sortDown = (index) => {
+    if (index < player.actions.length - 1) {
+      const playerGet = { ...player };
+      const actionOne = playerGet.actions[index];
+      const actionTwo = playerGet.actions[index + 1];
+      playerGet.actions[index] = actionTwo;
+      playerGet.actions[index + 1] = actionOne;
+      setPlayer(playerGet);
+    }
+  };
+
+  const [searchActions, setSearchActions] = useState("");
+
+  const action = (data, index) => {
     return (
       <div>
         <div style={{ display: "flex", alignItems: "center" }}>
@@ -942,9 +1283,11 @@ function App() {
               width: 120,
               color: "lightgrey",
             }}
-            value={"Gun Fire"}
+            value={data.name}
             onChange={(evt) => {
-              //setText(evt.target.value);
+              const playerGet = { ...player };
+              playerGet.actions[index].name = evt.target.value;
+              setPlayer(playerGet);
             }}
           />
           <Text>Info: </Text>
@@ -954,24 +1297,34 @@ function App() {
               width: 258,
               color: "lightgrey",
             }}
-            value={""}
+            value={data.info}
             placeholder="Level/Target/MP Cost/Duration/Damage/Other"
             onChange={(evt) => {
-              //setText(evt.target.value);
+              const playerGet = { ...player };
+              playerGet.actions[index].info = evt.target.value;
+              setPlayer(playerGet);
             }}
           />
 
-          <button className="button" style={{ width: 25, color: "darkred" }}>
+          <button
+            className="button"
+            style={{ width: 25, color: "darkred" }}
+            onClick={() => {
+              removeAction(index);
+            }}
+          >
             ✖
           </button>
         </div>
         <div style={{ display: "flex", alignItems: "center", marginTop: 4 }}>
-          <Text>Dice One: </Text>
+          <Text>Dice 1: </Text>
           <select
             className="attribute-stat"
-            value={"dex"}
+            value={data.diceOne}
             onChange={(evt) => {
-              //setText(evt.target.value);
+              const playerGet = { ...player };
+              playerGet.actions[index].diceOne = evt.target.value;
+              setPlayer(playerGet);
             }}
           >
             <option value="dex">DEX</option>
@@ -983,12 +1336,14 @@ function App() {
             <option value="d8">d8</option>
             <option value="d6">d6</option>
           </select>
-          <Text>Dice Two: </Text>
+          <Text>Dice 2: </Text>
           <select
             className="attribute-stat"
-            value={"ins"}
+            value={data.diceTwo}
             onChange={(evt) => {
-              //setText(evt.target.value);
+              const playerGet = { ...player };
+              playerGet.actions[index].diceTwo = evt.target.value;
+              setPlayer(playerGet);
             }}
           >
             <option value="dex">DEX</option>
@@ -1000,37 +1355,66 @@ function App() {
             <option value="d8">d8</option>
             <option value="d6">d6</option>
           </select>
-          <Text>Bonus/Penalty</Text>
+          <Text>Modifier:</Text>
           <input
             className="input-stat"
+            type="number"
             style={{
               width: 20,
               color: "lightblue",
             }}
-            value={"-2"}
+            value={data.bonus}
             onChange={(evt) => {
-              //setText(evt.target.value);
+              const playerGet = { ...player };
+              playerGet.actions[index].bonus = evt.target.value;
+              setPlayer(playerGet);
             }}
           />
-          <Text>Damage</Text>
+          <button
+            className="button"
+            style={{ marginRight: 4 }}
+            onClick={() => {
+              const playerGet = { ...player };
+              playerGet.actions[index].hr = !playerGet.actions[index].hr;
+              setPlayer(playerGet);
+            }}
+          >
+            {data.hr ? "With HR" : "No HR"}
+          </button>
+          <Text>Damage:</Text>
           <input
             className="input-stat"
+            type="number"
             style={{
               width: 20,
               color: "red",
             }}
-            value={"10"}
+            value={data.damage}
             onChange={(evt) => {
-              //setText(evt.target.value);
+              const playerGet = { ...player };
+              playerGet.actions[index].damage = evt.target.value;
+              setPlayer(playerGet);
             }}
           />
-          <button className="button" style={{ marginRight: 4 }}>
+          <button className="button" style={{ marginRight: 4, width: 50 }}>
             Roll
           </button>
-          <button className="button" style={{ width: 25, marginRight: 4 }}>
+          <button
+            className="button"
+            style={{ width: 25, marginRight: 4 }}
+            onClick={() => {
+              sortUp(index);
+            }}
+          >
             ↑
           </button>
-          <button className="button" style={{ width: 25 }}>
+          <button
+            className="button"
+            style={{ width: 25 }}
+            onClick={() => {
+              sortDown(index);
+            }}
+          >
             ↓
           </button>
         </div>
@@ -1046,9 +1430,12 @@ function App() {
             marginTop: 4,
             width: 485,
           }}
-          value={
-            "After an enemy hits or misses you with a melee attack, if the Result of their Accuracy Check was an even number, you may perform a free attack against that enemy (after their attack has been fully resolved). This attack must be a melee attack and must have that enemy as its only target; treat your High Roll (HR) as 0 when calculating damage dealt by this attack."
-          }
+          value={data.detail}
+          onChange={(evt) => {
+            const playerGet = { ...player };
+            playerGet.actions[index].detail = evt.target.value;
+            setPlayer(playerGet);
+          }}
         ></textarea>
         <hr />
       </div>
@@ -1056,6 +1443,15 @@ function App() {
   };
 
   const renderActionList = () => {
+    const items = player.actions.filter((item) => {
+      if (searchActions !== "") {
+        if (item.name.toLowerCase().includes(searchActions.toLowerCase())) {
+          return true;
+        } else return false;
+      } else {
+        return true;
+      }
+    });
     return (
       <div>
         <div>
@@ -1063,29 +1459,40 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 120,
+              width: 150,
               color: "lightgrey",
             }}
-            value={""}
+            value={searchActions}
             onChange={(evt) => {
-              //setText(evt.target.value);
+              setSearchActions(evt.target.value);
             }}
           />
-          <button
-            className="button"
-            style={{ fontWeight: "bolder", width: 40 }}
-          >
-            Clear
-          </button>
+          {searchActions !== "" && (
+            <button
+              className="button"
+              style={{ fontWeight: "bolder", width: 40 }}
+              onClick={() => {
+                setSearchActions("");
+              }}
+            >
+              Clear
+            </button>
+          )}
           <button
             className="button"
             style={{ fontWeight: "bolder", width: 80, float: "right" }}
+            onClick={() => {
+              addAction();
+            }}
           >
             Add Action
           </button>
         </div>
         <hr />
-        <Action />
+
+        {items.map((item, index) => {
+          return action(item, index);
+        })}
       </div>
     );
   };
@@ -1109,31 +1516,55 @@ function App() {
           paddingRight: 30,
         }}
       >
-        {renderNav()}
-        <hr />
-        {tab === "stats" && (
-          <div>
-            {renderInfo()}
+        {player ? (
+          <>
+            {renderNav()}
             <hr />
-            {renderBonds()}
-            <hr />
-            {renderItemStats()}
-            <div style={{ display: "flex" }}>
-              <div style={{ width: 110 }}>{renderAttributes()}</div>
-              <div>{renderSecondaryCondition()}</div>
-              <div>{renderEquipment()}</div>
-            </div>
-            {renderMartialUnlocked()}
-            <hr />
+            {tab === "stats" && (
+              <div>
+                {renderInfo()}
+                <hr />
+                {renderBonds()}
+                <hr />
+                {renderItemStats()}
+                <div style={{ display: "flex" }}>
+                  <div style={{ width: 110 }}>{renderAttributes()}</div>
+                  <div>{renderSecondaryCondition()}</div>
+                  <div>{renderEquipment()}</div>
+                </div>
+                {renderMartialUnlocked()}
+                <hr />
 
-            <div>
-              <Text>Character Notes/Backpack</Text>
-            </div>
-            {renderNotes()}
-          </div>
+                <div style={{ marginBottom: 8 }}>
+                  <Text>Character Notes/Backpack</Text>
+                  <span style={{ float: "right" }}>
+                    <Text>Zenit: </Text>
+                    <input
+                      className="input-stat"
+                      type="number"
+                      style={{
+                        width: 60,
+                        color: "gold",
+                        marginRight: 0,
+                      }}
+                      value={player.items.zenit}
+                      onChange={(evt) => {
+                        const playerGet = { ...player };
+                        playerGet.items.zenit = parseInt(evt.target.value);
+                        setPlayer(playerGet);
+                      }}
+                    />
+                  </span>
+                </div>
+                {renderNotes()}
+              </div>
+            )}
+            {tab === "skills" && renderCategory()}
+            {tab === "actions" && renderActionList()}
+          </>
+        ) : (
+          renderPlayerList()
         )}
-        {tab === "skills" && renderCategory()}
-        {tab === "actions" && renderActionList()}
       </div>
     </div>
   );
