@@ -1635,6 +1635,7 @@ function App() {
       }}
     >
       <div
+        className="scrollable-container"
         style={{
           overflow: "scroll",
           height: windowInnerHeight - 40,
