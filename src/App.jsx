@@ -1105,7 +1105,13 @@ function App() {
         className="input-stat"
         rows="40"
         cols="89"
-        style={{ textAlign: "left", color: "#FFF", height: 150, margin: 0 }}
+        style={{
+          textAlign: "left",
+          color: "#FFF",
+          height: 150,
+          margin: 0,
+          width: 485,
+        }}
         value={player.items.notes}
         onChange={(evt) => {
           const playerGet = { ...player };
