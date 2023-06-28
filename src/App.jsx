@@ -1640,8 +1640,8 @@ function App() {
           overflow: "scroll",
           height: windowInnerHeight - 40,
           marginTop: 20,
-          paddingLeft: 20,
-          paddingRight: 20,
+          paddingLeft: 30,
+          paddingRight: 30,
         }}
       >
         {player ? (
