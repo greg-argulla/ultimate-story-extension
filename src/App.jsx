@@ -1523,7 +1523,7 @@ function App() {
               setPlayer(playerGet);
             }}
           />
-          <button className="button" style={{ marginRight: 4, width: 50 }}>
+          <button className="button" style={{ marginRight: 4, width: 40 }}>
             Roll
           </button>
           <button
