@@ -155,7 +155,8 @@ function App() {
   }, [isOBRReady]);
 
   const [timeoutID, setTimeoutID] = useState(null);
-  useEffect(() => {
+
+  const updatePlayer = (playerGet) => {
     if (!timeoutID) {
       const myTimeout = setTimeout(() => {
         savePlayer();
@@ -168,12 +169,14 @@ function App() {
       }, 2000);
       setTimeoutID(myTimeout);
     }
-  }, [player]);
+
+    setPlayer(playerGet);
+  };
 
   const savePlayer = () => {
     if (player) {
       let metadataChange = { ...metadata };
-      metadataChange[player.id] = player;
+      metadataChange[player.id] = { ...player, lastEdit: id };
 
       OBR.scene.setMetadata({
         "ultimate.story.extension/metadata": metadataChange,
@@ -181,6 +184,14 @@ function App() {
       setTimeoutID(null);
     }
   };
+
+  useEffect(() => {
+    if (player) {
+      if (metadata[player.id].lastEdit !== id) {
+        setPlayer(metadata[player.id]);
+      }
+    }
+  }, [metadata]);
 
   const getDiceAttribute = (attr) => {
     if (attr === "dex") {
@@ -556,7 +567,7 @@ function App() {
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.name = evt.target.value;
-              setPlayer(playerGet);
+              updatePlayer(playerGet);
             }}
             placeholder="Your name and pronouns"
           />
@@ -573,7 +584,7 @@ function App() {
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.traits.theme = evt.target.value;
-              setPlayer(playerGet);
+              updatePlayer(playerGet);
             }}
             placeholder="A strong ideal"
           />
@@ -590,7 +601,7 @@ function App() {
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.traits.origin = evt.target.value;
-              setPlayer(playerGet);
+              updatePlayer(playerGet);
             }}
             placeholder={"Where they are from"}
           />
@@ -616,7 +627,7 @@ function App() {
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.traits.identity = evt.target.value;
-              setPlayer(playerGet);
+              updatePlayer(playerGet);
             }}
             placeholder="This is a short sentence that sums up your character's general concept"
           />
@@ -633,7 +644,7 @@ function App() {
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.level = parseInt(evt.target.value);
-              setPlayer(playerGet);
+              updatePlayer(playerGet);
             }}
           />
         </div>
@@ -647,7 +658,7 @@ function App() {
     const updateBond = (bond, index) => {
       const playerGet = { ...player };
       playerGet.bonds[index] = bond;
-      setPlayer(playerGet);
+      updatePlayer(playerGet);
     };
 
     return (
@@ -785,7 +796,7 @@ function App() {
             const playerGet = { ...player };
             player.attributes[stat] = evt.target.value;
             playerGet.attributes["current" + stat] = getCurrentAttribute(stat);
-            setPlayer(playerGet);
+            updatePlayer(playerGet);
           }}
         >
           <option value="d12">d12</option>
@@ -813,7 +824,7 @@ function App() {
             const playerGet = { ...player };
             playerGet.debuff[condition] = !player.debuff[condition];
             playerGet.attributes["current" + stat] = getCurrentAttribute(stat);
-            setPlayer(playerGet);
+            updatePlayer(playerGet);
           }}
         >
           {condition}
@@ -865,7 +876,7 @@ function App() {
             playerGet.debuff.enraged = !player.debuff.enraged;
             playerGet.attributes["currentdex"] = getCurrentAttribute("dex");
             playerGet.attributes["currentins"] = getCurrentAttribute("ins");
-            setPlayer(playerGet);
+            updatePlayer(playerGet);
           }}
         >
           Enraged
@@ -887,7 +898,7 @@ function App() {
             playerGet.debuff.poisoned = !player.debuff.poisoned;
             playerGet.attributes["currentmig"] = getCurrentAttribute("mig");
             playerGet.attributes["currentwil"] = getCurrentAttribute("wil");
-            setPlayer(playerGet);
+            updatePlayer(playerGet);
           }}
         >
           Poisoned
@@ -921,7 +932,7 @@ function App() {
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.items.accessory = evt.target.value;
-              setPlayer(playerGet);
+              updatePlayer(playerGet);
             }}
           />
         </div>
@@ -941,7 +952,7 @@ function App() {
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.items.armor = evt.target.value;
-              setPlayer(playerGet);
+              updatePlayer(playerGet);
             }}
           />
         </div>
@@ -961,7 +972,7 @@ function App() {
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.items.mainhand = evt.target.value;
-              setPlayer(playerGet);
+              updatePlayer(playerGet);
             }}
           />
         </div>
@@ -981,7 +992,7 @@ function App() {
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.items.offhand = evt.target.value;
-              setPlayer(playerGet);
+              updatePlayer(playerGet);
             }}
           />
         </div>
@@ -1004,7 +1015,7 @@ function App() {
           onChange={(evt) => {
             const playerGet = { ...player };
             playerGet.stats.defense = parseInt(evt.target.value);
-            setPlayer(playerGet);
+            updatePlayer(playerGet);
           }}
         />
         <Text>Magic Defense: </Text>
@@ -1019,7 +1030,7 @@ function App() {
           onChange={(evt) => {
             const playerGet = { ...player };
             playerGet.stats.mDefense = parseInt(evt.target.value);
-            setPlayer(playerGet);
+            updatePlayer(playerGet);
           }}
         />
         <Text>Initiative Modifier: </Text>
@@ -1036,7 +1047,7 @@ function App() {
             if (evt.target.value != "") {
               playerGet.stats.initMod = parseInt(evt.target.value, "");
             } else playerGet.stats.initMod = "";
-            setPlayer(playerGet);
+            updatePlayer(playerGet);
           }}
         />
         <Text>Fabula: </Text>
@@ -1051,7 +1062,7 @@ function App() {
           onChange={(evt) => {
             const playerGet = { ...player };
             playerGet.stats.fabula = parseInt(evt.target.value);
-            setPlayer(playerGet);
+            updatePlayer(playerGet);
           }}
         />
         <Text>Experience: </Text>
@@ -1067,7 +1078,7 @@ function App() {
           onChange={(evt) => {
             const playerGet = { ...player };
             playerGet.stats.experience = parseInt(evt.target.value);
-            setPlayer(playerGet);
+            updatePlayer(playerGet);
           }}
         />
       </div>
@@ -1089,7 +1100,7 @@ function App() {
           onChange={(evt) => {
             const playerGet = { ...player };
             playerGet.items.martialRitual = evt.target.value;
-            setPlayer(playerGet);
+            updatePlayer(playerGet);
           }}
         />
         <Text>Modifiers - </Text>
@@ -1106,7 +1117,7 @@ function App() {
           onChange={(evt) => {
             const playerGet = { ...player };
             playerGet.stats.hpMod = parseInt(evt.target.value);
-            setPlayer(playerGet);
+            updatePlayer(playerGet);
           }}
         />
         <Text>MP: </Text>
@@ -1122,7 +1133,7 @@ function App() {
           onChange={(evt) => {
             const playerGet = { ...player };
             playerGet.stats.mpMod = parseInt(evt.target.value);
-            setPlayer(playerGet);
+            updatePlayer(playerGet);
           }}
         />
         <Text
@@ -1146,7 +1157,7 @@ function App() {
           onChange={(evt) => {
             const playerGet = { ...player };
             playerGet.stats.ipMod = parseInt(evt.target.value);
-            setPlayer(playerGet);
+            updatePlayer(playerGet);
           }}
         />
       </div>
@@ -1170,7 +1181,7 @@ function App() {
         onChange={(evt) => {
           const playerGet = { ...player };
           playerGet.items.notes = evt.target.value;
-          setPlayer(playerGet);
+          updatePlayer(playerGet);
         }}
       ></textarea>
     );
@@ -1179,14 +1190,14 @@ function App() {
   const addSkill = (index) => {
     const playerGet = { ...player };
     playerGet.skills[index].items.push({ name: "", info: "", detail: "" }),
-      setPlayer(playerGet);
+      updatePlayer(playerGet);
   };
 
   const removeSkill = (index, itemIndex) => {
     if (confirm("Are you sure you want to delete the skill?") == true) {
       const playerGet = { ...player };
       playerGet.skills[index].items.splice(itemIndex, 1);
-      setPlayer(playerGet);
+      updatePlayer(playerGet);
     }
   };
 
@@ -1206,7 +1217,7 @@ function App() {
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.skills[index].items[itemIndex].name = evt.target.value;
-              setPlayer(playerGet);
+              updatePlayer(playerGet);
             }}
           />
           <Text>Info: </Text>
@@ -1221,7 +1232,7 @@ function App() {
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.skills[index].items[itemIndex].info = evt.target.value;
-              setPlayer(playerGet);
+              updatePlayer(playerGet);
             }}
           />
           <button
@@ -1257,7 +1268,7 @@ function App() {
           onChange={(evt) => {
             const playerGet = { ...player };
             playerGet.skills[index].items[itemIndex].detail = evt.target.value;
-            setPlayer(playerGet);
+            updatePlayer(playerGet);
           }}
           value={data.detail}
         ></textarea>
@@ -1272,14 +1283,14 @@ function App() {
       categoryInfo: "",
       items: [{ name: "", info: "", detail: "" }],
     });
-    setPlayer(playerGet);
+    updatePlayer(playerGet);
   };
 
   const removeCategory = (index) => {
     if (confirm("Are you sure you want to delete the category?") == true) {
       const playerGet = { ...player };
       playerGet.skills.splice(index, 1);
-      setPlayer(playerGet);
+      updatePlayer(playerGet);
     }
   };
 
@@ -1324,7 +1335,7 @@ function App() {
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.skills[index].categoryName = evt.target.value;
-              setPlayer(playerGet);
+              updatePlayer(playerGet);
             }}
           />
           <Text>Info: </Text>
@@ -1339,7 +1350,7 @@ function App() {
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.skills[index].categoryInfo = evt.target.value;
-              setPlayer(playerGet);
+              updatePlayer(playerGet);
             }}
           />
           <div style={{ display: "flex", justifyContent: "center" }}>
@@ -1428,14 +1439,14 @@ function App() {
       damage: 0,
       useHR: true,
     });
-    setPlayer(playerGet);
+    updatePlayer(playerGet);
   };
 
   const removeAction = (index) => {
     if (confirm("Are you sure you want to delete the action?") == true) {
       const playerGet = { ...player };
       playerGet.actions.splice(index, 1);
-      setPlayer(playerGet);
+      updatePlayer(playerGet);
     }
   };
 
@@ -1446,7 +1457,7 @@ function App() {
       const actionTwo = playerGet.actions[index - 1];
       playerGet.actions[index] = actionTwo;
       playerGet.actions[index - 1] = actionOne;
-      setPlayer(playerGet);
+      updatePlayer(playerGet);
     }
   };
 
@@ -1457,7 +1468,7 @@ function App() {
       const actionTwo = playerGet.actions[index + 1];
       playerGet.actions[index] = actionTwo;
       playerGet.actions[index + 1] = actionOne;
-      setPlayer(playerGet);
+      updatePlayer(playerGet);
     }
   };
 
@@ -1478,7 +1489,7 @@ function App() {
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.actions[index].name = evt.target.value;
-              setPlayer(playerGet);
+              updatePlayer(playerGet);
             }}
           />
           <Text>Info: </Text>
@@ -1515,7 +1526,7 @@ function App() {
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.actions[index].diceOne = evt.target.value;
-              setPlayer(playerGet);
+              updatePlayer(playerGet);
             }}
           >
             <option value="dex">DEX</option>
@@ -1534,7 +1545,7 @@ function App() {
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.actions[index].diceTwo = evt.target.value;
-              setPlayer(playerGet);
+              updatePlayer(playerGet);
             }}
           >
             <option value="dex">DEX</option>
@@ -1558,7 +1569,7 @@ function App() {
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.actions[index].bonus = evt.target.value;
-              setPlayer(playerGet);
+              updatePlayer(playerGet);
             }}
           />
           <button
@@ -1567,7 +1578,7 @@ function App() {
             onClick={() => {
               const playerGet = { ...player };
               playerGet.actions[index].useHR = !playerGet.actions[index].useHR;
-              setPlayer(playerGet);
+              updatePlayer(playerGet);
             }}
           >
             {data.useHR ? "With HR" : "No HR"}
@@ -1584,7 +1595,7 @@ function App() {
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.actions[index].damage = evt.target.value;
-              setPlayer(playerGet);
+              updatePlayer(playerGet);
             }}
           />
           <button
@@ -1629,7 +1640,7 @@ function App() {
           onChange={(evt) => {
             const playerGet = { ...player };
             playerGet.actions[index].detail = evt.target.value;
-            setPlayer(playerGet);
+            updatePlayer(playerGet);
           }}
         ></textarea>
         <hr />
@@ -1747,7 +1758,7 @@ function App() {
                       onChange={(evt) => {
                         const playerGet = { ...player };
                         playerGet.items.zenit = parseInt(evt.target.value);
-                        setPlayer(playerGet);
+                        updatePlayer(playerGet);
                       }}
                     />
                   </span>
