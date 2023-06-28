@@ -87,7 +87,7 @@ const newPlayer = () => {
         diceTwo: "dex",
         bonus: 0,
         damage: 0,
-        hr: true,
+        useHR: true,
       },
     ],
   };
@@ -172,7 +172,6 @@ function App() {
 
   const savePlayer = () => {
     if (player) {
-      console.log("SAVE CHANGES");
       let metadataChange = { ...metadata };
       metadataChange[player.id] = player;
 
@@ -181,6 +180,61 @@ function App() {
       });
       setTimeoutID(null);
     }
+  };
+
+  const getDiceAttribute = (attr) => {
+    if (attr === "dex") {
+      return player.attributes.currentdex;
+    }
+    if (attr === "ins") {
+      return player.attributes.currentins;
+    }
+    if (attr === "mig") {
+      return player.attributes.currentmig;
+    }
+    if (attr === "dex") {
+      return player.attributes.currentwil;
+    }
+    return attr;
+  };
+
+  const sendRoll = (roll) => {
+    const rollData = {
+      dex: player.attributes.currentdex,
+      ins: player.attributes.currentins,
+      mig: player.attributes.currentmig,
+      wil: player.attributes.currentwil,
+      diceOne: getDiceAttribute(roll.diceOne),
+      diceTwo: getDiceAttribute(roll.diceTwo),
+      diceLabelOne: roll.diceOne.toUpperCase(),
+      diceLabelTwo: roll.diceTwo.toUpperCase(),
+      bonus: isNaN(parseInt(roll.bonus)) ? 0 : parseInt(roll.bonus),
+      damage: isNaN(parseInt(roll.damage)) ? 0 : parseInt(roll.damage),
+      useHR: roll.useHR,
+      skillName: roll.name,
+      info: roll.info,
+      detail: roll.detail,
+      userId: id,
+      username: name,
+      id: Date.now(),
+    };
+    OBR.scene.setMetadata({
+      "ultimate.story.extension/sendroll": rollData,
+    });
+  };
+
+  const sendSkill = (skill) => {
+    const skillData = {
+      skillName: skill.name,
+      info: skill.info,
+      detail: skill.detail,
+      userId: id,
+      username: name,
+      id: Date.now(),
+    };
+    OBR.scene.setMetadata({
+      "ultimate.story.extension/sendskill": skillData,
+    });
   };
 
   const [windowInnerHeight, setWindowInnerHeight] = useState(
@@ -504,7 +558,7 @@ function App() {
               playerGet.name = evt.target.value;
               setPlayer(playerGet);
             }}
-            placeholder="How your character is addressed. Add pronouns if you wish."
+            placeholder="Your name and pronouns"
           />
           <div style={{ width: 40 }}>
             <Text>Theme: </Text>
@@ -538,7 +592,7 @@ function App() {
               playerGet.traits.origin = evt.target.value;
               setPlayer(playerGet);
             }}
-            placeholder={"Where the character's from"}
+            placeholder={"Where they are from"}
           />
         </div>
         <div
@@ -1170,7 +1224,11 @@ function App() {
               setPlayer(playerGet);
             }}
           />
-          <button className="button" style={{ marginRight: 4 }}>
+          <button
+            className="button"
+            style={{ marginRight: 4 }}
+            onClick={() => sendSkill(data)}
+          >
             Show
           </button>
           <button
@@ -1368,7 +1426,7 @@ function App() {
       diceTwo: "dex",
       bonus: 0,
       damage: 0,
-      hr: true,
+      useHR: true,
     });
     setPlayer(playerGet);
   };
@@ -1431,7 +1489,7 @@ function App() {
               color: "lightgrey",
             }}
             value={data.info}
-            placeholder="Level/Target/MP Cost/Duration/Damage/Other"
+            placeholder="Level/Target/MP Cost/Duration/Damage/Other/Quote"
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.actions[index].info = evt.target.value;
@@ -1508,11 +1566,11 @@ function App() {
             style={{ marginRight: 4 }}
             onClick={() => {
               const playerGet = { ...player };
-              playerGet.actions[index].hr = !playerGet.actions[index].hr;
+              playerGet.actions[index].useHR = !playerGet.actions[index].useHR;
               setPlayer(playerGet);
             }}
           >
-            {data.hr ? "With HR" : "No HR"}
+            {data.useHR ? "With HR" : "No HR"}
           </button>
           <Text>Damage:</Text>
           <input
@@ -1529,7 +1587,11 @@ function App() {
               setPlayer(playerGet);
             }}
           />
-          <button className="button" style={{ marginRight: 4, width: 40 }}>
+          <button
+            className="button"
+            style={{ marginRight: 4, width: 40 }}
+            onClick={() => sendRoll(data)}
+          >
             Roll
           </button>
           <button
