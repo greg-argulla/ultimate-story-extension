@@ -1630,7 +1630,7 @@ function App() {
         backgroundImage: `url(${landingBG})`,
         backgroundSize: "contain",
         height: 540,
-        width: 554,
+        width: 550,
         overflow: "hidden",
       }}
     >
@@ -1639,8 +1639,8 @@ function App() {
           overflow: "scroll",
           height: windowInnerHeight - 40,
           marginTop: 20,
-          paddingLeft: 30,
-          paddingRight: 30,
+          paddingLeft: 20,
+          paddingRight: 20,
         }}
       >
         {player ? (
