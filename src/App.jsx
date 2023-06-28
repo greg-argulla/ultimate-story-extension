@@ -202,7 +202,22 @@ function App() {
     return () => window.removeEventListener("resize", autoResize);
   }, []);
 
-  const removePlayer = () => {};
+  const removePlayer = (id) => {
+    if (confirm("Are you sure you want to delete the character?") == true) {
+      if (
+        confirm(
+          "You won't be able to retrieve it back, are you really sure?"
+        ) == true
+      ) {
+        let metadataChange = { ...metadata };
+        delete metadataChange[id];
+
+        OBR.scene.setMetadata({
+          "ultimate.story.extension/metadata": metadataChange,
+        });
+      }
+    }
+  };
 
   const addPlayer = () => {
     const playerGet = newPlayer();
@@ -333,7 +348,7 @@ function App() {
           className="button"
           style={{ fontWeight: "bolder", width: 25, color: "darkred" }}
           onClick={() => {
-            removePlayer(index);
+            removePlayer(data.id);
           }}
         >
           ✖
