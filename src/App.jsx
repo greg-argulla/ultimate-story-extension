@@ -1630,7 +1630,7 @@ function App() {
         backgroundImage: `url(${landingBG})`,
         backgroundSize: "contain",
         height: 540,
-        width: 550,
+        width: 554,
         overflow: "hidden",
       }}
     >
