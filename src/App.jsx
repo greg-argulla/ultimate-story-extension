@@ -160,13 +160,13 @@ function App() {
     if (!timeoutID) {
       const myTimeout = setTimeout(() => {
         savePlayer();
-      }, 2000);
+      }, 500);
       setTimeoutID(myTimeout);
     } else {
       clearTimeout(timeoutID);
       const myTimeout = setTimeout(() => {
         savePlayer();
-      }, 2000);
+      }, 500);
       setTimeoutID(myTimeout);
     }
 
@@ -1504,7 +1504,7 @@ function App() {
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.actions[index].info = evt.target.value;
-              setPlayer(playerGet);
+              updatePlayer(playerGet);
             }}
           />
 
