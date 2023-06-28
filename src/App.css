@@ -82,10 +82,10 @@ input[type="number"] {
 .bond-stat {
   background-color: #333;
   color: #ffd433;
-  font-size: 7px;
+  font-size: 8px;
   margin-right: 4px;
   height: 24px;
-  width: 55px;
+  width: 60px;
 }
 
 .attribute-stat {

@@ -601,10 +601,10 @@ function App() {
         <input
           className="input-stat"
           style={{
-            width: 60,
+            width: 45,
             color: "white",
             marginLeft: 0,
-            fontSize: 7,
+            fontSize: 8,
           }}
           value={bond.name}
           placeholder="Bond"
