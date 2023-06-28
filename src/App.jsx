@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import OBR from "@owlbear-rodeo/sdk";
 import landingBG from "./assets/bg.jpg";
-import refresh from "./assets/refresh.png";
 import "./App.css";
 
 document.body.style.overflow = "hidden";
@@ -14,10 +13,11 @@ const Text = (props) => {
 
 const newPlayer = () => {
   return {
-    name: "Winter White",
+    id: Date.now(),
+    name: "",
     level: 5,
     traits: {
-      identity: "A eccentric and naive former slave mage who lost her home",
+      identity: "",
       theme: "",
       origin: "",
     },
@@ -113,20 +113,16 @@ function App() {
   const [name, setName] = useState("");
   const [id, setId] = useState("");
   const [metadata, setMetadata] = useState([]);
-  const [playerList, setPlayerList] = useState([
-    newPlayer(),
-    newPlayer(),
-    newPlayer(),
-  ]);
-  const [player, setPlayer] = useState(newPlayer());
+  const [playerList, setPlayerList] = useState([]);
+  const [player, setPlayer] = useState(null);
   const [tab, setTab] = useState("stats");
 
   useEffect(() => {
     OBR.onReady(async () => {
       const metadata = await OBR.scene.getMetadata();
       if (metadata["ultimate.story.extension/metadata"]) {
-        // const currentChat = createChatArray(metadata);
-        // setChat(currentChat);
+        const playerListGet = await createPlayerList(metadata);
+        setPlayerList(playerListGet);
       }
       setIsOBRReady(true);
       setName(await OBR.player.getName());
@@ -138,10 +134,54 @@ function App() {
     });
   }, []);
 
+  const createPlayerList = async (metadata) => {
+    const metadataGet = metadata["ultimate.story.extension/metadata"];
+    setMetadata(metadataGet);
+    const playerListGet = [];
+    const keys = Object.keys(metadataGet);
+    keys.forEach((key) => {
+      playerListGet.push(metadataGet[key]);
+    });
+    return playerListGet;
+  };
+
   useEffect(() => {
     if (isOBRReady) {
+      OBR.scene.onMetadataChange(async (metadata) => {
+        const playerListGet = await createPlayerList(metadata);
+        setPlayerList(playerListGet);
+      });
     }
   }, [isOBRReady]);
+
+  const [timeoutID, setTimeoutID] = useState(null);
+  useEffect(() => {
+    if (!timeoutID) {
+      const myTimeout = setTimeout(() => {
+        savePlayer();
+      }, 2000);
+      setTimeoutID(myTimeout);
+    } else {
+      clearTimeout(timeoutID);
+      const myTimeout = setTimeout(() => {
+        savePlayer();
+      }, 2000);
+      setTimeoutID(myTimeout);
+    }
+  }, [player]);
+
+  const savePlayer = () => {
+    if (player) {
+      console.log("SAVE CHANGES");
+      let metadataChange = { ...metadata };
+      metadataChange[player.id] = player;
+
+      OBR.scene.setMetadata({
+        "ultimate.story.extension/metadata": metadataChange,
+      });
+      setTimeoutID(null);
+    }
+  };
 
   const [windowInnerHeight, setWindowInnerHeight] = useState(
     window.innerHeight
@@ -162,110 +202,179 @@ function App() {
     return () => window.removeEventListener("resize", autoResize);
   }, []);
 
-  const renderPlayerList = () => {
-    return playerList.map((data) => {
-      return (
-        <div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 5,
-              marginTop: 5,
-            }}
-          >
-            <div style={{ width: 42 }}>
-              <Text>Name: </Text>
-            </div>
-            <input
-              className="input-stat"
-              style={{
-                width: 120,
-                color: "white",
-              }}
-              value={data.name}
-              readOnly={true}
-            />
+  const removePlayer = () => {};
 
-            <Text>HP:</Text>
-            <input
-              className="input-stat"
-              style={{
-                width: 20,
-                color: "Red",
-              }}
-              readOnly={true}
-              value={
-                getDiceStat(data.attributes.mig) * 5 +
-                data.stats.hpMod +
-                data.level
-              }
-            />
-            <Text>MP: </Text>
-            <input
-              className="input-stat"
-              style={{
-                width: 20,
-                color: "LightBlue",
-              }}
-              readOnly={true}
-              value={
-                getDiceStat(data.attributes.wil) * 5 +
-                data.stats.mpMod +
-                data.level
-              }
-            />
-            <Text>IP: </Text>
-            <input
-              className="input-stat"
-              style={{
-                width: 20,
-                color: "Orange",
-              }}
-              readOnly={true}
-              value={6 + data.stats.ipMod}
-            />
+  const addPlayer = () => {
+    const playerGet = newPlayer();
+    let metadataChange = { ...metadata };
+    metadataChange[playerGet.id] = playerGet;
 
-            <Text>DEF: </Text>
-            <input
-              className="input-stat"
-              type="number"
-              style={{
-                width: 20,
-                color: "violet",
-              }}
-              value={data.stats.defense}
-              readOnly={true}
-            />
-            <Text>M.DEF: </Text>
-            <input
-              className="input-stat"
-              type="number"
-              style={{
-                width: 20,
-                color: "cyan",
-              }}
-              value={data.stats.mDefense}
-              readOnly={true}
-            />
+    OBR.scene.setMetadata({
+      "ultimate.story.extension/metadata": metadataChange,
+    });
+  };
+
+  const playerItem = (data) => {
+    return (
+      <div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 5,
+            marginTop: 5,
+          }}
+        >
+          <div style={{ width: 42 }}>
+            <Text>Name: </Text>
           </div>
-
-          <Text>Identity: </Text>
-
           <input
             className="input-stat"
             style={{
-              width: 300,
+              width: 150,
               color: "white",
             }}
-            value={data.traits.identity}
+            value={data.name}
             readOnly={true}
           />
-          <hr />
+
+          <Text>HP:</Text>
+          <input
+            className="input-stat"
+            style={{
+              width: 20,
+              color: "Red",
+            }}
+            readOnly={true}
+            value={
+              getDiceStat(data.attributes.mig) * 5 +
+              data.stats.hpMod +
+              data.level
+            }
+          />
+          <Text>MP: </Text>
+          <input
+            className="input-stat"
+            style={{
+              width: 20,
+              color: "LightBlue",
+            }}
+            readOnly={true}
+            value={
+              getDiceStat(data.attributes.wil) * 5 +
+              data.stats.mpMod +
+              data.level
+            }
+          />
+          <Text>IP: </Text>
+          <input
+            className="input-stat"
+            style={{
+              width: 20,
+              color: "Orange",
+            }}
+            readOnly={true}
+            value={6 + data.stats.ipMod}
+          />
+
+          <Text>DEF: </Text>
+          <input
+            className="input-stat"
+            type="number"
+            style={{
+              width: 20,
+              color: "violet",
+            }}
+            value={data.stats.defense}
+            readOnly={true}
+          />
+          <Text>M.DEF: </Text>
+          <input
+            className="input-stat"
+            type="number"
+            style={{
+              width: 20,
+              color: "cyan",
+            }}
+            value={data.stats.mDefense}
+            readOnly={true}
+          />
         </div>
-      );
-    });
+
+        <Text>Identity: </Text>
+
+        <input
+          className="input-stat"
+          style={{
+            width: 300,
+            color: "white",
+          }}
+          value={data.traits.identity}
+          readOnly={true}
+        />
+
+        <button
+          className="button"
+          style={{
+            marginLeft: 4,
+            width: 96,
+            padding: 5,
+            marginRight: 4,
+          }}
+          onClick={() => {
+            setTab("stats");
+            setPlayer(data);
+          }}
+        >
+          Open
+        </button>
+        <button
+          className="button"
+          style={{ fontWeight: "bolder", width: 25, color: "darkred" }}
+          onClick={() => {
+            removePlayer(index);
+          }}
+        >
+          ✖
+        </button>
+        <hr />
+      </div>
+    );
+  };
+
+  const renderPlayerList = () => {
+    return (
+      <div style={{ marginTop: 4 }}>
+        <div>
+          <Text>Characters: </Text>
+          {searchActions !== "" && (
+            <button
+              className="button"
+              style={{ fontWeight: "bolder", width: 40 }}
+              onClick={() => {
+                setSearchActions("");
+              }}
+            >
+              Clear
+            </button>
+          )}
+          <button
+            className="button"
+            style={{ fontWeight: "bolder", width: 80, float: "right" }}
+            onClick={() => {
+              addPlayer();
+            }}
+          >
+            Add Character
+          </button>
+        </div>
+        <hr />
+        {playerList.map((data) => {
+          return playerItem(data);
+        })}
+      </div>
+    );
   };
 
   const renderNav = () => {
@@ -344,6 +453,9 @@ function App() {
             padding: 5,
             float: "right",
             color: "red",
+          }}
+          onClick={() => {
+            setPlayer(null);
           }}
         >
           Close
