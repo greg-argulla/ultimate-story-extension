@@ -604,7 +604,7 @@ function App() {
             width: 60,
             color: "white",
             marginLeft: 0,
-            fontSize: 8,
+            fontSize: 7,
           }}
           value={bond.name}
           placeholder="Bond"
