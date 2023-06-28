@@ -48,6 +48,10 @@
   display: none;
 }
 
+.scrollable-container {
+  scrollbar-width: none;
+}
+
 .crit {
   position: relative;
   font-size: 13px;
