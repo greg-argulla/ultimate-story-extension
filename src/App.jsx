@@ -248,7 +248,7 @@ function App() {
             className="input-stat"
             style={{
               width: 150,
-              color: "white",
+              color: "#ffd433",
             }}
             value={data.name}
             readOnly={true}
@@ -323,7 +323,7 @@ function App() {
           className="input-stat"
           style={{
             width: 300,
-            color: "white",
+            color: "#ffd433",
           }}
           value={data.traits.identity}
           readOnly={true}
