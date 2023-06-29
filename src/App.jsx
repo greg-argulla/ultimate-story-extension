@@ -203,7 +203,7 @@ function App() {
     if (attr === "mig") {
       return player.attributes.currentmig;
     }
-    if (attr === "dex") {
+    if (attr === "wil") {
       return player.attributes.currentwil;
     }
     return attr;
