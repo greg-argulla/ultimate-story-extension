@@ -291,18 +291,27 @@ function App() {
   }, []);
 
   const removePlayer = (id) => {
-    if (confirm("Are you sure you want to delete the character?") == true) {
-      if (
-        confirm(
-          "You won't be able to retrieve it back, are you really sure?"
-        ) == true
-      ) {
-        let metadataChange = { ...metadata };
-        delete metadataChange[id];
+    let metadataChange = { ...metadata };
 
-        OBR.scene.setMetadata({
-          "ultimate.story.extension/metadata": metadataChange,
-        });
+    if (metadataChange[id].isGMPlayer) {
+      delete metadataChange[id];
+
+      OBR.scene.setMetadata({
+        "ultimate.story.extension/metadata": metadataChange,
+      });
+    } else {
+      if (confirm("Are you sure you want to delete the character?") == true) {
+        if (
+          confirm(
+            "You won't be able to retrieve it back, are you really sure?"
+          ) == true
+        ) {
+          delete metadataChange[id];
+
+          OBR.scene.setMetadata({
+            "ultimate.story.extension/metadata": metadataChange,
+          });
+        }
       }
     }
   };
@@ -1900,7 +1909,6 @@ function App() {
                 </div>
                 {renderMartialUnlocked()}
                 <hr />
-
                 <div style={{ marginBottom: 8 }}>
                   <Text>Character Notes/Backpack</Text>
                   <span style={{ float: "right" }}>
