@@ -1176,6 +1176,7 @@ function App() {
           height: 150,
           margin: 0,
           width: 485,
+          padding: 4,
         }}
         value={player.items.notes}
         onChange={(evt) => {
@@ -1263,6 +1264,7 @@ function App() {
             marginLeft: 0,
             marginTop: 4,
             width: 485,
+            padding: 4,
           }}
           placeholder="Add Description Here"
           onChange={(evt) => {
@@ -1635,6 +1637,7 @@ function App() {
             marginLeft: 0,
             marginTop: 4,
             width: 485,
+            padding: 4,
           }}
           value={data.detail}
           onChange={(evt) => {
