@@ -11,9 +11,30 @@ const Text = (props) => {
   return <span className="outline">{children}</span>;
 };
 
-const newPlayer = () => {
+const newPlayer = (isGMPlayer) => {
+  if (isGMPlayer) {
+    return {
+      id: Date.now(),
+      isGMPlayer: isGMPlayer,
+      name: "",
+      actions: [
+        {
+          name: "",
+          info: "",
+          detail: "",
+          diceOne: "dex",
+          diceTwo: "dex",
+          bonus: 0,
+          damage: 0,
+          useHR: true,
+        },
+      ],
+    };
+  }
+
   return {
     id: Date.now(),
+    isGMPlayer: isGMPlayer,
     name: "",
     level: 5,
     traits: {
@@ -116,6 +137,7 @@ function App() {
   const [playerList, setPlayerList] = useState([]);
   const [player, setPlayer] = useState(null);
   const [tab, setTab] = useState("stats");
+  const [role, setRole] = useState("PLAYER");
 
   useEffect(() => {
     OBR.onReady(async () => {
@@ -131,6 +153,7 @@ function App() {
       OBR.player.onChange(async (player) => {
         setName(await OBR.player.getName());
       });
+      setRole(await OBR.player.getRole());
     });
   }, []);
 
@@ -294,7 +317,80 @@ function App() {
     });
   };
 
+  const addGMCharacter = () => {
+    const playerGet = newPlayer(true);
+    let metadataChange = { ...metadata };
+    metadataChange[playerGet.id] = playerGet;
+
+    OBR.scene.setMetadata({
+      "ultimate.story.extension/metadata": metadataChange,
+    });
+  };
+
   const playerItem = (data) => {
+    if (data.isGMPlayer) {
+      if (role !== "GM") {
+        return "";
+      }
+
+      return (
+        <div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: 5,
+              marginTop: 5,
+            }}
+          >
+            <div style={{ width: 42 }}>
+              <Text>Name: </Text>
+            </div>
+            <input
+              className="input-stat"
+              style={{
+                width: 150,
+                color: "#ffd433",
+              }}
+              value={data.name}
+              readOnly={true}
+            />
+            <button
+              className="button"
+              style={{
+                marginLeft: 4,
+                width: 96,
+                padding: 5,
+                marginRight: 4,
+              }}
+              onClick={() => {
+                if (data.isGMPlayer) {
+                  setTab("actions");
+                } else {
+                  setTab("stats");
+                }
+
+                setPlayer(data);
+              }}
+            >
+              Open
+            </button>
+            <button
+              className="button"
+              style={{ fontWeight: "bolder", width: 25, color: "darkred" }}
+              onClick={() => {
+                removePlayer(data.id);
+              }}
+            >
+              ✖
+            </button>
+          </div>
+          <hr />
+        </div>
+      );
+    }
+
     return (
       <div>
         <div
@@ -448,11 +544,34 @@ function App() {
           >
             Add Character
           </button>
+
+          {role === "GM" && (
+            <button
+              className="button"
+              style={{
+                fontWeight: "bolder",
+                width: 100,
+                float: "right",
+                marginRight: 4,
+              }}
+              onClick={() => {
+                addGMCharacter();
+              }}
+            >
+              Add GM Character
+            </button>
+          )}
         </div>
         <hr />
-        {playerList.map((data) => {
-          return playerItem(data);
-        })}
+        {playerList
+          .sort((a, b) => {
+            if (a.isGMPlayer && !b.isGMPlayer) return 1;
+            if (!a.isGMPlayer && b.isGMPlayer) return -1;
+            return 0;
+          })
+          .map((data) => {
+            return playerItem(data);
+          })}
       </div>
     );
   };
@@ -1531,10 +1650,10 @@ function App() {
               updatePlayer(playerGet);
             }}
           >
-            <option value="dex">DEX</option>
-            <option value="ins">INS</option>
-            <option value="mig">MIG</option>
-            <option value="wil">WIL</option>
+            {!player.isGMPlayer && <option value="dex">DEX</option>}
+            {!player.isGMPlayer && <option value="ins">INS</option>}
+            {!player.isGMPlayer && <option value="mig">MIG</option>}
+            {!player.isGMPlayer && <option value="wil">WIL</option>}
             <option value="d12">d12</option>
             <option value="d10">d10</option>
             <option value="d8">d8</option>
@@ -1550,10 +1669,10 @@ function App() {
               updatePlayer(playerGet);
             }}
           >
-            <option value="dex">DEX</option>
-            <option value="ins">INS</option>
-            <option value="mig">MIG</option>
-            <option value="wil">WIL</option>
+            {!player.isGMPlayer && <option value="dex">DEX</option>}
+            {!player.isGMPlayer && <option value="ins">INS</option>}
+            {!player.isGMPlayer && <option value="mig">MIG</option>}
+            {!player.isGMPlayer && <option value="wil">WIL</option>}
             <option value="d12">d12</option>
             <option value="d10">d10</option>
             <option value="d8">d8</option>
@@ -1728,7 +1847,44 @@ function App() {
       >
         {player ? (
           <>
-            {renderNav()}
+            {!player.isGMPlayer ? (
+              renderNav()
+            ) : (
+              <div style={{ display: "flex", marginTop: 4 }}>
+                <div style={{ width: 44 }}>
+                  <Text>Name: </Text>
+                </div>
+                <input
+                  className="input-stat"
+                  style={{
+                    width: 160,
+                    color: "white",
+                  }}
+                  value={player.name}
+                  onChange={(evt) => {
+                    const playerGet = { ...player };
+                    playerGet.name = evt.target.value;
+                    updatePlayer(playerGet);
+                  }}
+                  placeholder="Your Enemy Name"
+                />
+                <button
+                  className="button"
+                  style={{
+                    marginLeft: 4,
+                    width: "auto",
+                    padding: 5,
+                    marginLeft: "auto",
+                    color: "red",
+                  }}
+                  onClick={() => {
+                    setPlayer(null);
+                  }}
+                >
+                  Close
+                </button>
+              </div>
+            )}
             <hr />
             {tab === "stats" && (
               <div>
