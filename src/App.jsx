@@ -17,6 +17,24 @@ const newPlayer = (isGMPlayer) => {
       id: Date.now(),
       isGMPlayer: isGMPlayer,
       name: "",
+      attributes: {
+        dex: "d8",
+        ins: "d8",
+        mig: "d8",
+        wil: "d8",
+        currentdex: "d8",
+        currentins: "d8",
+        currentmig: "d8",
+        currentwil: "d8",
+      },
+      debuff: {
+        slow: false,
+        dazed: false,
+        weak: false,
+        shaken: false,
+        enraged: false,
+        poisoned: false,
+      },
       actions: [
         {
           name: "",
@@ -910,6 +928,57 @@ function App() {
     }
   };
 
+  const GMAttribute = (props) => {
+    const { stat, label } = props;
+    return (
+      <div>
+        <Text>
+          {label}: {player.attributes["current" + stat]}
+        </Text>
+        <select
+          className="attribute-stat"
+          value={player.attributes[stat]}
+          onChange={(evt) => {
+            const playerGet = { ...player };
+            player.attributes[stat] = evt.target.value;
+            playerGet.attributes["current" + stat] = getCurrentAttribute(stat);
+            updatePlayer(playerGet);
+          }}
+        >
+          <option value="d12">d12</option>
+          <option value="d10">d10</option>
+          <option value="d8">d8</option>
+          <option value="d6">d6</option>
+        </select>
+      </div>
+    );
+  };
+
+  const GMCondition = (props) => {
+    const { stat, condition } = props;
+    return (
+      <button
+        className="button"
+        style={{
+          marginLeft: 4,
+          fontSize: 8,
+          width: 40,
+          textTransform: "capitalize",
+          backgroundColor: player.debuff[condition] ? "darkred" : "#222",
+          color: player.debuff[condition] ? "white" : "#ffd433",
+        }}
+        onClick={() => {
+          const playerGet = { ...player };
+          playerGet.debuff[condition] = !player.debuff[condition];
+          playerGet.attributes["current" + stat] = getCurrentAttribute(stat);
+          updatePlayer(playerGet);
+        }}
+      >
+        {condition}
+      </button>
+    );
+  };
+
   const Attribute = (props) => {
     const { stat, condition, label } = props;
     return (
@@ -1659,10 +1728,10 @@ function App() {
               updatePlayer(playerGet);
             }}
           >
-            {!player.isGMPlayer && <option value="dex">DEX</option>}
-            {!player.isGMPlayer && <option value="ins">INS</option>}
-            {!player.isGMPlayer && <option value="mig">MIG</option>}
-            {!player.isGMPlayer && <option value="wil">WIL</option>}
+            <option value="dex">DEX</option>
+            <option value="ins">INS</option>
+            <option value="mig">MIG</option>
+            <option value="wil">WIL</option>
             <option value="d12">d12</option>
             <option value="d10">d10</option>
             <option value="d8">d8</option>
@@ -1678,10 +1747,10 @@ function App() {
               updatePlayer(playerGet);
             }}
           >
-            {!player.isGMPlayer && <option value="dex">DEX</option>}
-            {!player.isGMPlayer && <option value="ins">INS</option>}
-            {!player.isGMPlayer && <option value="mig">MIG</option>}
-            {!player.isGMPlayer && <option value="wil">WIL</option>}
+            <option value="dex">DEX</option>
+            <option value="ins">INS</option>
+            <option value="mig">MIG</option>
+            <option value="wil">WIL</option>
             <option value="d12">d12</option>
             <option value="d10">d10</option>
             <option value="d8">d8</option>
@@ -1834,6 +1903,100 @@ function App() {
     );
   };
 
+  const renderGMNav = () => {
+    return (
+      <div>
+        <div style={{ display: "flex", marginTop: 4 }}>
+          <div style={{ width: 44 }}>
+            <Text>Name: </Text>
+          </div>
+          <input
+            className="input-stat"
+            style={{
+              width: 160,
+              color: "white",
+            }}
+            value={player.name}
+            onChange={(evt) => {
+              const playerGet = { ...player };
+              playerGet.name = evt.target.value;
+              updatePlayer(playerGet);
+            }}
+            placeholder="Your Enemy Name"
+          />
+
+          <GMCondition stat="dex" condition="slow" />
+          <GMCondition stat="ins" condition="dazed" />
+          <GMCondition stat="mig" condition="weak" />
+          <GMCondition stat="wil" condition="shaken" />
+          <button
+            className="button"
+            style={{
+              marginLeft: 4,
+              fontSize: 8,
+              width: 40,
+              textTransform: "capitalize",
+              backgroundColor: player.debuff.enraged ? "darkred" : "#222",
+              color: player.debuff.enraged ? "white" : "#ffd433",
+            }}
+            onClick={() => {
+              const playerGet = { ...player };
+              playerGet.debuff.enraged = !player.debuff.enraged;
+              playerGet.attributes["currentdex"] = getCurrentAttribute("dex");
+              playerGet.attributes["currentins"] = getCurrentAttribute("ins");
+              updatePlayer(playerGet);
+            }}
+          >
+            Enraged
+          </button>
+          <button
+            className="button"
+            style={{
+              marginLeft: 4,
+              marginRight: 10,
+              fontSize: 8,
+              width: 40,
+              textTransform: "capitalize",
+              backgroundColor: player.debuff.poisoned ? "darkred" : "#222",
+              color: player.debuff.poisoned ? "white" : "#ffd433",
+            }}
+            onClick={() => {
+              const playerGet = { ...player };
+              playerGet.debuff.poisoned = !player.debuff.poisoned;
+              playerGet.attributes["currentmig"] = getCurrentAttribute("mig");
+              playerGet.attributes["currentwil"] = getCurrentAttribute("wil");
+              updatePlayer(playerGet);
+            }}
+          >
+            Poisoned
+          </button>
+          <button
+            className="button"
+            style={{
+              width: "auto",
+              padding: 5,
+              marginLeft: "auto",
+              color: "red",
+            }}
+            onClick={() => {
+              setPlayer(null);
+            }}
+          >
+            Close
+          </button>
+        </div>
+        <hr />
+        <div style={{ display: "flex", gap: 10 }}>
+          <GMAttribute stat="dex" label="Dexterity" />
+          <GMAttribute stat="ins" label="Insight" />
+          <GMAttribute stat="mig" label="Might" />
+          <GMAttribute stat="wil" label="Willpower" />
+        </div>
+        <div></div>
+      </div>
+    );
+  };
+
   return (
     <div
       style={{
@@ -1856,44 +2019,7 @@ function App() {
       >
         {player ? (
           <>
-            {!player.isGMPlayer ? (
-              renderNav()
-            ) : (
-              <div style={{ display: "flex", marginTop: 4 }}>
-                <div style={{ width: 44 }}>
-                  <Text>Name: </Text>
-                </div>
-                <input
-                  className="input-stat"
-                  style={{
-                    width: 160,
-                    color: "white",
-                  }}
-                  value={player.name}
-                  onChange={(evt) => {
-                    const playerGet = { ...player };
-                    playerGet.name = evt.target.value;
-                    updatePlayer(playerGet);
-                  }}
-                  placeholder="Your Enemy Name"
-                />
-                <button
-                  className="button"
-                  style={{
-                    marginLeft: 4,
-                    width: "auto",
-                    padding: 5,
-                    marginLeft: "auto",
-                    color: "red",
-                  }}
-                  onClick={() => {
-                    setPlayer(null);
-                  }}
-                >
-                  Close
-                </button>
-              </div>
-            )}
+            {!player.isGMPlayer ? renderNav() : renderGMNav()}
             <hr />
             {tab === "stats" && (
               <div>
