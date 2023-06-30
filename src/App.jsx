@@ -464,7 +464,7 @@ function App() {
               width: 150,
               textAlign: "center",
               borderBottom: "1px solid #AAA",
-              minHeight: 12,
+              minHeight: 18,
             }}
           >
             <span className="outline" style={{ fontSize: 12, color: "orange" }}>
