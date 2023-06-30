@@ -158,6 +158,7 @@ function App() {
   const [id, setId] = useState("");
   const [metadata, setMetadata] = useState([]);
   const [playerList, setPlayerList] = useState([]);
+  const [savedPlayerList, setSavePlayerList] = useState([]);
   const [player, setPlayer] = useState(null);
   const [tab, setTab] = useState("stats");
   const [role, setRole] = useState("PLAYER");
@@ -197,6 +198,11 @@ function App() {
         const playerListGet = await createPlayerList(metadata);
         setPlayerList(playerListGet);
       });
+
+      const localPlayerList = JSON.parse(
+        localStorage.getItem("ultimate.story.extension/metadata")
+      );
+      setSavePlayerList(localPlayerList);
     }
   }, [isOBRReady]);
 
@@ -349,6 +355,67 @@ function App() {
     });
   };
 
+  const saveCharacterLocally = (id) => {
+    let metadataChange = { ...metadata };
+
+    const localPlayerList = JSON.parse(
+      localStorage.getItem("ultimate.story.extension/metadata")
+    );
+
+    if (localPlayerList) {
+      localPlayerList.push(metadataChange[id]);
+      localStorage.setItem(
+        "ultimate.story.extension/metadata",
+        JSON.stringify(localPlayerList)
+      );
+
+      setSavePlayerList(localPlayerList);
+    } else {
+      localStorage.setItem(
+        "ultimate.story.extension/metadata",
+        JSON.stringify([metadataChange[id]])
+      );
+      setSavePlayerList([metadataChange[id]]);
+    }
+  };
+
+  const loadLocalCharacter = (data) => {
+    let metadataChange = { ...metadata };
+
+    if (metadataChange[data.id]) {
+      if (
+        !confirm(
+          "This character is already loaded, loading this character will replace the character in the current scene. Are you sure you want to replace the existing character?"
+        ) == true
+      ) {
+        return;
+      }
+    }
+    metadataChange[data.id] = data;
+
+    OBR.scene.setMetadata({
+      "ultimate.story.extension/metadata": metadataChange,
+    });
+  };
+
+  const removeCharacterLocally = (index) => {
+    if (
+      confirm(
+        "Are you sure you want to delete this locally stored character?"
+      ) == true
+    ) {
+      const localPlayerList = JSON.parse(
+        localStorage.getItem("ultimate.story.extension/metadata")
+      );
+      localPlayerList.splice(index, 1);
+      localStorage.setItem(
+        "ultimate.story.extension/metadata",
+        JSON.stringify(localPlayerList)
+      );
+      setSavePlayerList(localPlayerList);
+    }
+  };
+
   const addGMCharacter = () => {
     const playerGet = newPlayer(true);
     let metadataChange = { ...metadata };
@@ -372,6 +439,86 @@ function App() {
         {stat}
       </span>
     );
+  };
+
+  const localPlayerItem = (data, index) => {
+    return (
+      <div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 5,
+            marginTop: 5,
+          }}
+        >
+          <Text>Name: </Text>
+          <span
+            className="outline"
+            style={{
+              display: "inline-block",
+              fontSize: 12,
+              color: "orange",
+              width: 150,
+              textAlign: "center",
+            }}
+          >
+            {data.traits ? data.traits.name : ""}
+          </span>
+
+          <Text>Identity: </Text>
+
+          <input
+            className="input-stat"
+            style={{
+              width: 380,
+              color: "white",
+            }}
+            value={data.traits.identity}
+            readOnly={true}
+          />
+          <button
+            className="button"
+            style={{
+              marginLeft: 4,
+              width: 96,
+              padding: 5,
+              marginRight: 4,
+              marginLeft: "auto",
+            }}
+            onClick={() => {
+              loadLocalCharacter(data);
+            }}
+          >
+            Load
+          </button>
+          <button
+            className="button"
+            style={{
+              fontWeight: "bolder",
+              width: 25,
+              color: "darkred",
+            }}
+            onClick={() => {
+              removeCharacterLocally(index);
+            }}
+          >
+            ✖
+          </button>
+        </div>
+        <hr />
+      </div>
+    );
+  };
+
+  const renderLocalPlayerList = () => {
+    if (savedPlayerList.length) {
+      return savedPlayerList.map((data, index) => {
+        return localPlayerItem(data, index);
+      });
+    }
+    return "";
   };
 
   const playerItem = (data) => {
@@ -575,6 +722,21 @@ function App() {
           className="button"
           style={{
             marginLeft: 4,
+            width: 40,
+            padding: 5,
+            marginRight: 4,
+            float: "right",
+          }}
+          onClick={() => {
+            saveCharacterLocally(data.id);
+          }}
+        >
+          Save
+        </button>
+        <button
+          className="button"
+          style={{
+            marginLeft: 4,
             width: 96,
             padding: 5,
             marginRight: 4,
@@ -597,7 +759,9 @@ function App() {
     return (
       <div style={{ marginTop: 4 }}>
         <div>
-          <Text>Characters: </Text>
+          <span style={{ fontSize: 13, color: "white" }} className="outline">
+            Characters:
+          </span>
           {searchActions !== "" && (
             <button
               className="button"
@@ -2110,7 +2274,17 @@ function App() {
             {tab === "actions" && renderActionList()}
           </>
         ) : (
-          renderPlayerList()
+          <div>
+            {renderPlayerList()}
+            <div
+              style={{ fontSize: 13, color: "White", marginTop: 20 }}
+              className="outline"
+            >
+              Locally Saved Character:
+            </div>
+            <hr />
+            {renderLocalPlayerList()}
+          </div>
         )}
       </div>
     </div>
