@@ -17,6 +17,9 @@ const newPlayer = (isGMPlayer) => {
       id: Date.now(),
       isGMPlayer: isGMPlayer,
       name: "",
+      traits: {
+        name: "",
+      },
       attributes: {
         dex: "d8",
         ins: "d8",
@@ -56,6 +59,7 @@ const newPlayer = (isGMPlayer) => {
     name: "",
     level: 5,
     traits: {
+      name: "",
       identity: "",
       theme: "",
       origin: "",
@@ -354,6 +358,21 @@ function App() {
     });
   };
 
+  const debuffItem = (debuff, stat) => {
+    return (
+      <span
+        className="outline"
+        style={{
+          display: "inline-block",
+          padding: 4,
+          color: debuff ? "red" : "white",
+        }}
+      >
+        {stat}
+      </span>
+    );
+  };
+
   const playerItem = (data) => {
     if (data.isGMPlayer) {
       if (role !== "GM") {
@@ -371,18 +390,26 @@ function App() {
               marginTop: 5,
             }}
           >
-            <div style={{ width: 42 }}>
-              <Text>Name: </Text>
-            </div>
-            <input
-              className="input-stat"
+            <Text>Name: </Text>
+            <span
+              className="outline"
               style={{
+                display: "inline-block",
+                fontSize: 12,
+                color: "orange",
                 width: 150,
-                color: "#ffd433",
+                textAlign: "center",
               }}
-              value={data.name}
-              readOnly={true}
-            />
+            >
+              {data.traits.name}
+            </span>
+            <Text>Debuff:</Text>
+            {debuffItem(data.debuff.slow, "slow")}
+            {debuffItem(data.debuff.dazed, "dazed")}
+            {debuffItem(data.debuff.weak, "weak")}
+            {debuffItem(data.debuff.shaken, "shaken")}
+            {debuffItem(data.debuff.enraged, "enraged")}
+            {debuffItem(data.debuff.poisoned, "poisoned")}
             <button
               className="button"
               style={{
@@ -432,13 +459,28 @@ function App() {
           <div style={{ width: 42 }}>
             <Text>Name: </Text>
           </div>
-          <input
-            className="input-stat"
+          <div
             style={{
               width: 150,
-              color: "#ffd433",
+              textAlign: "center",
+              borderBottom: "1px solid #AAA",
+              minHeight: 12,
             }}
-            value={data.name}
+          >
+            <span className="outline" style={{ fontSize: 12, color: "orange" }}>
+              {data.traits.name}
+            </span>
+          </div>
+
+          <Text>Level: </Text>
+          <input
+            className="input-stat"
+            type="number"
+            style={{
+              width: 20,
+              color: "white",
+            }}
+            value={data.level}
             readOnly={true}
           />
 
@@ -505,18 +547,29 @@ function App() {
           />
         </div>
 
-        <Text>Identity: </Text>
+        <Text>Debuff:</Text>
 
-        <input
-          className="input-stat"
+        {debuffItem(data.debuff.slow, "slow")}
+        {debuffItem(data.debuff.dazed, "dazed")}
+        {debuffItem(data.debuff.weak, "weak")}
+        {debuffItem(data.debuff.shaken, "shaken")}
+        {debuffItem(data.debuff.enraged, "enraged")}
+        {debuffItem(data.debuff.poisoned, "poisoned")}
+
+        <button
+          className="button"
           style={{
-            width: 300,
-            color: "#ffd433",
+            fontWeight: "bolder",
+            width: 25,
+            color: "darkred",
+            float: "right",
           }}
-          value={data.traits.identity}
-          readOnly={true}
-        />
-
+          onClick={() => {
+            removePlayer(data.id);
+          }}
+        >
+          ✖
+        </button>
         <button
           className="button"
           style={{
@@ -524,6 +577,7 @@ function App() {
             width: 96,
             padding: 5,
             marginRight: 4,
+            float: "right",
           }}
           onClick={() => {
             setTab("stats");
@@ -532,15 +586,7 @@ function App() {
         >
           Open
         </button>
-        <button
-          className="button"
-          style={{ fontWeight: "bolder", width: 25, color: "darkred" }}
-          onClick={() => {
-            removePlayer(data.id);
-          }}
-        >
-          ✖
-        </button>
+
         <hr />
       </div>
     );
@@ -709,10 +755,10 @@ function App() {
               width: 160,
               color: "white",
             }}
-            value={player.name}
+            value={player.traits.name}
             onChange={(evt) => {
               const playerGet = { ...player };
-              playerGet.name = evt.target.value;
+              playerGet.traits.name = evt.target.value;
               updatePlayer(playerGet);
             }}
             placeholder="Your name and pronouns"
@@ -1916,10 +1962,10 @@ function App() {
               width: 160,
               color: "white",
             }}
-            value={player.name}
+            value={player.traits.name}
             onChange={(evt) => {
               const playerGet = { ...player };
-              playerGet.name = evt.target.value;
+              playerGet.traits.name = evt.target.value;
               updatePlayer(playerGet);
             }}
             placeholder="Your Enemy Name"
