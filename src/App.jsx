@@ -282,7 +282,7 @@ function App() {
 
   const sendSkill = (skill) => {
     const skillData = {
-      skillName: skill.name,
+      skillName: skill.name ? skill.name : "Blank skill",
       info: skill.info,
       detail: skill.detail,
       userId: id,
