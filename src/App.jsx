@@ -481,7 +481,6 @@ function App() {
           <button
             className="button"
             style={{
-              marginLeft: 4,
               width: 96,
               padding: 5,
               marginRight: 4,
