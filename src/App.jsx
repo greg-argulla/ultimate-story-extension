@@ -275,7 +275,7 @@ function App() {
       username: name,
       id: Date.now(),
     };
-    OBR.scene.setMetadata({
+    OBR.room.setMetadata({
       "ultimate.story.extension/sendroll": rollData,
     });
   };
@@ -289,7 +289,7 @@ function App() {
       username: name,
       id: Date.now(),
     };
-    OBR.scene.setMetadata({
+    OBR.room.setMetadata({
       "ultimate.story.extension/sendskill": skillData,
     });
   };
