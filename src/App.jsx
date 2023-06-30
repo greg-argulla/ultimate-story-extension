@@ -63,6 +63,7 @@ const newPlayer = (isGMPlayer) => {
       identity: "",
       theme: "",
       origin: "",
+      level: 5,
     },
     bonds: [
       { name: "", emotionOne: "", emotionTwo: "", emotionThree: "" },
@@ -480,7 +481,7 @@ function App() {
               width: 20,
               color: "white",
             }}
-            value={data.level}
+            value={data.traits.level}
             readOnly={true}
           />
 
@@ -495,7 +496,7 @@ function App() {
             value={
               getDiceStat(data.attributes.mig) * 5 +
               data.stats.hpMod +
-              data.level
+              data.traits.level
             }
           />
           <Text>MP: </Text>
@@ -509,7 +510,7 @@ function App() {
             value={
               getDiceStat(data.attributes.wil) * 5 +
               data.stats.mpMod +
-              data.level
+              data.traits.level
             }
           />
           <Text>IP: </Text>
@@ -690,7 +691,7 @@ function App() {
           value={
             getDiceStat(player.attributes.mig) * 5 +
             player.stats.hpMod +
-            player.level
+            player.traits.level
           }
         />
         <Text>MP: </Text>
@@ -704,7 +705,7 @@ function App() {
           value={
             getDiceStat(player.attributes.wil) * 5 +
             player.stats.mpMod +
-            player.level
+            player.traits.level
           }
         />
         <Text>IP: </Text>
@@ -832,10 +833,10 @@ function App() {
               color: "white",
             }}
             type="number"
-            value={player.level}
+            value={player.traits.level}
             onChange={(evt) => {
               const playerGet = { ...player };
-              playerGet.level = parseInt(evt.target.value);
+              playerGet.traits.level = parseInt(evt.target.value);
               updatePlayer(playerGet);
             }}
           />
