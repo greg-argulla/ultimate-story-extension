@@ -401,7 +401,7 @@ function App() {
                 textAlign: "center",
               }}
             >
-              {data.traits.name}
+              {data.traits ? data.traits.name : ""}
             </span>
             <Text>Debuff:</Text>
             {debuffItem(data.debuff.slow, "slow")}
