@@ -512,10 +512,12 @@ function App() {
   };
 
   const renderLocalPlayerList = () => {
-    if (savedPlayerList.length) {
-      return savedPlayerList.map((data, index) => {
-        return localPlayerItem(data, index);
-      });
+    if (savedPlayerList) {
+      if (savedPlayerList.length) {
+        return savedPlayerList.map((data, index) => {
+          return localPlayerItem(data, index);
+        });
+      }
     }
     return "";
   };
