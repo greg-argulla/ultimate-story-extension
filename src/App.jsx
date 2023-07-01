@@ -55,7 +55,6 @@ const newPlayer = (isGMPlayer) => {
 
   return {
     id: Date.now(),
-    isGMPlayer: isGMPlayer,
     name: "",
     level: 5,
     traits: {
@@ -162,6 +161,9 @@ function App() {
   const [player, setPlayer] = useState(null);
   const [tab, setTab] = useState("stats");
   const [role, setRole] = useState("PLAYER");
+  const [exportData, setExportData] = useState(null);
+  const [importData, setImportData] = useState("");
+  const [copyText, setCopyText] = useState(false);
 
   useEffect(() => {
     OBR.onReady(async () => {
@@ -355,6 +357,57 @@ function App() {
     });
   };
 
+  const removeItemFromArray = (array, text) => {
+    const index = array.indexOf(text);
+    if (index > -1) {
+      array.splice(index, 1);
+    }
+    return array;
+  };
+
+  function compareKeys(a, b) {
+    var aKeys = Object.keys(a).sort();
+    var bKeys = Object.keys(b).sort();
+    aKeys = removeItemFromArray(aKeys, "lastEdit");
+    bKeys = removeItemFromArray(bKeys, "lastEdit");
+    aKeys = removeItemFromArray(aKeys, "isGMPlayer");
+    bKeys = removeItemFromArray(bKeys, "isGMPlayer");
+    return JSON.stringify(aKeys) === JSON.stringify(bKeys);
+  }
+
+  const importCharacter = () => {
+    const localPlayerList = JSON.parse(
+      localStorage.getItem("ultimate.story.extension/metadata")
+    );
+
+    const data = JSON.parse(importData);
+
+    if (compareKeys(data, newPlayer())) {
+      if (localPlayerList) {
+        localPlayerList.push(data);
+        localStorage.setItem(
+          "ultimate.story.extension/metadata",
+          JSON.stringify(localPlayerList)
+        );
+
+        setSavePlayerList(localPlayerList);
+      } else {
+        localStorage.setItem(
+          "ultimate.story.extension/metadata",
+          JSON.stringify(data)
+        );
+        setSavePlayerList(data);
+      }
+      setPlayer(null);
+      setImportData("");
+      setTab("stats");
+    } else {
+      alert(
+        "Invalid Data. Please double check the export data and copy again."
+      );
+    }
+  };
+
   const saveCharacterLocally = (id) => {
     let metadataChange = { ...metadata };
 
@@ -495,6 +548,22 @@ function App() {
           <button
             className="button"
             style={{
+              width: 96,
+              padding: 5,
+              marginRight: 4,
+              marginLeft: "auto",
+            }}
+            onClick={() => {
+              setTab("export");
+              setExportData(JSON.stringify(data));
+              setCopyText(false);
+            }}
+          >
+            Export
+          </button>
+          <button
+            className="button"
+            style={{
               fontWeight: "bolder",
               width: 25,
               color: "darkred",
@@ -548,6 +617,7 @@ function App() {
                 color: "orange",
                 width: 150,
                 textAlign: "center",
+                padding: 4,
               }}
             >
               {data.traits ? data.traits.name : ""}
@@ -2209,6 +2279,140 @@ function App() {
     );
   };
 
+  const renderExportData = () => {
+    return (
+      <div>
+        <div>
+          <span style={{ fontSize: 13, color: "White" }} className="outline">
+            Export:
+          </span>
+
+          <button
+            className="button"
+            style={{
+              marginLeft: 4,
+              width: "auto",
+              padding: 5,
+              float: "right",
+              color: "red",
+            }}
+            onClick={() => {
+              setPlayer(null);
+              setTab("stats");
+            }}
+          >
+            Close
+          </button>
+        </div>
+        <hr />
+        <Text>
+          Copy the text below to export your character. Use import to bring your
+          characters to other rooms:
+        </Text>
+        <textarea
+          className="input-stat"
+          rows="40"
+          cols="89"
+          style={{
+            textAlign: "left",
+            color: "#FFF",
+            height: 150,
+            margin: 0,
+            width: 485,
+            padding: 4,
+          }}
+          value={exportData}
+          readOnly={true}
+        ></textarea>
+        <button
+          className="button"
+          style={{
+            marginLeft: 4,
+            width: "auto",
+            padding: 5,
+            float: "right",
+            width: 150,
+          }}
+          onClick={() => {
+            navigator.clipboard.writeText(exportData);
+            setCopyText(true);
+            setTimeout(() => {
+              setCopyText(false);
+            }, 1500);
+          }}
+        >
+          {copyText ? "Copied to Clipboard" : "Copy Text"}
+        </button>
+      </div>
+    );
+  };
+
+  const renderImportData = () => {
+    return (
+      <div>
+        <div>
+          <span style={{ fontSize: 13, color: "White" }} className="outline">
+            Import:
+          </span>
+          <button
+            className="button"
+            style={{
+              marginLeft: 4,
+              width: "auto",
+              padding: 5,
+              float: "right",
+              color: "red",
+            }}
+            onClick={() => {
+              setPlayer(null);
+              setTab("stats");
+            }}
+          >
+            Close
+          </button>
+        </div>
+        <hr />
+        <Text>
+          Paste the exported text below to import your character. Use export to
+          bring your characters to other rooms:
+        </Text>
+        <textarea
+          className="input-stat"
+          rows="40"
+          cols="89"
+          style={{
+            textAlign: "left",
+            color: "#FFF",
+            height: 150,
+            margin: 0,
+            width: 485,
+            padding: 4,
+          }}
+          value={importData}
+          onChange={(evt) => {
+            setImportData(evt.target.value);
+          }}
+        ></textarea>
+        <button
+          className="button"
+          style={{
+            marginLeft: 4,
+            width: "auto",
+            padding: 5,
+            float: "right",
+            color: "white",
+            width: 150,
+          }}
+          onClick={() => {
+            importCharacter();
+          }}
+        >
+          Import
+        </button>
+      </div>
+    );
+  };
+
   return (
     <div
       style={{
@@ -2275,17 +2479,43 @@ function App() {
             {tab === "actions" && renderActionList()}
           </>
         ) : (
-          <div>
-            {renderPlayerList()}
-            <div
-              style={{ fontSize: 13, color: "White", marginTop: 20 }}
-              className="outline"
-            >
-              Locally Saved Character:
-            </div>
-            <hr />
-            {renderLocalPlayerList()}
-          </div>
+          <>
+            {tab === "export" ? (
+              renderExportData()
+            ) : tab === "import" ? (
+              renderImportData()
+            ) : (
+              <div>
+                {renderPlayerList()}
+                <div style={{ marginTop: 40 }}>
+                  <span
+                    style={{ fontSize: 13, color: "White" }}
+                    className="outline"
+                  >
+                    Room Saved Character:
+                  </span>
+                  <button
+                    className="button"
+                    style={{
+                      fontWeight: "bolder",
+                      width: 100,
+                      float: "right",
+                      marginRight: 4,
+                    }}
+                    onClick={() => {
+                      setTab("import");
+                      setExportData("");
+                      setCopyText(false);
+                    }}
+                  >
+                    Import Character
+                  </button>
+                </div>
+                <hr />
+                {renderLocalPlayerList()}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
