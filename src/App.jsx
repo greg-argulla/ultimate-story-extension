@@ -352,9 +352,9 @@ function App() {
   };
 
   const addPlayer = async () => {
+    const playerGet = newPlayer();
     const metadataData = await OBR.scene.getMetadata();
     const metadata = metadataData["ultimate.story.extension/metadata"];
-    const playerGet = newPlayer();
     let metadataChange = { ...metadata };
     metadataChange[playerGet.id] = playerGet;
 
