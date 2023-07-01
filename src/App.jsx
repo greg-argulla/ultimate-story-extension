@@ -155,7 +155,6 @@ function App() {
   const [isOBRReady, setIsOBRReady] = useState(false);
   const [name, setName] = useState("");
   const [id, setId] = useState("");
-  const [metadata, setMetadata] = useState([]);
   const [playerList, setPlayerList] = useState([]);
   const [savedPlayerList, setSavePlayerList] = useState([]);
   const [player, setPlayer] = useState(null);
@@ -164,6 +163,7 @@ function App() {
   const [exportData, setExportData] = useState(null);
   const [importData, setImportData] = useState("");
   const [copyText, setCopyText] = useState(false);
+  const [metadataUpdate, setMetadata] = useState([]);
 
   useEffect(() => {
     OBR.onReady(async () => {
@@ -227,8 +227,10 @@ function App() {
     setPlayer(playerGet);
   };
 
-  const savePlayer = () => {
+  const savePlayer = async () => {
     if (player) {
+      const metadataData = await OBR.scene.getMetadata();
+      const metadata = metadataData["ultimate.story.extension/metadata"];
       let metadataChange = { ...metadata };
       metadataChange[player.id] = { ...player, lastEdit: id };
 
@@ -241,11 +243,11 @@ function App() {
 
   useEffect(() => {
     if (player) {
-      if (metadata[player.id].lastEdit !== id) {
-        setPlayer(metadata[player.id]);
+      if (metadataUpdate[player.id].lastEdit !== id) {
+        setPlayer(metadataUpdate[player.id]);
       }
     }
-  }, [metadata]);
+  }, [metadataUpdate]);
 
   const getDiceAttribute = (attr) => {
     if (attr === "dex") {
@@ -321,7 +323,9 @@ function App() {
     return () => window.removeEventListener("resize", autoResize);
   }, []);
 
-  const removePlayer = (id) => {
+  const removePlayer = async (id) => {
+    const metadataData = await OBR.scene.getMetadata();
+    const metadata = metadataData["ultimate.story.extension/metadata"];
     let metadataChange = { ...metadata };
 
     if (metadataChange[id].isGMPlayer) {
@@ -347,7 +351,9 @@ function App() {
     }
   };
 
-  const addPlayer = () => {
+  const addPlayer = async () => {
+    const metadataData = await OBR.scene.getMetadata();
+    const metadata = metadataData["ultimate.story.extension/metadata"];
     const playerGet = newPlayer();
     let metadataChange = { ...metadata };
     metadataChange[playerGet.id] = playerGet;
@@ -408,7 +414,9 @@ function App() {
     }
   };
 
-  const saveCharacterLocally = (id) => {
+  const saveCharacterLocally = async (id) => {
+    const metadataData = await OBR.scene.getMetadata();
+    const metadata = metadataData["ultimate.story.extension/metadata"];
     let metadataChange = { ...metadata };
 
     const localPlayerList = JSON.parse(
@@ -432,7 +440,9 @@ function App() {
     }
   };
 
-  const loadLocalCharacter = (data) => {
+  const loadLocalCharacter = async (data) => {
+    const metadataData = await OBR.scene.getMetadata();
+    const metadata = metadataData["ultimate.story.extension/metadata"];
     let metadataChange = { ...metadata };
 
     if (metadataChange[data.id]) {
@@ -469,8 +479,11 @@ function App() {
     }
   };
 
-  const addGMCharacter = () => {
+  const addGMCharacter = async () => {
     const playerGet = newPlayer(true);
+
+    const metadataData = await OBR.scene.getMetadata();
+    const metadata = metadataData["ultimate.story.extension/metadata"];
     let metadataChange = { ...metadata };
     metadataChange[playerGet.id] = playerGet;
 
@@ -515,6 +528,7 @@ function App() {
               color: "orange",
               width: 150,
               textAlign: "center",
+              padding: 4,
             }}
           >
             {data.traits ? data.traits.name : ""}
