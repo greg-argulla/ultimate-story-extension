@@ -5,7 +5,7 @@ author: Alyx
 image: https://fabula-ultima-character-extension.onrender.com/ultimate-story-icon.jpg
 icon: https://fabula-ultima-character-extension.onrender.com/ultimate-story-image.png
 tags:
-  - dice
+  - combat
 manifest: https://fabula-ultima-character-extension.onrender.com/manifest.json
 ---
 
