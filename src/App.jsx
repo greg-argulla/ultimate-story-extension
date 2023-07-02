@@ -304,7 +304,6 @@ function App() {
           onClick={async () => {
             const selected = await OBR.player.getSelection();
             if (selected && selected[0]) {
-              console.log(await OBR.scene.items.getItems(selected));
               const playerGet = { ...player };
               playerGet.linkedStats[stat] = selected[0];
               updatePlayer(playerGet);
