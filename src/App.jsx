@@ -164,6 +164,7 @@ function App() {
   const [importData, setImportData] = useState("");
   const [copyText, setCopyText] = useState(false);
   const [metadataUpdate, setMetadata] = useState([]);
+  const [cookiesNotEnabled, setCookiesNotEnabled] = useState(false);
 
   useEffect(() => {
     OBR.onReady(async () => {
@@ -181,6 +182,12 @@ function App() {
       });
       setRole(await OBR.player.getRole());
     });
+
+    try {
+      localStorage.getItem("ultimate.story.extension/metadata");
+    } catch {
+      setCookiesNotEnabled(true);
+    }
   }, []);
 
   const createPlayerList = async (metadata) => {
@@ -211,10 +218,14 @@ function App() {
         }
       });
 
-      const localPlayerList = JSON.parse(
-        localStorage.getItem("ultimate.story.extension/metadata")
-      );
-      setSavePlayerList(localPlayerList);
+      try {
+        const localPlayerList = JSON.parse(
+          localStorage.getItem("ultimate.story.extension/metadata")
+        );
+        setSavePlayerList(localPlayerList);
+      } catch {
+        setCookiesNotEnabled(true);
+      }
     }
   }, [isOBRReady]);
 
@@ -2434,6 +2445,40 @@ function App() {
       </div>
     );
   };
+
+  if (cookiesNotEnabled) {
+    return (
+      <div
+        style={{
+          backgroundImage: `url(${landingBG})`,
+          backgroundSize: "contain",
+          height: 540,
+          width: 550,
+          overflow: "hidden",
+        }}
+      >
+        <div
+          className="scrollable-container"
+          style={{
+            overflow: "scroll",
+            height: windowInnerHeight - 40,
+            marginTop: 40,
+            paddingLeft: 30,
+            paddingRight: 30,
+          }}
+        >
+          <div className="outline" style={{ color: "red", font: 14 }}>
+            Error:
+          </div>
+          <div className="outline" style={{ fontSize: 14 }}>
+            You need to enable 3rd Party cookies for this extention to work.
+            This is because some character data is stored in the browser
+            localstorage that enables characters to transfer between scenes.
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
