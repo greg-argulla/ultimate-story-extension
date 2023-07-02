@@ -201,6 +201,16 @@ function App() {
         setPlayerList(playerListGet);
       });
 
+      OBR.scene.onReadyChange(async (ready) => {
+        if (ready) {
+          const metadata = await OBR.scene.getMetadata();
+          if (metadata["ultimate.story.extension/metadata"]) {
+            const playerListGet = await createPlayerList(metadata);
+            setPlayerList(playerListGet);
+          }
+        }
+      });
+
       const localPlayerList = JSON.parse(
         localStorage.getItem("ultimate.story.extension/metadata")
       );
