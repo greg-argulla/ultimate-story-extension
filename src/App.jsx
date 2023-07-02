@@ -142,6 +142,14 @@ const newPlayer = (isGMPlayer) => {
         useHR: true,
       },
     ],
+    linkedStats: {
+      currentHP: "",
+      currentMP: "",
+      currentIP: "",
+      defense: "",
+      mDefense: "",
+      fabula: "",
+    },
   };
 };
 
@@ -175,6 +183,7 @@ function App() {
   const [metadataUpdate, setMetadata] = useState([]);
   const [cookiesNotEnabled, setCookiesNotEnabled] = useState(false);
   const [bonus, setBonus] = useState(0);
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     OBR.onReady(async () => {
@@ -239,16 +248,111 @@ function App() {
     }
   }, [isOBRReady]);
 
-  const updateNoteItem = async () => {
-    await OBR.scene.items.updateItems(
-      await OBR.player.getSelection(),
-      (images) => {
-        for (let image of images) {
-          image.text.richText = [
-            { type: "paragraph", children: [{ text: "00" }] },
-          ];
-        }
+  const updateNoteItem = async (id, value, key) => {
+    const valueGet = isNaN(value) ? 0 : value;
+    await OBR.scene.items.updateItems([id], (images) => {
+      for (let image of images) {
+        if (key === "defense" || key === "mDefense") {
+          const format =
+            valueGet > 9 ? valueGet.toString() : " " + valueGet.toString();
+
+          const fontSize = valueGet > 9 ? 16 : 18;
+          image.text.richText[0].children[0].text = format;
+          image.text.style.fontSize = fontSize;
+        } else image.text.richText[0].children[0].text = valueGet.toString();
       }
+    });
+  };
+
+  const linkItem = (label, stat) => {
+    return (
+      <div>
+        <span
+          className="outline"
+          style={{ display: "inline-block", width: 80 }}
+        >
+          {label}
+        </span>
+        <input
+          className="input-stat"
+          style={{
+            width: 200,
+            color: "white",
+          }}
+          value={player.linkedStats[stat]}
+          readOnly={true}
+        />
+        <button
+          className="button"
+          style={{
+            width: 96,
+            padding: 5,
+            marginRight: 4,
+            marginLeft: "auto",
+          }}
+          onClick={async () => {
+            const selected = await OBR.player.getSelection();
+            if (selected && selected[0]) {
+              console.log(await OBR.scene.items.getItems(selected));
+              const playerGet = { ...player };
+              playerGet.linkedStats[stat] = selected[0];
+              updatePlayer(playerGet);
+            }
+          }}
+        >
+          Link Selected Item
+        </button>
+
+        <button
+          className="button"
+          style={{
+            width: 50,
+            padding: 5,
+            marginRight: 4,
+            marginLeft: "auto",
+          }}
+          onClick={async () => {
+            const playerGet = { ...player };
+            playerGet.linkedStats[stat] = "";
+            updatePlayer(playerGet);
+          }}
+        >
+          Clear
+        </button>
+      </div>
+    );
+  };
+
+  const renderLinkStats = () => {
+    if (!player.linkedStats) {
+      const playerGet = { ...player };
+      playerGet.linkedStats = {
+        currentHP: "",
+        currentMP: "",
+        currentIP: "",
+        defense: "",
+        mDefense: "",
+        fabula: "",
+      };
+      updatePlayer(playerGet);
+      return;
+    }
+
+    return (
+      <>
+        {linkItem("Current HP:", "currentHP")}
+        {linkItem("Current MP:", "currentMP")}
+        {linkItem("Current IP:", "currentIP")}
+        {linkItem("Defense:", "defense")}
+        {linkItem("Magic Defense:", "mDefense")}
+        {linkItem("Fabula Points :", "fabula")}
+
+        <hr></hr>
+        <Text>
+          Instructions: Select one item then press 'Link Selected Item' to sync
+          text value of item to stats.
+        </Text>
+      </>
     );
   };
 
@@ -422,6 +526,8 @@ function App() {
     bKeys = removeItemFromArray(bKeys, "lastEdit");
     aKeys = removeItemFromArray(aKeys, "isGMPlayer");
     bKeys = removeItemFromArray(bKeys, "isGMPlayer");
+    aKeys = removeItemFromArray(aKeys, "linkedStats");
+    bKeys = removeItemFromArray(bKeys, "linkedStats");
     return JSON.stringify(aKeys) === JSON.stringify(bKeys);
   }
 
@@ -467,7 +573,16 @@ function App() {
       localStorage.getItem("ultimate.story.extension/metadata")
     );
 
-    if (localPlayerList) {
+    const foundIndex = localPlayerList.findIndex((item) => id === item.id);
+
+    if (foundIndex !== -1) {
+      localPlayerList[foundIndex] = metadataChange[id];
+      localStorage.setItem(
+        "ultimate.story.extension/metadata",
+        JSON.stringify(localPlayerList)
+      );
+      setSavePlayerList(localPlayerList);
+    } else if (localPlayerList) {
       localPlayerList.push(metadataChange[id]);
       localStorage.setItem(
         "ultimate.story.extension/metadata",
@@ -641,9 +756,11 @@ function App() {
   const renderLocalPlayerList = () => {
     if (savedPlayerList) {
       if (savedPlayerList.length) {
-        return savedPlayerList.map((data, index) => {
-          return localPlayerItem(data, index);
-        });
+        return savedPlayerList
+          .sort((a, b) => a.traits.name.localeCompare(b.traits.name))
+          .map((data, index) => {
+            return localPlayerItem(data, index);
+          });
       }
     }
     return "";
@@ -702,15 +819,17 @@ function App() {
             >
               Open
             </button>
-            <button
-              className="button"
-              style={{ fontWeight: "bolder", width: 25, color: "darkred" }}
-              onClick={() => {
-                removePlayer(data.id);
-              }}
-            >
-              ✖
-            </button>
+            {editMode && (
+              <button
+                className="button"
+                style={{ fontWeight: "bolder", width: 25, color: "darkred" }}
+                onClick={() => {
+                  removePlayer(data.id);
+                }}
+              >
+                ✖
+              </button>
+            )}
           </div>
           <hr />
         </div>
@@ -820,24 +939,25 @@ function App() {
         {debuffItem(data.debuff.enraged, "enraged")}
         {debuffItem(data.debuff.poisoned, "poisoned")}
 
+        {editMode && (
+          <button
+            className="button"
+            style={{
+              fontWeight: "bolder",
+              width: 25,
+              color: "darkred",
+              float: "right",
+            }}
+            onClick={() => {
+              removePlayer(data.id);
+            }}
+          >
+            ✖
+          </button>
+        )}
         <button
           className="button"
           style={{
-            fontWeight: "bolder",
-            width: 25,
-            color: "darkred",
-            float: "right",
-          }}
-          onClick={() => {
-            removePlayer(data.id);
-          }}
-        >
-          ✖
-        </button>
-        <button
-          className="button"
-          style={{
-            marginLeft: 4,
             width: 40,
             padding: 5,
             marginRight: 4,
@@ -849,11 +969,28 @@ function App() {
         >
           Save
         </button>
+        {role === "GM" && editMode && (
+          <button
+            className="button"
+            style={{
+              width: 40,
+              padding: 5,
+              marginRight: 4,
+              float: "right",
+            }}
+            onClick={async () => {
+              setTab("link");
+              setPlayer(data);
+            }}
+          >
+            Link
+          </button>
+        )}
         <button
           className="button"
           style={{
             marginLeft: 4,
-            width: 96,
+            width: 70,
             padding: 5,
             marginRight: 4,
             float: "right",
@@ -914,9 +1051,25 @@ function App() {
               Add GM Character
             </button>
           )}
+
+          <button
+            className="button"
+            style={{
+              fontWeight: "bolder",
+              width: 60,
+              float: "right",
+              marginRight: 4,
+            }}
+            onClick={() => {
+              setEditMode(!editMode);
+            }}
+          >
+            {editMode ? "Done Edit" : "Edit"}
+          </button>
         </div>
         <hr />
         {playerList
+          .sort((a, b) => a.traits.name.localeCompare(b.traits.name))
           .sort((a, b) => {
             if (a.isGMPlayer && !b.isGMPlayer) return 1;
             if (!a.isGMPlayer && b.isGMPlayer) return -1;
@@ -932,33 +1085,53 @@ function App() {
   const renderNav = () => {
     return (
       <div>
-        <button
-          className="button"
-          style={{ marginLeft: 4, width: "auto", padding: 5 }}
-          onClick={() => {
-            setTab("stats");
-          }}
-        >
-          Stats/Equipment
-        </button>
-        <button
-          className="button"
-          style={{ marginLeft: 4, width: "auto", padding: 5 }}
-          onClick={() => {
-            setTab("skills");
-          }}
-        >
-          Skills/Spells
-        </button>
-        <button
-          className="button"
-          style={{ marginLeft: 4, width: "auto", padding: 5, marginRight: 6 }}
-          onClick={() => {
-            setTab("actions");
-          }}
-        >
-          Actions/Rolls
-        </button>
+        {tab !== "link" ? (
+          <span>
+            <button
+              className="button"
+              style={{ marginLeft: 4, width: "auto", padding: 5 }}
+              onClick={() => {
+                setTab("stats");
+              }}
+            >
+              Stats/Equipment
+            </button>
+            <button
+              className="button"
+              style={{ marginLeft: 4, width: "auto", padding: 5 }}
+              onClick={() => {
+                setTab("skills");
+              }}
+            >
+              Skills/Spells
+            </button>
+            <button
+              className="button"
+              style={{
+                marginLeft: 4,
+                width: "auto",
+                padding: 5,
+                marginRight: 6,
+              }}
+              onClick={() => {
+                setTab("actions");
+              }}
+            >
+              Actions/Rolls
+            </button>
+          </span>
+        ) : (
+          <span
+            className="outline"
+            style={{
+              display: "inline-block",
+              marginRight: 90,
+              fontSize: 13,
+            }}
+          >
+            Link stats to owlbear items
+          </span>
+        )}
         <Text>HP:</Text>
         <input
           className="input-stat"
@@ -981,6 +1154,13 @@ function App() {
             } else {
               playerGet.stats.currentHP = value;
             }
+
+            updateNoteItem(
+              playerGet.linkedStats.currentHP,
+              playerGet.stats.currentHP,
+              "currentHP"
+            );
+
             updatePlayer(playerGet);
           }}
           value={player.stats.currentHP}
@@ -1007,6 +1187,13 @@ function App() {
             } else {
               playerGet.stats.currentMP = value;
             }
+
+            updateNoteItem(
+              playerGet.linkedStats.currentMP,
+              playerGet.stats.currentMP,
+              "currentMP"
+            );
+
             updatePlayer(playerGet);
           }}
           value={player.stats.currentMP}
@@ -1029,6 +1216,12 @@ function App() {
             } else {
               playerGet.stats.currentIP = value;
             }
+            updateNoteItem(
+              playerGet.linkedStats.currentIP,
+              playerGet.stats.currentIP,
+              "currentIP"
+            );
+
             updatePlayer(playerGet);
           }}
           value={player.stats.currentIP}
@@ -1044,6 +1237,11 @@ function App() {
           onChange={(evt) => {
             const playerGet = { ...player };
             playerGet.stats.fabula = parseInt(evt.target.value);
+            updateNoteItem(
+              playerGet.linkedStats.fabula,
+              playerGet.stats.fabula,
+              "fabula"
+            );
             updatePlayer(playerGet);
           }}
           value={player.stats.fabula}
@@ -1051,10 +1249,11 @@ function App() {
         <button
           className="button"
           style={{
-            marginLeft: 8,
+            float: "right",
             width: "auto",
             padding: 5,
             color: "red",
+            marginTop: 2,
           }}
           onClick={() => {
             setPlayer(null);
@@ -1373,10 +1572,22 @@ function App() {
               playerGet.stats.defense =
                 parseInt(playerGet.stats.defenseMod) +
                 getDiceStat(playerGet.attributes.currentdex);
+
+              updateNoteItem(
+                playerGet.linkedStats.defense,
+                playerGet.stats.defense,
+                "defense"
+              );
             }
             playerGet.stats.mDefense =
               parseInt(playerGet.stats.mDefenseMod) +
               getDiceStat(playerGet.attributes.currentins);
+
+            updateNoteItem(
+              playerGet.linkedStats.mDefense,
+              playerGet.stats.mDefense,
+              "mDefense"
+            );
             updatePlayer(playerGet);
           }}
         >
@@ -1409,10 +1620,22 @@ function App() {
               playerGet.stats.defense =
                 parseInt(playerGet.stats.defenseMod) +
                 getDiceStat(playerGet.attributes.currentdex);
+
+              updateNoteItem(
+                playerGet.linkedStats.defense,
+                playerGet.stats.defense,
+                "defense"
+              );
             }
             playerGet.stats.mDefense =
               parseInt(playerGet.stats.mDefenseMod) +
               getDiceStat(playerGet.attributes.currentins);
+
+            updateNoteItem(
+              playerGet.linkedStats.mDefense,
+              playerGet.stats.mDefense,
+              "mDefense"
+            );
             updatePlayer(playerGet);
           }}
         >
@@ -1469,11 +1692,22 @@ function App() {
               playerGet.stats.defense =
                 parseInt(playerGet.stats.defenseMod) +
                 getDiceStat(playerGet.attributes.currentdex);
+              updateNoteItem(
+                playerGet.linkedStats.defense,
+                playerGet.stats.defense,
+                "defense"
+              );
             }
 
             playerGet.stats.mDefense =
               parseInt(playerGet.stats.mDefenseMod) +
               getDiceStat(playerGet.attributes.currentins);
+
+            updateNoteItem(
+              playerGet.linkedStats.mDefense,
+              playerGet.stats.mDefense,
+              "mDefense"
+            );
             updatePlayer(playerGet);
           }}
         >
@@ -1722,6 +1956,12 @@ function App() {
             } else {
               playerGet.stats.defense = playerGet.stats.defenseMartial;
             }
+
+            updateNoteItem(
+              playerGet.linkedStats.defense,
+              playerGet.stats.defense,
+              "defense"
+            );
             updatePlayer(playerGet);
           }}
         >
@@ -1751,6 +1991,12 @@ function App() {
                 parseInt(evt.target.value) +
                 getDiceStat(player.attributes.currentdex);
             }
+
+            updateNoteItem(
+              playerGet.linkedStats.defense,
+              playerGet.stats.defense,
+              "defense"
+            );
             updatePlayer(playerGet);
           }}
         />
@@ -1769,6 +2015,12 @@ function App() {
             playerGet.stats.mDefense =
               parseInt(evt.target.value) +
               getDiceStat(player.attributes.currentins);
+
+            updateNoteItem(
+              playerGet.linkedStats.mDefense,
+              playerGet.stats.mDefense,
+              "mDefense"
+            );
             updatePlayer(playerGet);
           }}
         />
@@ -2799,6 +3051,7 @@ function App() {
             )}
             {tab === "skills" && renderCategory()}
             {tab === "actions" && renderActionList()}
+            {tab === "link" && renderLinkStats()}
           </>
         ) : (
           <>
