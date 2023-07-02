@@ -1992,7 +1992,7 @@ function App() {
 
   const action = (data, index) => {
     return (
-      <div>
+      <div key={index}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <Text>Name: </Text>
           <input
