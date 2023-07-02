@@ -252,13 +252,15 @@ function App() {
     const valueGet = isNaN(value) ? 0 : value;
     await OBR.scene.items.updateItems([id], (images) => {
       for (let image of images) {
-        if (key === "defense" || key === "mDefense") {
-          const format =
-            valueGet > 9 ? valueGet.toString() : " " + valueGet.toString();
+        if (name === "Alyx" || name === "Kuya G") {
+          if (key === "defense" || key === "mDefense") {
+            const format =
+              valueGet > 9 ? valueGet.toString() : " " + valueGet.toString();
 
-          const fontSize = valueGet > 9 ? 16 : 18;
-          image.text.richText[0].children[0].text = format;
-          image.text.style.fontSize = fontSize;
+            const fontSize = valueGet > 9 ? 16 : 18;
+            image.text.richText[0].children[0].text = format;
+            image.text.style.fontSize = fontSize;
+          } else image.text.richText[0].children[0].text = valueGet.toString();
         } else image.text.richText[0].children[0].text = valueGet.toString();
       }
     });
