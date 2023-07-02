@@ -4,6 +4,8 @@ import OBR from "@owlbear-rodeo/sdk";
 import landingBG from "./assets/bg.jpg";
 import "./App.css";
 
+import { isImage } from "@owlbear-rodeo/sdk";
+
 document.body.style.overflow = "hidden";
 
 const Text = (props) => {
@@ -91,7 +93,10 @@ const newPlayer = (isGMPlayer) => {
       poisoned: false,
     },
     stats: {
+      martialDef: false,
+      defenseMod: 0,
       defense: 8,
+      mDefenseMod: 2,
       mDefense: 8,
       initMod: 0,
       hpMod: 0,
@@ -99,6 +104,9 @@ const newPlayer = (isGMPlayer) => {
       ipMod: 0,
       fabula: 0,
       experience: 0,
+      currentHP: 0,
+      currentMP: 0,
+      currentIP: 0,
     },
     items: {
       accessory: "",
@@ -229,6 +237,19 @@ function App() {
       }
     }
   }, [isOBRReady]);
+
+  const updateNoteItem = async () => {
+    await OBR.scene.items.updateItems(
+      await OBR.player.getSelection(),
+      (images) => {
+        for (let image of images) {
+          image.text.richText = [
+            { type: "paragraph", children: [{ text: "00" }] },
+          ];
+        }
+      }
+    );
+  };
 
   const [timeoutID, setTimeoutID] = useState(null);
 
@@ -673,13 +694,8 @@ function App() {
                 padding: 5,
                 marginRight: 4,
               }}
-              onClick={() => {
-                if (data.isGMPlayer) {
-                  setTab("actions");
-                } else {
-                  setTab("stats");
-                }
-
+              onClick={async () => {
+                setTab("actions");
                 setPlayer(data);
               }}
             >
@@ -727,7 +743,7 @@ function App() {
             </span>
           </div>
 
-          <Text>Level: </Text>
+          <Text>FP: </Text>
           <input
             className="input-stat"
             type="number"
@@ -735,7 +751,7 @@ function App() {
               width: 20,
               color: "white",
             }}
-            value={data.traits.level}
+            value={data.stats.fabula}
             readOnly={true}
           />
 
@@ -849,14 +865,13 @@ function App() {
             marginRight: 4,
             float: "right",
           }}
-          onClick={() => {
+          onClick={async () => {
             setTab("stats");
             setPlayer(data);
           }}
         >
           Open
         </button>
-
         <hr />
       </div>
     );
@@ -944,7 +959,7 @@ function App() {
         </button>
         <button
           className="button"
-          style={{ marginLeft: 4, width: "auto", padding: 5, marginRight: 20 }}
+          style={{ marginLeft: 4, width: "auto", padding: 5, marginRight: 6 }}
           onClick={() => {
             setTab("actions");
           }}
@@ -989,13 +1004,22 @@ function App() {
           readOnly={true}
           value={6 + player.stats.ipMod}
         />
+        <Text>FP: </Text>
+        <input
+          className="input-stat"
+          style={{
+            width: 20,
+            color: "White",
+          }}
+          readOnly={true}
+          value={player.stats.fabula}
+        />
         <button
           className="button"
           style={{
-            marginLeft: 4,
+            marginLeft: 8,
             width: "auto",
             padding: 5,
-            float: "right",
             color: "red",
           }}
           onClick={() => {
@@ -1311,6 +1335,14 @@ function App() {
             const playerGet = { ...player };
             player.attributes[stat] = evt.target.value;
             playerGet.attributes["current" + stat] = getCurrentAttribute(stat);
+            if (!playerGet.stats.martialDef) {
+              playerGet.stats.defense =
+                parseInt(playerGet.stats.defenseMod) +
+                getDiceStat(playerGet.attributes.currentdex);
+            }
+            playerGet.stats.mDefense =
+              parseInt(playerGet.stats.mDefenseMod) +
+              getDiceStat(playerGet.attributes.currentins);
             updatePlayer(playerGet);
           }}
         >
@@ -1339,6 +1371,14 @@ function App() {
             const playerGet = { ...player };
             playerGet.debuff[condition] = !player.debuff[condition];
             playerGet.attributes["current" + stat] = getCurrentAttribute(stat);
+            if (!playerGet.stats.martialDef) {
+              playerGet.stats.defense =
+                parseInt(playerGet.stats.defenseMod) +
+                getDiceStat(playerGet.attributes.currentdex);
+            }
+            playerGet.stats.mDefense =
+              parseInt(playerGet.stats.mDefenseMod) +
+              getDiceStat(playerGet.attributes.currentins);
             updatePlayer(playerGet);
           }}
         >
@@ -1391,6 +1431,15 @@ function App() {
             playerGet.debuff.enraged = !player.debuff.enraged;
             playerGet.attributes["currentdex"] = getCurrentAttribute("dex");
             playerGet.attributes["currentins"] = getCurrentAttribute("ins");
+            if (!playerGet.stats.martialDef) {
+              playerGet.stats.defense =
+                parseInt(playerGet.stats.defenseMod) +
+                getDiceStat(playerGet.attributes.currentdex);
+            }
+
+            playerGet.stats.mDefense =
+              parseInt(playerGet.stats.mDefenseMod) +
+              getDiceStat(playerGet.attributes.currentins);
             updatePlayer(playerGet);
           }}
         >
@@ -1515,10 +1564,84 @@ function App() {
     );
   };
 
+  const renderStats = () => {
+    return (
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ marginRight: 4 }}>
+          <Text>Max HP:</Text>
+        </div>
+        <div style={{ marginRight: 4 }}>
+          <span className="outline" style={{ color: "red", fontSize: 12 }}>
+            {getDiceStat(player.attributes.mig) * 5 +
+              player.stats.hpMod +
+              player.traits.level}
+          </span>
+        </div>
+        <div style={{ marginRight: 4 }}>
+          <Text>Max MP:</Text>
+        </div>
+        <div style={{ marginRight: 4 }}>
+          <span
+            className="outline"
+            style={{ color: "lightblue", fontSize: 12 }}
+          >
+            {getDiceStat(player.attributes.wil) * 5 +
+              player.stats.mpMod +
+              player.traits.level}
+          </span>
+        </div>
+        <div style={{ marginRight: 4 }}>
+          <Text>Defense:</Text>
+        </div>
+        <div style={{ marginRight: 4 }}>
+          <span className="outline" style={{ color: "violet", fontSize: 12 }}>
+            {player.stats.defense}
+          </span>
+        </div>
+        <div style={{ marginRight: 4 }}>
+          <Text>Magic Defense:</Text>
+        </div>
+        <div style={{ marginRight: 4 }}>
+          <span className="outline" style={{ color: "cyan", fontSize: 12 }}>
+            {player.stats.mDefense}
+          </span>
+        </div>
+        <div style={{ marginRight: 4 }}>
+          <Text>Max IP:</Text>
+        </div>
+        <div style={{ marginRight: 4 }}>
+          <span className="outline" style={{ color: "orange", fontSize: 12 }}>
+            {6 + player.stats.ipMod}
+          </span>
+        </div>
+      </div>
+    );
+  };
+
   const renderItemStats = () => {
     return (
       <div>
-        <Text>Defense: </Text>
+        <button
+          className="button"
+          style={{
+            width: "auto",
+            marginRight: 4,
+            padding: 4,
+          }}
+          onClick={() => {
+            const playerGet = { ...player };
+            playerGet.stats.martialDef = !playerGet.stats.martialDef;
+            if (!playerGet.stats.martialDef) {
+              playerGet.stats.defense =
+                parseInt(playerGet.stats.defenseMod) +
+                getDiceStat(player.attributes.dex);
+            }
+            updatePlayer(playerGet);
+          }}
+        >
+          {player.stats.martialDef ? "Martial" : "Non Martial"}
+        </button>
+        <Text>{player.stats.martialDef ? "Defense:" : "Defense Mod:"}</Text>
         <input
           className="input-stat"
           type="number"
@@ -1526,14 +1649,25 @@ function App() {
             width: 20,
             color: "violet",
           }}
-          value={player.stats.defense}
+          value={
+            player.stats.martialDef
+              ? player.stats.defense
+              : player.stats.defenseMod
+          }
           onChange={(evt) => {
             const playerGet = { ...player };
-            playerGet.stats.defense = parseInt(evt.target.value);
+            if (player.stats.martialDef) {
+              playerGet.stats.defense = parseInt(evt.target.value);
+            } else {
+              playerGet.stats.defenseMod = parseInt(evt.target.value, 0);
+              playerGet.stats.defense =
+                parseInt(evt.target.value) +
+                getDiceStat(player.attributes.currentdex);
+            }
             updatePlayer(playerGet);
           }}
         />
-        <Text>Magic Defense: </Text>
+        <Text>Magic Defense Mod: </Text>
         <input
           className="input-stat"
           type="number"
@@ -1541,14 +1675,17 @@ function App() {
             width: 20,
             color: "cyan",
           }}
-          value={player.stats.mDefense}
+          value={player.stats.mDefenseMod}
           onChange={(evt) => {
             const playerGet = { ...player };
-            playerGet.stats.mDefense = parseInt(evt.target.value);
+            playerGet.stats.mDefenseMod = parseInt(evt.target.value);
+            playerGet.stats.mDefense =
+              parseInt(evt.target.value) +
+              getDiceStat(player.attributes.currentins);
             updatePlayer(playerGet);
           }}
         />
-        <Text>Initiative Modifier: </Text>
+        <Text>Init. Modifier: </Text>
         <input
           className="input-stat"
           type="number"
@@ -1562,21 +1699,6 @@ function App() {
             if (evt.target.value != "") {
               playerGet.stats.initMod = parseInt(evt.target.value, "");
             } else playerGet.stats.initMod = "";
-            updatePlayer(playerGet);
-          }}
-        />
-        <Text>Fabula: </Text>
-        <input
-          className="input-stat"
-          type="number"
-          style={{
-            width: 20,
-            color: "Magenta",
-          }}
-          value={player.stats.fabula}
-          onChange={(evt) => {
-            const playerGet = { ...player };
-            playerGet.stats.fabula = parseInt(evt.target.value);
             updatePlayer(playerGet);
           }}
         />
@@ -2176,12 +2298,13 @@ function App() {
       });
     });
 
-    return combinations.map((item) => {
+    return combinations.map((item, index) => {
       return (
         <button
           className="button"
           style={{ marginRight: 4, width: 50, fontSize: 8 }}
           onClick={() => sendRoll(item)}
+          key={index}
         >
           {item.diceOne.toUpperCase()} + {item.diceTwo.toUpperCase()}
         </button>
@@ -2552,6 +2675,8 @@ function App() {
                 {renderInfo()}
                 <hr />
                 {renderBonds()}
+                <hr />
+                {renderStats()}
                 <hr />
                 {renderItemStats()}
                 <div style={{ display: "flex" }}>
