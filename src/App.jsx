@@ -96,6 +96,7 @@ const newPlayer = (isGMPlayer) => {
       martialDef: false,
       defenseMod: 0,
       defense: 8,
+      defenseMartial: 8,
       mDefenseMod: 2,
       mDefense: 8,
       initMod: 0,
@@ -763,11 +764,7 @@ function App() {
               color: "Red",
             }}
             readOnly={true}
-            value={
-              getDiceStat(data.attributes.mig) * 5 +
-              data.stats.hpMod +
-              data.traits.level
-            }
+            value={data.stats.currentHP}
           />
           <Text>MP: </Text>
           <input
@@ -777,11 +774,7 @@ function App() {
               color: "LightBlue",
             }}
             readOnly={true}
-            value={
-              getDiceStat(data.attributes.wil) * 5 +
-              data.stats.mpMod +
-              data.traits.level
-            }
+            value={data.stats.currentMP}
           />
           <Text>IP: </Text>
           <input
@@ -791,7 +784,7 @@ function App() {
               color: "Orange",
             }}
             readOnly={true}
-            value={6 + data.stats.ipMod}
+            value={data.stats.currentIP}
           />
 
           <Text>DEF: </Text>
@@ -969,49 +962,90 @@ function App() {
         <Text>HP:</Text>
         <input
           className="input-stat"
+          type="number"
           style={{
             width: 20,
             color: "Red",
           }}
-          readOnly={true}
-          value={
-            getDiceStat(player.attributes.mig) * 5 +
-            player.stats.hpMod +
-            player.traits.level
-          }
+          onChange={(evt) => {
+            const playerGet = { ...player };
+            const maxHP =
+              getDiceStat(player.attributes.mig) * 5 +
+              player.stats.hpMod +
+              player.traits.level;
+
+            let value = parseInt(evt.target.value, 0);
+
+            if (!isNaN(value)) {
+              playerGet.stats.currentHP = maxHP > value ? value : maxHP;
+            } else {
+              playerGet.stats.currentHP = value;
+            }
+            updatePlayer(playerGet);
+          }}
+          value={player.stats.currentHP}
         />
         <Text>MP: </Text>
         <input
           className="input-stat"
+          type="number"
           style={{
             width: 20,
             color: "LightBlue",
           }}
-          readOnly={true}
-          value={
-            getDiceStat(player.attributes.wil) * 5 +
-            player.stats.mpMod +
-            player.traits.level
-          }
+          onChange={(evt) => {
+            const playerGet = { ...player };
+            const maxMP =
+              getDiceStat(player.attributes.wil) * 5 +
+              player.stats.mpMod +
+              player.traits.level;
+
+            let value = parseInt(evt.target.value, 0);
+
+            if (!isNaN(value)) {
+              playerGet.stats.currentMP = maxMP > value ? value : maxMP;
+            } else {
+              playerGet.stats.currentMP = value;
+            }
+            updatePlayer(playerGet);
+          }}
+          value={player.stats.currentMP}
         />
         <Text>IP: </Text>
         <input
           className="input-stat"
+          type="number"
           style={{
             width: 20,
             color: "Orange",
           }}
-          readOnly={true}
-          value={6 + player.stats.ipMod}
+          onChange={(evt) => {
+            const playerGet = { ...player };
+            const maxIP = 6 + player.stats.ipMod;
+
+            let value = parseInt(evt.target.value, 0);
+            if (!isNaN(value)) {
+              playerGet.stats.currentIP = maxIP > value ? value : maxIP;
+            } else {
+              playerGet.stats.currentIP = value;
+            }
+            updatePlayer(playerGet);
+          }}
+          value={player.stats.currentIP}
         />
         <Text>FP: </Text>
         <input
           className="input-stat"
+          type="number"
           style={{
             width: 20,
             color: "White",
           }}
-          readOnly={true}
+          onChange={(evt) => {
+            const playerGet = { ...player };
+            playerGet.stats.fabula = parseInt(evt.target.value);
+            updatePlayer(playerGet);
+          }}
           value={player.stats.fabula}
         />
         <button
@@ -1566,7 +1600,13 @@ function App() {
 
   const renderStats = () => {
     return (
-      <div style={{ display: "flex", alignItems: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <div style={{ marginRight: 4 }}>
           <Text>Max HP:</Text>
         </div>
@@ -1591,7 +1631,15 @@ function App() {
           </span>
         </div>
         <div style={{ marginRight: 4 }}>
-          <Text>Defense:</Text>
+          <Text>Max IP:</Text>
+        </div>
+        <div style={{ marginRight: 4 }}>
+          <span className="outline" style={{ color: "orange", fontSize: 12 }}>
+            {6 + player.stats.ipMod}
+          </span>
+        </div>
+        <div style={{ marginRight: 4 }}>
+          <Text>DEF:</Text>
         </div>
         <div style={{ marginRight: 4 }}>
           <span className="outline" style={{ color: "violet", fontSize: 12 }}>
@@ -1599,7 +1647,7 @@ function App() {
           </span>
         </div>
         <div style={{ marginRight: 4 }}>
-          <Text>Magic Defense:</Text>
+          <Text>M.DEF:</Text>
         </div>
         <div style={{ marginRight: 4 }}>
           <span className="outline" style={{ color: "cyan", fontSize: 12 }}>
@@ -1607,11 +1655,47 @@ function App() {
           </span>
         </div>
         <div style={{ marginRight: 4 }}>
-          <Text>Max IP:</Text>
+          <Text>DEX:</Text>
         </div>
         <div style={{ marginRight: 4 }}>
-          <span className="outline" style={{ color: "orange", fontSize: 12 }}>
-            {6 + player.stats.ipMod}
+          <span
+            className="outline"
+            style={{ color: "lightgrey", fontSize: 12 }}
+          >
+            {player.attributes.currentdex}
+          </span>
+        </div>
+        <div style={{ marginRight: 4 }}>
+          <Text>INS:</Text>
+        </div>
+        <div style={{ marginRight: 4 }}>
+          <span
+            className="outline"
+            style={{ color: "lightgrey", fontSize: 12 }}
+          >
+            {player.attributes.currentins}
+          </span>
+        </div>
+        <div style={{ marginRight: 4 }}>
+          <Text>MIG:</Text>
+        </div>
+        <div style={{ marginRight: 4 }}>
+          <span
+            className="outline"
+            style={{ color: "lightgrey", fontSize: 12 }}
+          >
+            {player.attributes.currentmig}
+          </span>
+        </div>
+        <div style={{ marginRight: 4 }}>
+          <Text>WIL:</Text>
+        </div>
+        <div style={{ marginRight: 4 }}>
+          <span
+            className="outline"
+            style={{ color: "lightgrey", fontSize: 12 }}
+          >
+            {player.attributes.currentwil}
           </span>
         </div>
       </div>
@@ -1635,6 +1719,8 @@ function App() {
               playerGet.stats.defense =
                 parseInt(playerGet.stats.defenseMod) +
                 getDiceStat(player.attributes.dex);
+            } else {
+              playerGet.stats.defense = playerGet.stats.defenseMartial;
             }
             updatePlayer(playerGet);
           }}
@@ -1651,12 +1737,13 @@ function App() {
           }}
           value={
             player.stats.martialDef
-              ? player.stats.defense
+              ? player.stats.defenseMartial
               : player.stats.defenseMod
           }
           onChange={(evt) => {
             const playerGet = { ...player };
             if (player.stats.martialDef) {
+              playerGet.stats.defenseMartial = parseInt(evt.target.value);
               playerGet.stats.defense = parseInt(evt.target.value);
             } else {
               playerGet.stats.defenseMod = parseInt(evt.target.value, 0);
