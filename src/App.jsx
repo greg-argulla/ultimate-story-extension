@@ -165,6 +165,7 @@ function App() {
   const [copyText, setCopyText] = useState(false);
   const [metadataUpdate, setMetadata] = useState([]);
   const [cookiesNotEnabled, setCookiesNotEnabled] = useState(false);
+  const [bonus, setBonus] = useState(0);
 
   useEffect(() => {
     OBR.onReady(async () => {
@@ -2165,6 +2166,29 @@ function App() {
     );
   };
 
+  const renderStatCombinations = () => {
+    const stats = ["dex", "ins", "mig", "wil"];
+
+    const combinations = [];
+    stats.forEach((item) => {
+      stats.forEach((item2) => {
+        combinations.push({ diceOne: item, diceTwo: item2, bonus });
+      });
+    });
+
+    return combinations.map((item) => {
+      return (
+        <button
+          className="button"
+          style={{ marginRight: 4, width: 50, fontSize: 8 }}
+          onClick={() => sendRoll(item)}
+        >
+          {item.diceOne.toUpperCase()} + {item.diceTwo.toUpperCase()}
+        </button>
+      );
+    });
+  };
+
   const renderActionList = () => {
     const items = player.actions.filter((item) => {
       if (searchActions !== "") {
@@ -2178,6 +2202,25 @@ function App() {
     return (
       <div>
         <div>
+          <span
+            style={{ display: "inline-block", width: 108, textAlign: "center" }}
+          >
+            <Text>Modifier:</Text>
+            <input
+              className="input-stat"
+              type="number"
+              style={{
+                width: 20,
+                color: "lightblue",
+              }}
+              value={bonus}
+              onChange={(evt) => {
+                setBonus(evt.target.value);
+              }}
+            />
+          </span>
+          {renderStatCombinations()}
+          <hr />
           <Text>Search By Name: </Text>
           <input
             className="input-stat"
