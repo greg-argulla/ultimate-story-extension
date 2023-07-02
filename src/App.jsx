@@ -2420,7 +2420,6 @@ function App() {
           className="button"
           style={{
             marginLeft: 4,
-            width: "auto",
             padding: 5,
             float: "right",
             color: "white",
