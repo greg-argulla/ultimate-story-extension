@@ -519,7 +519,7 @@ function App() {
 
   const localPlayerItem = (data, index) => {
     return (
-      <div>
+      <div key={index}>
         <div
           style={{
             display: "flex",
@@ -615,14 +615,14 @@ function App() {
     return "";
   };
 
-  const playerItem = (data) => {
+  const playerItem = (data, index) => {
     if (data.isGMPlayer) {
       if (role !== "GM") {
         return "";
       }
 
       return (
-        <div>
+        <div key={index}>
           <div
             style={{
               display: "flex",
@@ -689,7 +689,7 @@ function App() {
     }
 
     return (
-      <div>
+      <div key={index}>
         <div
           style={{
             display: "flex",
@@ -902,8 +902,8 @@ function App() {
             if (!a.isGMPlayer && b.isGMPlayer) return -1;
             return 0;
           })
-          .map((data) => {
-            return playerItem(data);
+          .map((data, index) => {
+            return playerItem(data, index);
           })}
       </div>
     );
@@ -1707,7 +1707,7 @@ function App() {
 
   const skill = (data, index, itemIndex) => {
     return (
-      <div>
+      <div key={itemIndex}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <Text>Name: </Text>
           <input
@@ -1825,7 +1825,7 @@ function App() {
     }
 
     return (
-      <div style={{ marginBottom: 20 }}>
+      <div style={{ marginBottom: 20 }} key={index}>
         <hr />
         <div style={{ display: "flex", alignItems: "center" }}>
           <Text>Category: </Text>
