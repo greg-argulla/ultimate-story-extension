@@ -248,11 +248,12 @@ function App() {
     }
   }, [isOBRReady]);
 
-  const updateNoteItem = async (id, value, key) => {
+  const updateNoteItem = async (id, value, key, max) => {
     const valueGet = isNaN(value) ? 0 : value;
+    const maxGet = isNaN(max) ? 0 : max;
     await OBR.scene.items.updateItems([id], (images) => {
       for (let image of images) {
-        if (name === "Alyx" || name === "Kuya G") {
+        if (name === "Alyx" || name === "Kuya G" || name === "+ GM +") {
           if (key === "defense" || key === "mDefense") {
             const format =
               valueGet > 9 ? valueGet.toString() : " " + valueGet.toString();
@@ -260,8 +261,16 @@ function App() {
             const fontSize = valueGet > 9 ? 16 : 18;
             image.text.richText[0].children[0].text = format;
             image.text.style.fontSize = fontSize;
-          } else image.text.richText[0].children[0].text = valueGet.toString();
-        } else image.text.richText[0].children[0].text = valueGet.toString();
+          } else if (key === "fabula") {
+            const format =
+              valueGet > 9 ? valueGet.toString() : " " + valueGet.toString();
+            image.text.richText[0].children[0].text = format;
+          } else
+            image.text.richText[0].children[0].text =
+              valueGet.toString() + "/" + maxGet.toString();
+        } else
+          image.text.richText[0].children[0].text =
+            valueGet.toString() + "/" + maxGet.toString();
       }
     });
   };
@@ -1160,7 +1169,8 @@ function App() {
             updateNoteItem(
               playerGet.linkedStats.currentHP,
               playerGet.stats.currentHP,
-              "currentHP"
+              "currentHP",
+              maxHP
             );
 
             updatePlayer(playerGet);
@@ -1193,7 +1203,8 @@ function App() {
             updateNoteItem(
               playerGet.linkedStats.currentMP,
               playerGet.stats.currentMP,
-              "currentMP"
+              "currentMP",
+              maxMP
             );
 
             updatePlayer(playerGet);
