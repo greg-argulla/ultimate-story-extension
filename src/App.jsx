@@ -440,6 +440,7 @@ function App() {
       detail: roll.detail,
       userId: id,
       username: name,
+      characterName: player.traits.name,
       id: Date.now(),
     };
     OBR.room.setMetadata({
@@ -452,6 +453,7 @@ function App() {
       skillName: skill.name ? skill.name : "Blank skill",
       info: skill.info,
       detail: skill.detail,
+      characterName: player.traits.name,
       userId: id,
       username: name,
       id: Date.now(),
