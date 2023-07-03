@@ -183,6 +183,8 @@ function App() {
   const [metadataUpdate, setMetadata] = useState([]);
   const [cookiesNotEnabled, setCookiesNotEnabled] = useState(false);
   const [bonus, setBonus] = useState(0);
+  const [healthModifier, setHealthModifier] = useState(0);
+  const [mindModifier, setMindModifier] = useState(0);
   const [editMode, setEditMode] = useState(false);
   const [diceOne, setDiceOne] = useState("");
   const [diceTwo, setDiceTwo] = useState("");
@@ -2708,6 +2710,184 @@ function App() {
     );
   };
 
+  const renderDamageAndRestore = () => {
+    return (
+      <div style={{ marginTop: 8, marginBottom: 8 }}>
+        <span style={{ display: "inline-block", marginRight: 4 }}>
+          <Text>Hitpoints Modifier:</Text>
+          <input
+            className="input-stat"
+            type="number"
+            style={{
+              width: 20,
+              color: "red",
+            }}
+            value={healthModifier}
+            onChange={(evt) => {
+              setHealthModifier(evt.target.value);
+            }}
+          />
+        </span>
+
+        <button
+          className="button"
+          style={{ width: 65, marginRight: 4, fontSize: 8, marginTop: 2 }}
+          onClick={() => {
+            const playerGet = { ...player };
+            const maxHP =
+              getDiceStat(player.attributes.mig) * 5 +
+              player.stats.hpMod +
+              player.traits.level;
+
+            let value =
+              playerGet.stats.currentHP -
+              (healthModifier === "" ? 0 : parseInt(healthModifier, 0));
+
+            if (value < 0) value = 0;
+
+            if (!isNaN(value)) {
+              playerGet.stats.currentHP = maxHP > value ? value : maxHP;
+            } else {
+              playerGet.stats.currentHP = value;
+            }
+
+            updateNoteItem(
+              playerGet.linkedStats.currentHP,
+              playerGet.stats.currentHP,
+              "currentHP",
+              maxHP
+            );
+
+            updatePlayer(playerGet);
+            setHealthModifier(0);
+          }}
+        >
+          Damage
+        </button>
+
+        <button
+          className="button"
+          style={{ marginRight: 4, width: 40, fontSize: 8 }}
+          onClick={() => {
+            const playerGet = { ...player };
+            const maxHP =
+              getDiceStat(player.attributes.mig) * 5 +
+              player.stats.hpMod +
+              player.traits.level;
+
+            let value =
+              playerGet.stats.currentHP +
+              (healthModifier === "" ? 0 : parseInt(healthModifier, 0));
+
+            if (!isNaN(value)) {
+              playerGet.stats.currentHP = maxHP > value ? value : maxHP;
+            } else {
+              playerGet.stats.currentHP = value;
+            }
+
+            updateNoteItem(
+              playerGet.linkedStats.currentHP,
+              playerGet.stats.currentHP,
+              "currentHP",
+              maxHP
+            );
+
+            updatePlayer(playerGet);
+            setHealthModifier(0);
+          }}
+        >
+          Heal
+        </button>
+
+        <span style={{ display: "inline-block", marginRight: 4 }}>
+          <Text>Mindpoints Modifier:</Text>
+          <input
+            className="input-stat"
+            type="number"
+            style={{
+              width: 20,
+              color: "lightblue",
+            }}
+            value={mindModifier}
+            onChange={(evt) => {
+              setMindModifier(evt.target.value);
+            }}
+          />
+        </span>
+
+        <button
+          className="button"
+          style={{ width: 65, marginRight: 4, fontSize: 8, marginTop: 2 }}
+          onClick={() => {
+            const playerGet = { ...player };
+            const maxMP =
+              getDiceStat(player.attributes.wil) * 5 +
+              player.stats.mpMod +
+              player.traits.level;
+
+            let value =
+              playerGet.stats.currentMP -
+              (mindModifier === "" ? 0 : parseInt(mindModifier, 0));
+
+            if (value < 0) value = 0;
+
+            if (!isNaN(value)) {
+              playerGet.stats.currentMP = maxMP > value ? value : maxMP;
+            } else {
+              playerGet.stats.currentMP = value;
+            }
+
+            updateNoteItem(
+              playerGet.linkedStats.currentMP,
+              playerGet.stats.currentMP,
+              "currentMP",
+              maxMP
+            );
+
+            updatePlayer(playerGet);
+            setMindModifier(0);
+          }}
+        >
+          Spend
+        </button>
+
+        <button
+          className="button"
+          style={{ marginRight: 4, width: 40, fontSize: 8 }}
+          onClick={() => {
+            const playerGet = { ...player };
+            const maxMP =
+              getDiceStat(player.attributes.wil) * 5 +
+              player.stats.mpMod +
+              player.traits.level;
+
+            let value =
+              playerGet.stats.currentMP +
+              (mindModifier === "" ? 0 : parseInt(mindModifier, 0));
+
+            if (!isNaN(value)) {
+              playerGet.stats.currentMP = maxMP > value ? value : maxMP;
+            } else {
+              playerGet.stats.currentMP = value;
+            }
+
+            updateNoteItem(
+              playerGet.linkedStats.currentMP,
+              playerGet.stats.currentMP,
+              "currentMP",
+              maxMP
+            );
+
+            updatePlayer(playerGet);
+            setMindModifier(0);
+          }}
+        >
+          Restore
+        </button>
+      </div>
+    );
+  };
+
   const renderActionList = () => {
     const items = player.actions.filter((item) => {
       if (searchActions !== "") {
@@ -3056,7 +3236,9 @@ function App() {
                 {renderBonds()}
                 <hr />
                 {renderStats()}
+                {renderDamageAndRestore()}
                 <hr />
+
                 {renderItemStats()}
                 <div style={{ display: "flex" }}>
                   <div style={{ width: 120 }}>{renderAttributes()}</div>
