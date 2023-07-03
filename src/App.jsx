@@ -2713,8 +2713,8 @@ function App() {
   const renderDamageAndRestore = () => {
     return (
       <div style={{ marginTop: 8, marginBottom: 8 }}>
-        <span style={{ display: "inline-block", marginRight: 4 }}>
-          <Text>Hitpoints Modifier:</Text>
+        <span style={{ display: "inline-block" }}>
+          <Text>Change Hitpoints:</Text>
           <input
             className="input-stat"
             type="number"
@@ -2767,7 +2767,7 @@ function App() {
 
         <button
           className="button"
-          style={{ marginRight: 4, width: 40, fontSize: 8 }}
+          style={{ marginRight: 16, width: 40, fontSize: 8 }}
           onClick={() => {
             const playerGet = { ...player };
             const maxHP =
@@ -2799,8 +2799,8 @@ function App() {
           Heal
         </button>
 
-        <span style={{ display: "inline-block", marginRight: 4 }}>
-          <Text>Mindpoints Modifier:</Text>
+        <span style={{ display: "inline-block" }}>
+          <Text>Change Mindpoints:</Text>
           <input
             className="input-stat"
             type="number"
