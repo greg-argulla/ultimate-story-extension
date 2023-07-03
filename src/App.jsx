@@ -2706,7 +2706,7 @@ function App() {
           </button>
         )}
 
-        {diceOne === "" && diceTwo === "" && (
+        {diceOne === "" && diceTwo === "" && !player.isGMPlayer && (
           <button
             className="button"
             style={{ width: 80, float: "right", marginTop: 2 }}
