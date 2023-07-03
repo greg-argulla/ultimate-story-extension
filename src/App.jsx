@@ -184,6 +184,8 @@ function App() {
   const [cookiesNotEnabled, setCookiesNotEnabled] = useState(false);
   const [bonus, setBonus] = useState(0);
   const [editMode, setEditMode] = useState(false);
+  const [diceOne, setDiceOne] = useState("");
+  const [diceTwo, setDiceTwo] = useState("");
 
   useEffect(() => {
     OBR.onReady(async () => {
@@ -2639,28 +2641,76 @@ function App() {
     );
   };
 
-  const renderStatCombinations = () => {
+  const renderStatRolls = () => {
     const stats = ["dex", "ins", "mig", "wil"];
 
-    const combinations = [];
-    stats.forEach((item) => {
-      stats.forEach((item2) => {
-        combinations.push({ diceOne: item, diceTwo: item2, bonus });
-      });
-    });
+    return (
+      <span>
+        {stats.map((item, index) => {
+          return (
+            <button
+              className="button"
+              style={{ marginRight: 4, width: 50, fontSize: 8 }}
+              onClick={() => {
+                if (diceOne === "") {
+                  setDiceOne(item);
+                } else if (diceTwo === "") {
+                  setDiceTwo(item);
+                }
+              }}
+              key={index}
+            >
+              {item.toUpperCase()}
+            </button>
+          );
+        })}
+        <span style={{ display: "inline-block", marginRight: 4 }}>
+          <Text>Modifier:</Text>
+          <input
+            className="input-stat"
+            type="number"
+            style={{
+              width: 20,
+              color: "lightblue",
+            }}
+            value={bonus}
+            onChange={(evt) => {
+              setBonus(evt.target.value);
+            }}
+          />
+        </span>
 
-    return combinations.map((item, index) => {
-      return (
-        <button
-          className="button"
-          style={{ marginRight: 4, width: 50, fontSize: 8 }}
-          onClick={() => sendRoll(item)}
-          key={index}
-        >
-          {item.diceOne.toUpperCase()} + {item.diceTwo.toUpperCase()}
-        </button>
-      );
-    });
+        <span style={{ display: "inline-block", marginRight: 8 }}>
+          <Text>
+            {diceOne.toUpperCase()} {diceTwo ? "+" : ""} {diceTwo.toUpperCase()}
+          </Text>
+        </span>
+        {(diceOne || diceTwo) && (
+          <button
+            className="button"
+            style={{ marginRight: 4, width: 40, fontSize: 8 }}
+            onClick={() => {
+              setDiceOne("");
+              setDiceTwo("");
+            }}
+          >
+            Clear
+          </button>
+        )}
+
+        {diceOne && diceTwo && (
+          <button
+            className="button"
+            style={{ width: 80, fontSize: 8, float: "right", marginTop: 2 }}
+            onClick={() => {
+              sendRoll({ diceOne, diceTwo, bonus });
+            }}
+          >
+            Roll
+          </button>
+        )}
+      </span>
+    );
   };
 
   const renderActionList = () => {
@@ -2676,24 +2726,7 @@ function App() {
     return (
       <div>
         <div>
-          <span
-            style={{ display: "inline-block", width: 108, textAlign: "center" }}
-          >
-            <Text>Modifier:</Text>
-            <input
-              className="input-stat"
-              type="number"
-              style={{
-                width: 20,
-                color: "lightblue",
-              }}
-              value={bonus}
-              onChange={(evt) => {
-                setBonus(evt.target.value);
-              }}
-            />
-          </span>
-          {renderStatCombinations()}
+          {renderStatRolls()}
           <hr />
           <Text>Search By Name: </Text>
           <input
