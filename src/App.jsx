@@ -825,6 +825,8 @@ function App() {
               }}
               onClick={async () => {
                 setTab("actions");
+                setDiceOne("");
+                setDiceTwo("");
                 setPlayer(data);
               }}
             >

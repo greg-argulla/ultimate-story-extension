@@ -19,6 +19,7 @@ manifest: https://fabula-ultima-character-extension.onrender.com/manifest.json
 - Prepare GM characters that are simpler sheets that players won't be able to see
 - Save characters to carry them over to other scenes
 - Import or export characters to transfer to other owlbear accounts
+- You can also link and sync your character stats to owlbear notes so you can display them on stage
 
 # UI Kit
 
