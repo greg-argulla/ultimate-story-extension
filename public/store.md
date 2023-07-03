@@ -2,8 +2,8 @@
 title: Ultimate Story
 description: Character sheet extension for fabula ultima
 author: Alyx
-image: https://fabula-ultima-character-extension.onrender.com/ultimate-story-icon.jpg
-icon: https://fabula-ultima-character-extension.onrender.com/ultimate-story-image.png
+image: https://fabula-ultima-character-extension.onrender.com/ultimate-story-image.jpg
+icon: https://fabula-ultima-character-extension.onrender.com/ultimate-story-icon.png
 tags:
   - combat
 manifest: https://fabula-ultima-character-extension.onrender.com/manifest.json
