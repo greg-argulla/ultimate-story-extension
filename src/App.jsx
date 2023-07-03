@@ -1853,98 +1853,95 @@ function App() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          backgroundColor: "#333",
+          borderRadius: 4,
+          height: 24,
         }}
       >
-        <div style={{ marginRight: 4 }}>
+        <div className="outline" style={{ marginRight: 4 }}>
           <Text>Max HP:</Text>
         </div>
-        <div style={{ marginRight: 4 }}>
-          <span className="outline" style={{ color: "red", fontSize: 12 }}>
-            {getDiceStat(player.attributes.mig) * 5 +
-              player.stats.hpMod +
-              player.traits.level}
-          </span>
+        <div
+          className="outline"
+          style={{ color: "red", fontSize: 12, marginRight: 4 }}
+        >
+          {getDiceStat(player.attributes.mig) * 5 +
+            player.stats.hpMod +
+            player.traits.level}
         </div>
-        <div style={{ marginRight: 4 }}>
-          <Text>Max MP:</Text>
+        <div className="outline" style={{ marginRight: 4 }}>
+          Max MP:
         </div>
-        <div style={{ marginRight: 4 }}>
-          <span
-            className="outline"
-            style={{ color: "lightblue", fontSize: 12 }}
-          >
-            {getDiceStat(player.attributes.wil) * 5 +
-              player.stats.mpMod +
-              player.traits.level}
-          </span>
+        <div
+          className="outline"
+          style={{ marginRight: 4, color: "lightblue", fontSize: 12 }}
+        >
+          {getDiceStat(player.attributes.wil) * 5 +
+            player.stats.mpMod +
+            player.traits.level}
         </div>
-        <div style={{ marginRight: 4 }}>
-          <Text>Max IP:</Text>
+        <div className="outline" style={{ marginRight: 4 }}>
+          Max IP:
         </div>
-        <div style={{ marginRight: 4 }}>
-          <span className="outline" style={{ color: "orange", fontSize: 12 }}>
-            {6 + player.stats.ipMod}
-          </span>
+        <div
+          className="outline"
+          style={{ color: "orange", fontSize: 12, marginRight: 4 }}
+        >
+          {6 + player.stats.ipMod}
         </div>
-        <div style={{ marginRight: 4 }}>
-          <Text>DEF:</Text>
+        <div className="outline" style={{ marginRight: 4 }}>
+          DEF:
         </div>
-        <div style={{ marginRight: 4 }}>
-          <span className="outline" style={{ color: "violet", fontSize: 12 }}>
-            {player.stats.defense}
-          </span>
+        <div
+          className="outline"
+          style={{ color: "violet", fontSize: 12, marginRight: 4 }}
+        >
+          {player.stats.defense}
         </div>
-        <div style={{ marginRight: 4 }}>
-          <Text>M.DEF:</Text>
+        <div className="outline" style={{ marginRight: 4 }}>
+          M.DEF:
         </div>
-        <div style={{ marginRight: 4 }}>
-          <span className="outline" style={{ color: "cyan", fontSize: 12 }}>
-            {player.stats.mDefense}
-          </span>
+        <div
+          className="outline"
+          style={{ color: "cyan", fontSize: 12, marginRight: 4 }}
+        >
+          {player.stats.mDefense}
         </div>
-        <div style={{ marginRight: 4 }}>
-          <Text>DEX:</Text>
+        <div className="outline" style={{ marginRight: 4 }}>
+          DEX:
         </div>
-        <div style={{ marginRight: 4 }}>
-          <span
-            className="outline"
-            style={{ color: "lightgrey", fontSize: 12 }}
-          >
-            {player.attributes.currentdex}
-          </span>
+        <div
+          className="outline"
+          style={{ color: "lightgrey", fontSize: 12, marginRight: 4 }}
+        >
+          {player.attributes.currentdex}
         </div>
-        <div style={{ marginRight: 4 }}>
-          <Text>INS:</Text>
+        <div className="outline" style={{ marginRight: 4 }}>
+          INS:
         </div>
-        <div style={{ marginRight: 4 }}>
-          <span
-            className="outline"
-            style={{ color: "lightgrey", fontSize: 12 }}
-          >
-            {player.attributes.currentins}
-          </span>
+        <div
+          className="outline"
+          style={{ color: "lightgrey", fontSize: 12, marginRight: 4 }}
+        >
+          {player.attributes.currentins}
         </div>
-        <div style={{ marginRight: 4 }}>
-          <Text>MIG:</Text>
+        <div className="outline" style={{ marginRight: 4 }}>
+          MIG:
         </div>
-        <div style={{ marginRight: 4 }}>
-          <span
-            className="outline"
-            style={{ color: "lightgrey", fontSize: 12 }}
-          >
-            {player.attributes.currentmig}
-          </span>
+        <div
+          className="outline"
+          style={{ color: "lightgrey", fontSize: 12, marginRight: 4 }}
+        >
+          {player.attributes.currentmig}
         </div>
-        <div style={{ marginRight: 4 }}>
-          <Text>WIL:</Text>
+        <div className="outline" style={{ marginRight: 4 }}>
+          WIL:
         </div>
-        <div style={{ marginRight: 4 }}>
-          <span
-            className="outline"
-            style={{ color: "lightgrey", fontSize: 12 }}
-          >
-            {player.attributes.currentwil}
-          </span>
+        <div
+          className="outline"
+          style={{ color: "lightgrey", fontSize: 12, marginRight: 4 }}
+        >
+          {player.attributes.currentwil}
         </div>
       </div>
     );
@@ -2704,6 +2701,8 @@ function App() {
             style={{ width: 80, fontSize: 8, float: "right", marginTop: 2 }}
             onClick={() => {
               sendRoll({ diceOne, diceTwo, bonus });
+              setDiceOne("");
+              setDiceTwo("");
             }}
           >
             Roll
