@@ -608,6 +608,8 @@ function App() {
       );
       setSavePlayerList([metadataChange[id]]);
     }
+
+    alert("Character Saved!");
   };
 
   const loadLocalCharacter = async (data) => {
