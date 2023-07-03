@@ -4,8 +4,6 @@ import OBR from "@owlbear-rodeo/sdk";
 import landingBG from "./assets/bg.jpg";
 import "./App.css";
 
-import { isImage } from "@owlbear-rodeo/sdk";
-
 document.body.style.overflow = "hidden";
 
 const Text = (props) => {
@@ -103,11 +101,11 @@ const newPlayer = (isGMPlayer) => {
       hpMod: 0,
       mpMod: 0,
       ipMod: 0,
-      fabula: 0,
+      fabula: 3,
       experience: 0,
-      currentHP: 0,
-      currentMP: 0,
-      currentIP: 0,
+      currentHP: 45,
+      currentMP: 45,
+      currentIP: 6,
     },
     items: {
       accessory: "",
@@ -253,6 +251,7 @@ function App() {
   }, [isOBRReady]);
 
   const updateNoteItem = async (id, value, key, max) => {
+    if (id === "") return;
     const valueGet = isNaN(value) ? 0 : value;
     const maxGet = isNaN(max) ? 0 : max;
     await OBR.scene.items.updateItems([id], (images) => {
