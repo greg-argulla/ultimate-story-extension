@@ -20,6 +20,11 @@ manifest: https://fabula-ultima-character-extension.onrender.com/manifest.json
 - Save characters to carry them over to other scenes
 - Import or export characters to transfer to other owlbear accounts
 
+# UI Kit
+
+- Use the UI kit to add more theme to your games!
+- Link here: https://drive.google.com/file/d/1MylP4_eH-fSpLs9FufgCIdCIPr__F4QH/view?usp=drive_link
+
 # Last Fable Extension Support
 
 - If you want to gain the full feature of prepared actions and sending skills to chat, use this extension along with the Ultimate fable extension (character sheet extension for fabula ultima)
