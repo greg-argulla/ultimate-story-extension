@@ -2644,7 +2644,7 @@ function App() {
           return (
             <button
               className="button"
-              style={{ marginRight: 4, width: 50, fontSize: 8 }}
+              style={{ marginRight: 4, width: 50 }}
               onClick={() => {
                 if (diceOne === "") {
                   setDiceOne(item);
@@ -2682,7 +2682,7 @@ function App() {
         {(diceOne || diceTwo) && (
           <button
             className="button"
-            style={{ marginRight: 4, width: 40, fontSize: 8 }}
+            style={{ marginRight: 4, width: 40 }}
             onClick={() => {
               setDiceOne("");
               setDiceTwo("");
@@ -2695,7 +2695,7 @@ function App() {
         {diceOne && diceTwo && (
           <button
             className="button"
-            style={{ width: 80, fontSize: 8, float: "right", marginTop: 2 }}
+            style={{ width: 80, float: "right", marginTop: 2 }}
             onClick={() => {
               sendRoll({ diceOne, diceTwo, bonus });
               setDiceOne("");
@@ -2703,6 +2703,25 @@ function App() {
             }}
           >
             Roll
+          </button>
+        )}
+
+        {diceOne === "" && diceTwo === "" && (
+          <button
+            className="button"
+            style={{ width: 80, float: "right", marginTop: 2 }}
+            onClick={() => {
+              const value = parseInt(player.stats.initMod, 0);
+              const mod = isNaN(value) ? 0 : value;
+              sendRoll({
+                diceOne: "dex",
+                diceTwo: "ins",
+                bonus: mod,
+                name: "Initiative",
+              });
+            }}
+          >
+            Roll Initiative
           </button>
         )}
       </span>
