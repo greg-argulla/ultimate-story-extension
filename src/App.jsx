@@ -106,6 +106,9 @@ const newPlayer = (isGMPlayer) => {
       currentHP: 45,
       currentMP: 45,
       currentIP: 6,
+      maxHP: 45,
+      maxMP: 45,
+      maxIP: 6,
     },
     items: {
       accessory: "",
@@ -723,6 +726,9 @@ function App() {
               width: 150,
               textAlign: "center",
               padding: 4,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
             }}
           >
             {data.traits ? data.traits.name : ""}
@@ -828,6 +834,9 @@ function App() {
                 width: 150,
                 textAlign: "center",
                 padding: 4,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
               }}
             >
               {data.traits ? data.traits.name : ""}
@@ -891,16 +900,23 @@ function App() {
             <Text>Name: </Text>
           </div>
           <div
+            className="outline"
             style={{
               width: 150,
               textAlign: "center",
               borderBottom: "1px solid #AAA",
+              fontSize: 12,
+              marginRight: 4,
+              color: "orange",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "inline-block",
+              paddingLeft: 4,
               minHeight: 18,
             }}
           >
-            <span className="outline" style={{ fontSize: 12, color: "orange" }}>
-              {data.traits.name}
-            </span>
+            {data.traits.name}
           </div>
 
           <Text>FP: </Text>
@@ -1185,11 +1201,7 @@ function App() {
           }}
           onChange={(evt) => {
             const playerGet = { ...player };
-            const maxHP =
-              getDiceStat(player.attributes.mig) * 5 +
-              player.stats.hpMod +
-              player.traits.level;
-
+            const maxHP = player.stats.maxHP;
             let value = parseInt(evt.target.value, 0);
 
             if (!isNaN(value)) {
@@ -1253,7 +1265,7 @@ function App() {
           }}
           onChange={(evt) => {
             const playerGet = { ...player };
-            const maxIP = 6 + player.stats.ipMod;
+            const maxIP = player.stats.maxIP;
 
             let value = parseInt(evt.target.value, 0);
             if (!isNaN(value)) {
@@ -1409,6 +1421,17 @@ function App() {
             value={player.traits.level}
             onChange={(evt) => {
               const playerGet = { ...player };
+
+              playerGet.stats.maxHP =
+                getDiceStat(player.attributes.mig) * 5 +
+                player.stats.hpMod +
+                parseInt(evt.target.value);
+
+              playerGet.stats.maxMP =
+                getDiceStat(player.attributes.wil) * 5 +
+                player.stats.hpMod +
+                parseInt(evt.target.value);
+
               playerGet.traits.level = parseInt(evt.target.value);
               updatePlayer(playerGet);
             }}
@@ -1613,6 +1636,21 @@ function App() {
             const playerGet = { ...player };
             player.attributes[stat] = evt.target.value;
             playerGet.attributes["current" + stat] = getCurrentAttribute(stat);
+
+            if (stat === "mig") {
+              playerGet.stats.maxHP =
+                getDiceStat(evt.target.value) * 5 +
+                player.stats.hpMod +
+                player.traits.level;
+            }
+
+            if (stat === "wil") {
+              playerGet.stats.maxMP =
+                getDiceStat(evt.target.value) * 5 +
+                player.stats.mpMod +
+                player.traits.level;
+            }
+
             if (!playerGet.stats.martialDef) {
               playerGet.stats.defense =
                 parseInt(playerGet.stats.defenseMod) +
@@ -1893,23 +1931,19 @@ function App() {
           <Text>Max HP:</Text>
         </div>
         <div className="outline" style={{ color: "red", marginRight: 4 }}>
-          {getDiceStat(player.attributes.mig) * 5 +
-            player.stats.hpMod +
-            player.traits.level}
+          {player.stats.maxHP}
         </div>
         <div className="outline" style={{ marginRight: 4 }}>
           Max MP:
         </div>
         <div className="outline" style={{ marginRight: 4, color: "lightblue" }}>
-          {getDiceStat(player.attributes.wil) * 5 +
-            player.stats.mpMod +
-            player.traits.level}
+          {player.stats.maxMP}
         </div>
         <div className="outline" style={{ marginRight: 4 }}>
           Max IP:
         </div>
         <div className="outline" style={{ color: "orange", marginRight: 4 }}>
-          {6 + player.stats.ipMod}
+          {player.stats.maxIP}
         </div>
         <div className="outline" style={{ marginRight: 4 }}>
           DEF:
@@ -2107,6 +2141,11 @@ function App() {
           value={player.stats.hpMod}
           onChange={(evt) => {
             const playerGet = { ...player };
+
+            playerGet.stats.maxHP =
+              getDiceStat(player.attributes.mig) * 5 +
+              parseInt(evt.target.value) +
+              player.traits.level;
             playerGet.stats.hpMod = parseInt(evt.target.value);
             updatePlayer(playerGet);
           }}
@@ -2123,6 +2162,10 @@ function App() {
           value={player.stats.mpMod}
           onChange={(evt) => {
             const playerGet = { ...player };
+            playerGet.stats.maxMP =
+              getDiceStat(player.attributes.wil) * 5 +
+              parseInt(evt.target.value) +
+              player.traits.level;
             playerGet.stats.mpMod = parseInt(evt.target.value);
             updatePlayer(playerGet);
           }}
@@ -2147,6 +2190,7 @@ function App() {
           value={player.stats.ipMod}
           onChange={(evt) => {
             const playerGet = { ...player };
+            playerGet.stats.maxIP = 6 + parseInt(evt.target.value);
             playerGet.stats.ipMod = parseInt(evt.target.value);
             updatePlayer(playerGet);
           }}
@@ -2442,6 +2486,7 @@ function App() {
       useHR: true,
     });
     updatePlayer(playerGet);
+    showMessage(`Added new action.`);
   };
 
   const removeAction = (index) => {
@@ -2449,6 +2494,7 @@ function App() {
       const playerGet = { ...player };
       playerGet.actions.splice(index, 1);
       updatePlayer(playerGet);
+      showMessage(`Deleted action.`);
     }
   };
 
@@ -2768,10 +2814,7 @@ function App() {
           style={{ width: 65, marginRight: 4, fontSize: 8, marginTop: 2 }}
           onClick={() => {
             const playerGet = { ...player };
-            const maxHP =
-              getDiceStat(player.attributes.mig) * 5 +
-              player.stats.hpMod +
-              player.traits.level;
+            const maxHP = playerGet.stats.maxHP;
 
             let value =
               playerGet.stats.currentHP -
@@ -2806,10 +2849,7 @@ function App() {
           style={{ marginRight: 16, width: 40, fontSize: 8 }}
           onClick={() => {
             const playerGet = { ...player };
-            const maxHP =
-              getDiceStat(player.attributes.mig) * 5 +
-              player.stats.hpMod +
-              player.traits.level;
+            const maxHP = playerGet.stats.maxHP;
 
             let value =
               playerGet.stats.currentHP +
@@ -2857,10 +2897,7 @@ function App() {
           style={{ width: 65, marginRight: 4, fontSize: 8, marginTop: 2 }}
           onClick={() => {
             const playerGet = { ...player };
-            const maxMP =
-              getDiceStat(player.attributes.wil) * 5 +
-              player.stats.mpMod +
-              player.traits.level;
+            const maxMP = playerGet.stats.maxMP;
 
             let value =
               playerGet.stats.currentMP -
@@ -2894,10 +2931,7 @@ function App() {
           style={{ marginRight: 4, width: 40, fontSize: 8 }}
           onClick={() => {
             const playerGet = { ...player };
-            const maxMP =
-              getDiceStat(player.attributes.wil) * 5 +
-              player.stats.mpMod +
-              player.traits.level;
+            const maxMP = playerGet.stats.maxMP;
 
             let value =
               playerGet.stats.currentMP +
