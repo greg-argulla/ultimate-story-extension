@@ -848,6 +848,9 @@ function App() {
                 setTab("actions");
                 setDiceOne("");
                 setDiceTwo("");
+                setHealthModifier(0);
+                setMindModifier(0);
+                setBonus(0);
                 setPlayer(data);
               }}
             >
