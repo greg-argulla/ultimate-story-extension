@@ -2431,7 +2431,12 @@ function App() {
           )}
           <button
             className="button"
-            style={{ fontWeight: "bolder", width: 80, float: "right" }}
+            style={{
+              fontWeight: "bolder",
+              width: 80,
+              float: "right",
+              marginTop: 2,
+            }}
             onClick={() => addCategory()}
           >
             Add Category
@@ -2983,7 +2988,12 @@ function App() {
           )}
           <button
             className="button"
-            style={{ fontWeight: "bolder", width: 80, float: "right" }}
+            style={{
+              fontWeight: "bolder",
+              width: 80,
+              float: "right",
+              marginTop: 2,
+            }}
             onClick={() => {
               addAction();
             }}
