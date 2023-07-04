@@ -276,9 +276,12 @@ function App() {
           const format =
             valueGet > 9 ? valueGet.toString() : " " + valueGet.toString();
           image.text.richText[0].children[0].text = format;
-        } else
+        } else if (maxGet) {
           image.text.richText[0].children[0].text =
             valueGet.toString() + "/" + maxGet.toString();
+        } else {
+          image.text.richText[0].children[0].text = valueGet.toString();
+        }
       }
     });
   };
