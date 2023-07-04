@@ -1210,12 +1210,14 @@ function App() {
               playerGet.stats.currentHP = value;
             }
 
-            updateNoteItem(
-              playerGet.linkedStats.currentHP,
-              playerGet.stats.currentHP,
-              "currentHP",
-              maxHP
-            );
+            if (playerGet.linkedStats) {
+              updateNoteItem(
+                playerGet.linkedStats.currentHP,
+                playerGet.stats.currentHP,
+                "currentHP",
+                maxHP
+              );
+            }
 
             updatePlayer(playerGet);
           }}
@@ -1243,13 +1245,14 @@ function App() {
             } else {
               playerGet.stats.currentMP = value;
             }
-
-            updateNoteItem(
-              playerGet.linkedStats.currentMP,
-              playerGet.stats.currentMP,
-              "currentMP",
-              maxMP
-            );
+            if (playerGet.linkedStats) {
+              updateNoteItem(
+                playerGet.linkedStats.currentMP,
+                playerGet.stats.currentMP,
+                "currentMP",
+                maxMP
+              );
+            }
 
             updatePlayer(playerGet);
           }}
@@ -1273,11 +1276,13 @@ function App() {
             } else {
               playerGet.stats.currentIP = value;
             }
-            updateNoteItem(
-              playerGet.linkedStats.currentIP,
-              playerGet.stats.currentIP,
-              "currentIP"
-            );
+            if (playerGet.linkedStats) {
+              updateNoteItem(
+                playerGet.linkedStats.currentIP,
+                playerGet.stats.currentIP,
+                "currentIP"
+              );
+            }
 
             updatePlayer(playerGet);
           }}
@@ -1294,11 +1299,13 @@ function App() {
           onChange={(evt) => {
             const playerGet = { ...player };
             playerGet.stats.fabula = parseInt(evt.target.value);
-            updateNoteItem(
-              playerGet.linkedStats.fabula,
-              playerGet.stats.fabula,
-              "fabula"
-            );
+            if (playerGet.linkedStats) {
+              updateNoteItem(
+                playerGet.linkedStats.fabula,
+                playerGet.stats.fabula,
+                "fabula"
+              );
+            }
             updatePlayer(playerGet);
           }}
           value={player.stats.fabula}
@@ -1655,22 +1662,24 @@ function App() {
               playerGet.stats.defense =
                 parseInt(playerGet.stats.defenseMod) +
                 getDiceStat(playerGet.attributes.currentdex);
-
-              updateNoteItem(
-                playerGet.linkedStats.defense,
-                playerGet.stats.defense,
-                "defense"
-              );
+              if (playerGet.linkedStats) {
+                updateNoteItem(
+                  playerGet.linkedStats.defense,
+                  playerGet.stats.defense,
+                  "defense"
+                );
+              }
             }
             playerGet.stats.mDefense =
               parseInt(playerGet.stats.mDefenseMod) +
               getDiceStat(playerGet.attributes.currentins);
-
-            updateNoteItem(
-              playerGet.linkedStats.mDefense,
-              playerGet.stats.mDefense,
-              "mDefense"
-            );
+            if (playerGet.linkedStats) {
+              updateNoteItem(
+                playerGet.linkedStats.mDefense,
+                playerGet.stats.mDefense,
+                "mDefense"
+              );
+            }
             updatePlayer(playerGet);
           }}
         >
@@ -1703,22 +1712,24 @@ function App() {
               playerGet.stats.defense =
                 parseInt(playerGet.stats.defenseMod) +
                 getDiceStat(playerGet.attributes.currentdex);
-
-              updateNoteItem(
-                playerGet.linkedStats.defense,
-                playerGet.stats.defense,
-                "defense"
-              );
+              if (playerGet.linkedStats) {
+                updateNoteItem(
+                  playerGet.linkedStats.defense,
+                  playerGet.stats.defense,
+                  "defense"
+                );
+              }
             }
             playerGet.stats.mDefense =
               parseInt(playerGet.stats.mDefenseMod) +
               getDiceStat(playerGet.attributes.currentins);
-
-            updateNoteItem(
-              playerGet.linkedStats.mDefense,
-              playerGet.stats.mDefense,
-              "mDefense"
-            );
+            if (playerGet.linkedStats) {
+              updateNoteItem(
+                playerGet.linkedStats.mDefense,
+                playerGet.stats.mDefense,
+                "mDefense"
+              );
+            }
             updatePlayer(playerGet);
           }}
         >
@@ -1775,22 +1786,25 @@ function App() {
               playerGet.stats.defense =
                 parseInt(playerGet.stats.defenseMod) +
                 getDiceStat(playerGet.attributes.currentdex);
-              updateNoteItem(
-                playerGet.linkedStats.defense,
-                playerGet.stats.defense,
-                "defense"
-              );
+              if (playerGet.linkedStats) {
+                updateNoteItem(
+                  playerGet.linkedStats.defense,
+                  playerGet.stats.defense,
+                  "defense"
+                );
+              }
             }
 
             playerGet.stats.mDefense =
               parseInt(playerGet.stats.mDefenseMod) +
               getDiceStat(playerGet.attributes.currentins);
-
-            updateNoteItem(
-              playerGet.linkedStats.mDefense,
-              playerGet.stats.mDefense,
-              "mDefense"
-            );
+            if (playerGet.linkedStats) {
+              updateNoteItem(
+                playerGet.linkedStats.mDefense,
+                playerGet.stats.mDefense,
+                "mDefense"
+              );
+            }
             updatePlayer(playerGet);
           }}
         >
@@ -2005,12 +2019,13 @@ function App() {
             } else {
               playerGet.stats.defense = playerGet.stats.defenseMartial;
             }
-
-            updateNoteItem(
-              playerGet.linkedStats.defense,
-              playerGet.stats.defense,
-              "defense"
-            );
+            if (playerGet.linkedStats) {
+              updateNoteItem(
+                playerGet.linkedStats.defense,
+                playerGet.stats.defense,
+                "defense"
+              );
+            }
             updatePlayer(playerGet);
           }}
         >
@@ -2040,12 +2055,13 @@ function App() {
                 parseInt(evt.target.value) +
                 getDiceStat(player.attributes.currentdex);
             }
-
-            updateNoteItem(
-              playerGet.linkedStats.defense,
-              playerGet.stats.defense,
-              "defense"
-            );
+            if (playerGet.linkedStats) {
+              updateNoteItem(
+                playerGet.linkedStats.defense,
+                playerGet.stats.defense,
+                "defense"
+              );
+            }
             updatePlayer(playerGet);
           }}
         />
@@ -2064,12 +2080,13 @@ function App() {
             playerGet.stats.mDefense =
               parseInt(evt.target.value) +
               getDiceStat(player.attributes.currentins);
-
-            updateNoteItem(
-              playerGet.linkedStats.mDefense,
-              playerGet.stats.mDefense,
-              "mDefense"
-            );
+            if (playerGet.linkedStats) {
+              updateNoteItem(
+                playerGet.linkedStats.mDefense,
+                playerGet.stats.mDefense,
+                "mDefense"
+              );
+            }
             updatePlayer(playerGet);
           }}
         />
@@ -2827,13 +2844,14 @@ function App() {
             } else {
               playerGet.stats.currentHP = value;
             }
-
-            updateNoteItem(
-              playerGet.linkedStats.currentHP,
-              playerGet.stats.currentHP,
-              "currentHP",
-              maxHP
-            );
+            if (playerGet.linkedStats) {
+              updateNoteItem(
+                playerGet.linkedStats.currentHP,
+                playerGet.stats.currentHP,
+                "currentHP",
+                maxHP
+              );
+            }
 
             updatePlayer(playerGet);
 
@@ -2860,13 +2878,14 @@ function App() {
             } else {
               playerGet.stats.currentHP = value;
             }
-
-            updateNoteItem(
-              playerGet.linkedStats.currentHP,
-              playerGet.stats.currentHP,
-              "currentHP",
-              maxHP
-            );
+            if (playerGet.linkedStats) {
+              updateNoteItem(
+                playerGet.linkedStats.currentHP,
+                playerGet.stats.currentHP,
+                "currentHP",
+                maxHP
+              );
+            }
 
             updatePlayer(playerGet);
             showMessage(`Healed ${healthModifier} hitpoints!`);
@@ -2910,13 +2929,14 @@ function App() {
             } else {
               playerGet.stats.currentMP = value;
             }
-
-            updateNoteItem(
-              playerGet.linkedStats.currentMP,
-              playerGet.stats.currentMP,
-              "currentMP",
-              maxMP
-            );
+            if (playerGet.linkedStats) {
+              updateNoteItem(
+                playerGet.linkedStats.currentMP,
+                playerGet.stats.currentMP,
+                "currentMP",
+                maxMP
+              );
+            }
 
             updatePlayer(playerGet);
             showMessage(`Spent ${mindModifier} mindpoints!`);
@@ -2942,13 +2962,14 @@ function App() {
             } else {
               playerGet.stats.currentMP = value;
             }
-
-            updateNoteItem(
-              playerGet.linkedStats.currentMP,
-              playerGet.stats.currentMP,
-              "currentMP",
-              maxMP
-            );
+            if (playerGet.linkedStats) {
+              updateNoteItem(
+                playerGet.linkedStats.currentMP,
+                playerGet.stats.currentMP,
+                "currentMP",
+                maxMP
+              );
+            }
 
             updatePlayer(playerGet);
             showMessage(`Restored ${mindModifier} mindpoints!`);
