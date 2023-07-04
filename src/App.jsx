@@ -1900,10 +1900,7 @@ function App() {
         <div className="outline" style={{ marginRight: 4 }}>
           Max MP:
         </div>
-        <div
-          className="outline"
-          style={{ marginRight: 4, color: "lightblue", fontSize: 12 }}
-        >
+        <div className="outline" style={{ marginRight: 4, color: "lightblue" }}>
           {getDiceStat(player.attributes.wil) * 5 +
             player.stats.mpMod +
             player.traits.level}
