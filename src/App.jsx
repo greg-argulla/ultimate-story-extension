@@ -186,6 +186,7 @@ function App() {
   const [editMode, setEditMode] = useState(false);
   const [diceOne, setDiceOne] = useState("");
   const [diceTwo, setDiceTwo] = useState("");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     OBR.onReady(async () => {
@@ -249,6 +250,14 @@ function App() {
       }
     }
   }, [isOBRReady]);
+
+  const showMessage = (messageGet) => {
+    setMessage(messageGet);
+
+    setTimeout(() => {
+      setMessage("");
+    }, 1000);
+  };
 
   const updateNoteItem = async (id, value, key, max) => {
     if (id === "") return;
@@ -446,6 +455,7 @@ function App() {
     OBR.room.setMetadata({
       "ultimate.story.extension/sendroll": rollData,
     });
+    showMessage("Roll Sent!");
   };
 
   const sendSkill = (skill) => {
@@ -461,6 +471,7 @@ function App() {
     OBR.room.setMetadata({
       "ultimate.story.extension/sendskill": skillData,
     });
+    showMessage("Skill Info Sent!");
   };
 
   const [windowInnerHeight, setWindowInnerHeight] = useState(
@@ -493,6 +504,7 @@ function App() {
       OBR.scene.setMetadata({
         "ultimate.story.extension/metadata": metadataChange,
       });
+      showMessage(`Removed character.`);
     } else {
       if (confirm("Are you sure you want to delete the character?") == true) {
         if (
@@ -505,6 +517,7 @@ function App() {
           OBR.scene.setMetadata({
             "ultimate.story.extension/metadata": metadataChange,
           });
+          showMessage(`Removed character.`);
         }
       }
     }
@@ -520,6 +533,7 @@ function App() {
     OBR.scene.setMetadata({
       "ultimate.story.extension/metadata": metadataChange,
     });
+    showMessage(`Added new character.`);
   };
 
   const removeItemFromArray = (array, text) => {
@@ -568,6 +582,7 @@ function App() {
       setPlayer(null);
       setImportData("");
       setTab("stats");
+      showMessage(`Imported character.`);
     } else {
       alert(
         "Invalid Data. Please double check the export data and copy again."
@@ -609,7 +624,7 @@ function App() {
       setSavePlayerList([metadataChange[id]]);
     }
 
-    alert("Character Saved!");
+    showMessage(`Character Saved!`);
   };
 
   const loadLocalCharacter = async (data) => {
@@ -631,6 +646,8 @@ function App() {
     OBR.scene.setMetadata({
       "ultimate.story.extension/metadata": metadataChange,
     });
+
+    showMessage(`Loaded character!`);
   };
 
   const removeCharacterLocally = (index) => {
@@ -648,6 +665,7 @@ function App() {
         JSON.stringify(localPlayerList)
       );
       setSavePlayerList(localPlayerList);
+      showMessage(`Deleted character.`);
     }
   };
 
@@ -662,6 +680,7 @@ function App() {
     OBR.scene.setMetadata({
       "ultimate.story.extension/metadata": metadataChange,
     });
+    showMessage(`Added GM character!`);
   };
 
   const debuffItem = (debuff, stat) => {
@@ -1076,6 +1095,9 @@ function App() {
               marginRight: 4,
             }}
             onClick={() => {
+              if (editMode) {
+                showMessage(`Edit mode disabled.`);
+              } else showMessage(`Edit mode enabled.`);
               setEditMode(!editMode);
             }}
           >
@@ -2182,6 +2204,7 @@ function App() {
     const playerGet = { ...player };
     playerGet.skills[index].items.push({ name: "", info: "", detail: "" }),
       updatePlayer(playerGet);
+    showMessage(`Added new item.`);
   };
 
   const removeSkill = (index, itemIndex) => {
@@ -2189,6 +2212,7 @@ function App() {
       const playerGet = { ...player };
       playerGet.skills[index].items.splice(itemIndex, 1);
       updatePlayer(playerGet);
+      showMessage(`Removed item.`);
     }
   };
 
@@ -2276,12 +2300,14 @@ function App() {
       items: [{ name: "", info: "", detail: "" }],
     });
     updatePlayer(playerGet);
+    showMessage(`Added new category.`);
   };
 
   const removeCategory = (index) => {
     if (confirm("Are you sure you want to delete the category?") == true) {
       const playerGet = { ...player };
       playerGet.skills.splice(index, 1);
+      showMessage(`Category removed.`);
       updatePlayer(playerGet);
     }
   };
@@ -2783,6 +2809,8 @@ function App() {
             );
 
             updatePlayer(playerGet);
+
+            showMessage(`Inflicted ${healthModifier} damage!`);
             setHealthModifier(0);
           }}
         >
@@ -2817,6 +2845,7 @@ function App() {
             );
 
             updatePlayer(playerGet);
+            showMessage(`Healed ${healthModifier} hitpoints!`);
             setHealthModifier(0);
           }}
         >
@@ -2869,6 +2898,7 @@ function App() {
             );
 
             updatePlayer(playerGet);
+            showMessage(`Spent ${mindModifier} mindpoints!`);
             setMindModifier(0);
           }}
         >
@@ -2903,6 +2933,7 @@ function App() {
             );
 
             updatePlayer(playerGet);
+            showMessage(`Restored ${mindModifier} mindpoints!`);
             setMindModifier(0);
           }}
         >
@@ -3339,6 +3370,27 @@ function App() {
           </>
         )}
       </div>
+
+      {message !== "" && (
+        <div
+          style={{
+            position: "absolute",
+            background: "rgba(52, 52, 52, 0.8)",
+            borderRadius: 4,
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            margin: "auto",
+            width: 200,
+            height: 28,
+            padding: 8,
+            textAlign: "center",
+          }}
+        >
+          <Text>{message}</Text>
+        </div>
+      )}
     </div>
   );
 }
