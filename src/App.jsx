@@ -1892,10 +1892,7 @@ function App() {
         <div className="outline" style={{ marginRight: 4 }}>
           <Text>Max HP:</Text>
         </div>
-        <div
-          className="outline"
-          style={{ color: "red", fontSize: 12, marginRight: 4 }}
-        >
+        <div className="outline" style={{ color: "red", marginRight: 4 }}>
           {getDiceStat(player.attributes.mig) * 5 +
             player.stats.hpMod +
             player.traits.level}
@@ -1914,64 +1911,43 @@ function App() {
         <div className="outline" style={{ marginRight: 4 }}>
           Max IP:
         </div>
-        <div
-          className="outline"
-          style={{ color: "orange", fontSize: 12, marginRight: 4 }}
-        >
+        <div className="outline" style={{ color: "orange", marginRight: 4 }}>
           {6 + player.stats.ipMod}
         </div>
         <div className="outline" style={{ marginRight: 4 }}>
           DEF:
         </div>
-        <div
-          className="outline"
-          style={{ color: "violet", fontSize: 12, marginRight: 4 }}
-        >
+        <div className="outline" style={{ color: "violet", marginRight: 4 }}>
           {player.stats.defense}
         </div>
         <div className="outline" style={{ marginRight: 4 }}>
           M.DEF:
         </div>
-        <div
-          className="outline"
-          style={{ color: "cyan", fontSize: 12, marginRight: 4 }}
-        >
+        <div className="outline" style={{ color: "cyan", marginRight: 4 }}>
           {player.stats.mDefense}
         </div>
         <div className="outline" style={{ marginRight: 4 }}>
           DEX:
         </div>
-        <div
-          className="outline"
-          style={{ color: "lightgrey", fontSize: 12, marginRight: 4 }}
-        >
+        <div className="outline" style={{ color: "lightgrey", marginRight: 4 }}>
           {player.attributes.currentdex}
         </div>
         <div className="outline" style={{ marginRight: 4 }}>
           INS:
         </div>
-        <div
-          className="outline"
-          style={{ color: "lightgrey", fontSize: 12, marginRight: 4 }}
-        >
+        <div className="outline" style={{ color: "lightgrey", marginRight: 4 }}>
           {player.attributes.currentins}
         </div>
         <div className="outline" style={{ marginRight: 4 }}>
           MIG:
         </div>
-        <div
-          className="outline"
-          style={{ color: "lightgrey", fontSize: 12, marginRight: 4 }}
-        >
+        <div className="outline" style={{ color: "lightgrey", marginRight: 4 }}>
           {player.attributes.currentmig}
         </div>
         <div className="outline" style={{ marginRight: 4 }}>
           WIL:
         </div>
-        <div
-          className="outline"
-          style={{ color: "lightgrey", fontSize: 12, marginRight: 4 }}
-        >
+        <div className="outline" style={{ color: "lightgrey", marginRight: 4 }}>
           {player.attributes.currentwil}
         </div>
       </div>
