@@ -194,19 +194,25 @@ function App() {
 
   useEffect(() => {
     OBR.onReady(async () => {
-      const metadata = await OBR.scene.getMetadata();
-      if (metadata["ultimate.story.extension/metadata"]) {
-        const playerListGet = await createPlayerList(metadata);
-        setPlayerList(playerListGet);
-      }
-      setIsOBRReady(true);
-      setName(await OBR.player.getName());
-      setId(await OBR.player.getId());
+      OBR.scene.onReadyChange(async (ready) => {
+        if (ready) {
+          const metadata = await OBR.scene.getMetadata();
+          if (metadata["ultimate.story.extension/metadata"]) {
+            const playerListGet = await createPlayerList(metadata);
+            setPlayerList(playerListGet);
+          }
+          setIsOBRReady(true);
+          setName(await OBR.player.getName());
+          setId(await OBR.player.getId());
 
-      OBR.player.onChange(async (player) => {
-        setName(await OBR.player.getName());
+          OBR.player.onChange(async (player) => {
+            setName(await OBR.player.getName());
+          });
+          setRole(await OBR.player.getRole());
+        } else {
+          setIsOBRReady(false);
+        }
       });
-      setRole(await OBR.player.getRole());
     });
 
     try {
@@ -3332,6 +3338,38 @@ function App() {
             You need to enable 3rd Party cookies for this extention to work.
             This is because some character data is stored in the browser
             localstorage that enables characters to transfer between scenes.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isOBRReady) {
+    return (
+      <div
+        style={{
+          backgroundImage: `url(${landingBG})`,
+          backgroundSize: "contain",
+          height: 540,
+          width: 550,
+          overflow: "hidden",
+        }}
+      >
+        <div
+          className="scrollable-container"
+          style={{
+            overflow: "scroll",
+            height: windowInnerHeight - 40,
+            marginTop: 40,
+            paddingLeft: 30,
+            paddingRight: 30,
+          }}
+        >
+          <div className="outline" style={{ color: "red", font: 14 }}>
+            No Scene found.
+          </div>
+          <div className="outline" style={{ fontSize: 14 }}>
+            You need to load a scene to start adding/updating characters.
           </div>
         </div>
       </div>
