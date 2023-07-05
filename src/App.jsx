@@ -509,7 +509,6 @@ function App() {
     OBR.room.setMetadata({
       "ultimate.story.extension/sendcharacter": characterData,
     });
-    showMessage("Character set!");
   };
 
   const [windowInnerHeight, setWindowInnerHeight] = useState(
