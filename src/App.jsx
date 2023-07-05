@@ -190,6 +190,7 @@ function App() {
   const [diceOne, setDiceOne] = useState("");
   const [diceTwo, setDiceTwo] = useState("");
   const [message, setMessage] = useState("");
+  const [ignoreFirstUpdate, setIgnoreFirstUpdate] = useState(false);
 
   useEffect(() => {
     OBR.onReady(async () => {
@@ -395,7 +396,7 @@ function App() {
       }, 500);
       setTimeoutID(myTimeout);
     }
-
+    setIgnoreFirstUpdate(true);
     setPlayer(playerGet);
   };
 
@@ -414,10 +415,13 @@ function App() {
   };
 
   useEffect(() => {
-    if (player) {
+    if (player && !ignoreFirstUpdate) {
       if (metadataUpdate[player.id].lastEdit !== id) {
         setPlayer(metadataUpdate[player.id]);
       }
+    }
+    if (ignoreFirstUpdate) {
+      setIgnoreFirstUpdate(false);
     }
   }, [metadataUpdate]);
 
@@ -456,6 +460,7 @@ function App() {
       userId: id,
       username: name,
       characterName: player.traits.name,
+      characterID: player.id,
       id: Date.now(),
     };
     OBR.room.setMetadata({
@@ -472,12 +477,30 @@ function App() {
       characterName: player.traits.name,
       userId: id,
       username: name,
+      characterID: player.id,
       id: Date.now(),
     };
     OBR.room.setMetadata({
       "ultimate.story.extension/sendskill": skillData,
     });
     showMessage("Skill Info Sent!");
+  };
+
+  const sendCharacter = () => {
+    const characterData = {
+      characterName: player.traits.name,
+      userId: id,
+      characterID: player.id,
+      dex: player.attributes.currentdex,
+      ins: player.attributes.currentins,
+      mig: player.attributes.currentmig,
+      wil: player.attributes.currentwil,
+      id: Date.now(),
+    };
+    OBR.room.setMetadata({
+      "ultimate.story.extension/sendcharacter": characterData,
+    });
+    showMessage("Character set!");
   };
 
   const [windowInnerHeight, setWindowInnerHeight] = useState(
@@ -2786,22 +2809,33 @@ function App() {
         )}
 
         {diceOne === "" && diceTwo === "" && !player.isGMPlayer && (
-          <button
-            className="button"
-            style={{ width: 80, float: "right", marginTop: 2 }}
-            onClick={() => {
-              const value = parseInt(player.stats.initMod, 0);
-              const mod = isNaN(value) ? 0 : value;
-              sendRoll({
-                diceOne: "dex",
-                diceTwo: "ins",
-                bonus: mod,
-                name: "Initiative",
-              });
-            }}
-          >
-            Roll Initiative
-          </button>
+          <>
+            <button
+              className="button"
+              style={{ width: 80, float: "right", marginTop: 2, marginLeft: 4 }}
+              onClick={() => {
+                sendCharacter();
+              }}
+            >
+              Open at Chat
+            </button>
+            <button
+              className="button"
+              style={{ width: 80, float: "right", marginTop: 2 }}
+              onClick={() => {
+                const value = parseInt(player.stats.initMod, 0);
+                const mod = isNaN(value) ? 0 : value;
+                sendRoll({
+                  diceOne: "dex",
+                  diceTwo: "ins",
+                  bonus: mod,
+                  name: "Initiative",
+                });
+              }}
+            >
+              Roll Initiative
+            </button>
+          </>
         )}
       </span>
     );
