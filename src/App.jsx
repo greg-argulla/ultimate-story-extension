@@ -211,6 +211,7 @@ function App() {
           setRole(await OBR.player.getRole());
         } else {
           setIsOBRReady(false);
+          setPlayer(null);
         }
       });
     });
