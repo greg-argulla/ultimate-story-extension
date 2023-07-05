@@ -2598,7 +2598,7 @@ function App() {
               color: "lightgrey",
             }}
             value={data.info}
-            placeholder="Level/Target/MP Cost/Duration/Damage/Other/Quote"
+            placeholder="Level/Target/MP Cost/Duration/Damage/Quote/Other"
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.actions[index].info = evt.target.value;
