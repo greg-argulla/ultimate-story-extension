@@ -468,6 +468,7 @@ function App() {
       username: name,
       characterName: player.traits.name,
       characterID: player.id,
+      isGMPlayer: player.isGMPlayer,
       id: Date.now(),
     };
     OBR.room.setMetadata({
@@ -493,15 +494,15 @@ function App() {
     showMessage("Skill Info Sent!");
   };
 
-  const sendCharacter = () => {
+  const sendCharacter = (playerGet) => {
     const characterData = {
-      characterName: player.traits.name,
+      characterName: playerGet.traits.name,
       userId: id,
-      characterID: player.id,
-      dex: player.attributes.currentdex,
-      ins: player.attributes.currentins,
-      mig: player.attributes.currentmig,
-      wil: player.attributes.currentwil,
+      characterID: playerGet.id,
+      dex: playerGet.attributes.currentdex,
+      ins: playerGet.attributes.currentins,
+      mig: playerGet.attributes.currentmig,
+      wil: playerGet.attributes.currentwil,
       id: Date.now(),
     };
     OBR.room.setMetadata({
@@ -894,6 +895,7 @@ function App() {
                 setMindModifier(0);
                 setBonus(0);
                 setPlayer(data);
+                sendCharacter(data);
               }}
             >
               Open
@@ -1084,6 +1086,7 @@ function App() {
           onClick={async () => {
             setTab("stats");
             setPlayer(data);
+            sendCharacter(data);
           }}
         >
           Open
@@ -2816,33 +2819,22 @@ function App() {
         )}
 
         {diceOne === "" && diceTwo === "" && !player.isGMPlayer && (
-          <>
-            <button
-              className="button"
-              style={{ width: 80, float: "right", marginTop: 2, marginLeft: 4 }}
-              onClick={() => {
-                sendCharacter();
-              }}
-            >
-              Open at Chat
-            </button>
-            <button
-              className="button"
-              style={{ width: 80, float: "right", marginTop: 2 }}
-              onClick={() => {
-                const value = parseInt(player.stats.initMod, 0);
-                const mod = isNaN(value) ? 0 : value;
-                sendRoll({
-                  diceOne: "dex",
-                  diceTwo: "ins",
-                  bonus: mod,
-                  name: "Initiative",
-                });
-              }}
-            >
-              Roll Initiative
-            </button>
-          </>
+          <button
+            className="button"
+            style={{ width: 80, float: "right", marginTop: 2 }}
+            onClick={() => {
+              const value = parseInt(player.stats.initMod, 0);
+              const mod = isNaN(value) ? 0 : value;
+              sendRoll({
+                diceOne: "dex",
+                diceTwo: "ins",
+                bonus: mod,
+                name: "Initiative",
+              });
+            }}
+          >
+            Roll Initiative
+          </button>
         )}
       </span>
     );
