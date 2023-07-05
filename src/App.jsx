@@ -503,6 +503,7 @@ function App() {
       ins: playerGet.attributes.currentins,
       mig: playerGet.attributes.currentmig,
       wil: playerGet.attributes.currentwil,
+      isGMPlayer: playerGet.isGMPlayer,
       id: Date.now(),
     };
     OBR.room.setMetadata({
