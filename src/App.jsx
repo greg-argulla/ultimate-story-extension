@@ -894,6 +894,7 @@ function App() {
                 setHealthModifier(0);
                 setMindModifier(0);
                 setBonus(0);
+                setEditMode(false);
                 setPlayer(data);
                 sendCharacter(data);
               }}
@@ -1085,6 +1086,12 @@ function App() {
           }}
           onClick={async () => {
             setTab("stats");
+            setDiceOne("");
+            setDiceTwo("");
+            setHealthModifier(0);
+            setMindModifier(0);
+            setBonus(0);
+            setEditMode(false);
             setPlayer(data);
             sendCharacter(data);
           }}
