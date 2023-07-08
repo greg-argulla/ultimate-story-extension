@@ -636,23 +636,31 @@ function App() {
       localStorage.getItem("ultimate.story.extension/metadata")
     );
 
-    const foundIndex = localPlayerList.findIndex((item) => id === item.id);
+    if (localPlayerList) {
+      const foundIndex = localPlayerList.findIndex((item) => id === item.id);
 
-    if (foundIndex !== -1) {
-      localPlayerList[foundIndex] = metadataChange[id];
-      localStorage.setItem(
-        "ultimate.story.extension/metadata",
-        JSON.stringify(localPlayerList)
-      );
-      setSavePlayerList(localPlayerList);
-    } else if (localPlayerList) {
-      localPlayerList.push(metadataChange[id]);
-      localStorage.setItem(
-        "ultimate.story.extension/metadata",
-        JSON.stringify(localPlayerList)
-      );
+      if (foundIndex !== -1) {
+        localPlayerList[foundIndex] = metadataChange[id];
+        localStorage.setItem(
+          "ultimate.story.extension/metadata",
+          JSON.stringify(localPlayerList)
+        );
+        setSavePlayerList(localPlayerList);
+      } else if (localPlayerList) {
+        localPlayerList.push(metadataChange[id]);
+        localStorage.setItem(
+          "ultimate.story.extension/metadata",
+          JSON.stringify(localPlayerList)
+        );
 
-      setSavePlayerList(localPlayerList);
+        setSavePlayerList(localPlayerList);
+      } else {
+        localStorage.setItem(
+          "ultimate.story.extension/metadata",
+          JSON.stringify([metadataChange[id]])
+        );
+        setSavePlayerList([metadataChange[id]]);
+      }
     } else {
       localStorage.setItem(
         "ultimate.story.extension/metadata",
