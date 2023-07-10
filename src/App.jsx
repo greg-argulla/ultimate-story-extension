@@ -212,6 +212,22 @@ function App() {
           setPlayer(null);
         }
       });
+
+      if (await OBR.scene.isReady()) {
+        const metadata = await OBR.scene.getMetadata();
+        if (metadata["ultimate.story.extension/metadata"]) {
+          const playerListGet = await createPlayerList(metadata);
+          setPlayerList(playerListGet);
+        }
+        setIsOBRReady(true);
+        setName(await OBR.player.getName());
+        setId(await OBR.player.getId());
+
+        OBR.player.onChange(async (player) => {
+          setName(await OBR.player.getName());
+        });
+        setRole(await OBR.player.getRole());
+      }
     });
 
     try {
