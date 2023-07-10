@@ -1874,7 +1874,7 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 312,
+              width: 332,
               color: "white",
               margin: 0,
               fontSize: 10,
@@ -1894,7 +1894,7 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 312,
+              width: 332,
               color: "white",
               margin: 0,
               fontSize: 10,
@@ -1914,7 +1914,7 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 312,
+              width: 332,
               color: "white",
               margin: 0,
               fontSize: 10,
@@ -1934,7 +1934,7 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 312,
+              width: 332,
               color: "white",
               margin: 0,
               fontSize: 10,
@@ -3394,7 +3394,7 @@ function App() {
 
                 {renderItemStats()}
                 <div style={{ display: "flex" }}>
-                  <div style={{ width: 120 }}>{renderAttributes()}</div>
+                  <div>{renderAttributes()}</div>
                   <div>{renderSecondaryCondition()}</div>
                   <div>{renderEquipment()}</div>
                 </div>
