@@ -1665,6 +1665,7 @@ function App() {
         </div>
         <select
           className="attribute-stat"
+          style={{ marginRight: 4 }}
           value={player.attributes[stat]}
           onChange={(evt) => {
             const playerGet = { ...player };
@@ -1715,12 +1716,6 @@ function App() {
           <option value="d8">d8</option>
           <option value="d6">d6</option>
         </select>
-        <span
-          className="outline"
-          style={{ display: "inline-block", fontSize: 11 }}
-        >
-          {player.attributes["current" + stat]}
-        </span>
         <button
           className="button"
           style={{
