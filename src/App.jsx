@@ -2912,7 +2912,7 @@ function App() {
 
         <button
           className="button"
-          style={{ marginRight: 16, width: 40, fontSize: 10 }}
+          style={{ marginRight: 14, width: 40, fontSize: 10 }}
           onClick={() => {
             const playerGet = { ...player };
             const maxHP = playerGet.stats.maxHP;
