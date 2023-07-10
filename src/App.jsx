@@ -945,7 +945,7 @@ function App() {
             style={{
               width: 150,
               textAlign: "center",
-              borderBottom: "1px solid #AAA",
+              borderBottom: "1px solid #222",
               fontSize: 12,
               marginRight: 4,
               color: "orange",
@@ -1513,7 +1513,7 @@ function App() {
             width: 45,
             color: "white",
             marginLeft: 0,
-            fontSize: 8,
+            fontSize: 10,
           }}
           value={bond.name}
           placeholder="Bond"
@@ -1659,7 +1659,7 @@ function App() {
         className="button"
         style={{
           marginLeft: 4,
-          fontSize: 8,
+          fontSize: 10,
           width: 40,
           textTransform: "capitalize",
           backgroundColor: player.debuff[condition] ? "darkred" : "#222",
@@ -1746,7 +1746,7 @@ function App() {
           className="button"
           style={{
             marginLeft: 4,
-            fontSize: 8,
+            fontSize: 10,
             width: 40,
             textTransform: "capitalize",
             backgroundColor: player.debuff[condition] ? "darkred" : "#222",
@@ -1819,8 +1819,8 @@ function App() {
             marginTop: 50,
             marginLeft: 0,
             marginRight: 10,
-            fontSize: 8,
-            width: 40,
+            fontSize: 10,
+            width: 50,
             textTransform: "capitalize",
             backgroundColor: player.debuff.enraged ? "darkred" : "#222",
             color: player.debuff.enraged ? "white" : "#ffd433",
@@ -1864,8 +1864,8 @@ function App() {
             marginTop: 75,
             marginLeft: 0,
             marginRight: 10,
-            fontSize: 8,
-            width: 40,
+            fontSize: 10,
+            width: 50,
             textTransform: "capitalize",
             backgroundColor: player.debuff.poisoned ? "darkred" : "#222",
             color: player.debuff.poisoned ? "white" : "#ffd433",
@@ -2876,7 +2876,7 @@ function App() {
 
         <button
           className="button"
-          style={{ width: 65, marginRight: 4, fontSize: 8, marginTop: 2 }}
+          style={{ width: 65, marginRight: 4, fontSize: 10, marginTop: 2 }}
           onClick={() => {
             const playerGet = { ...player };
             const maxHP = playerGet.stats.maxHP;
@@ -2912,7 +2912,7 @@ function App() {
 
         <button
           className="button"
-          style={{ marginRight: 16, width: 40, fontSize: 8 }}
+          style={{ marginRight: 16, width: 40, fontSize: 10 }}
           onClick={() => {
             const playerGet = { ...player };
             const maxHP = playerGet.stats.maxHP;
@@ -2961,7 +2961,7 @@ function App() {
 
         <button
           className="button"
-          style={{ width: 65, marginRight: 4, fontSize: 8, marginTop: 2 }}
+          style={{ width: 65, marginRight: 4, fontSize: 10, marginTop: 2 }}
           onClick={() => {
             const playerGet = { ...player };
             const maxMP = playerGet.stats.maxMP;
@@ -2996,7 +2996,7 @@ function App() {
 
         <button
           className="button"
-          style={{ marginRight: 4, width: 40, fontSize: 8 }}
+          style={{ marginRight: 4, width: 40, fontSize: 10 }}
           onClick={() => {
             const playerGet = { ...player };
             const maxMP = playerGet.stats.maxMP;
@@ -3113,7 +3113,6 @@ function App() {
             }}
             placeholder="Your Enemy Name"
           />
-
           <GMCondition stat="dex" condition="slow" />
           <GMCondition stat="ins" condition="dazed" />
           <GMCondition stat="mig" condition="weak" />
@@ -3122,8 +3121,8 @@ function App() {
             className="button"
             style={{
               marginLeft: 4,
-              fontSize: 8,
-              width: 40,
+              fontSize: 10,
+              width: 50,
               textTransform: "capitalize",
               backgroundColor: player.debuff.enraged ? "darkred" : "#222",
               color: player.debuff.enraged ? "white" : "#ffd433",
@@ -3143,8 +3142,8 @@ function App() {
             style={{
               marginLeft: 4,
               marginRight: 10,
-              fontSize: 8,
-              width: 40,
+              fontSize: 10,
+              width: 50,
               textTransform: "capitalize",
               backgroundColor: player.debuff.poisoned ? "darkred" : "#222",
               color: player.debuff.poisoned ? "white" : "#ffd433",
