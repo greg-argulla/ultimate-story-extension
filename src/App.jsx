@@ -1232,7 +1232,7 @@ function App() {
             className="outline"
             style={{
               display: "inline-block",
-              marginRight: 90,
+              marginRight: 80,
               fontSize: 13,
             }}
           >
