@@ -43,11 +43,26 @@ body {
   overflow-x: scroll;
   height: 540px;
   width: 550px;
-  scrollbar-width: none;
 }
 
-body::-webkit-scrollbar {
-  display: none;
+/* width */
+::-webkit-scrollbar {
+  width: 1px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #555;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #333;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #222;
 }
 
 h1 {
