@@ -1717,7 +1717,7 @@ function App() {
         </select>
         <span
           className="outline"
-          style={{ display: "inline-block", width: 19, fontSize: 11 }}
+          style={{ display: "inline-block", fontSize: 11 }}
         >
           {player.attributes["current" + stat]}
         </span>
