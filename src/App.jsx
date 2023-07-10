@@ -3325,7 +3325,7 @@ function App() {
           backgroundSize: "contain",
           height: 540,
           width: 550,
-          overflow: "scroll",
+          overflow: "hidden",
         }}
       >
         <div
@@ -3359,7 +3359,7 @@ function App() {
           backgroundSize: "contain",
           height: 540,
           width: 550,
-          overflow: "scroll",
+          overflow: "hidden",
         }}
       >
         <div
@@ -3391,7 +3391,7 @@ function App() {
         backgroundSize: "contain",
         height: 540,
         width: 550,
-        overflow: "scroll",
+        overflow: "hidden",
       }}
     >
       <div
