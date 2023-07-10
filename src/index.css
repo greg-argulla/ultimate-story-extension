@@ -43,20 +43,11 @@ body {
   overflow-x: scroll;
   height: 540px;
   width: 550px;
+  scrollbar-width: none;
 }
 
 body::-webkit-scrollbar {
-  width: 2px;
-  height: 2px;
-}
-
-body::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
-}
-
-body::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  display: none;
 }
 
 h1 {
