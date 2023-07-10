@@ -43,6 +43,11 @@ body {
   overflow-x: scroll;
   height: 540px;
   width: 550px;
+  scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
 }
 
 h1 {
