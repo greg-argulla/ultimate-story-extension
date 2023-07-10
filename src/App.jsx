@@ -3398,7 +3398,7 @@ function App() {
         className="scrollable-container"
         style={{
           overflow: "scroll",
-          height: windowInnerHeight - 40,
+          height: windowInnerHeight - 100,
           marginTop: 20,
           paddingLeft: 30,
           paddingRight: 30,

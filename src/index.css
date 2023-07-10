@@ -36,10 +36,11 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
   font-family: "Roboto";
+  transform: scale(1.1);
+  transform-origin: 0% 0% 0px;
 }
 
 h1 {
