@@ -4,8 +4,6 @@ import OBR from "@owlbear-rodeo/sdk";
 import landingBG from "./assets/bg.jpg";
 import "./App.css";
 
-document.body.style.overflow = "hidden";
-
 const Text = (props) => {
   const { children } = props;
   return <span className="outline">{children}</span>;
@@ -510,25 +508,6 @@ function App() {
       "ultimate.story.extension/sendcharacter": characterData,
     });
   };
-
-  const [windowInnerHeight, setWindowInnerHeight] = useState(
-    window.innerHeight
-  );
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    function autoResize() {
-      setWindowInnerHeight(window.innerHeight);
-    }
-
-    window.addEventListener("resize", autoResize);
-
-    // Return a function to disconnect the event listener
-    return () => window.removeEventListener("resize", autoResize);
-  }, []);
 
   const removePlayer = async (id) => {
     const metadataData = await OBR.scene.getMetadata();
@@ -3332,7 +3311,7 @@ function App() {
           className="scrollable-container"
           style={{
             overflow: "scroll",
-            height: windowInnerHeight - 40,
+            height: 500,
             marginTop: 40,
             paddingLeft: 30,
             paddingRight: 30,
@@ -3366,7 +3345,7 @@ function App() {
           className="scrollable-container"
           style={{
             overflow: "scroll",
-            height: windowInnerHeight - 40,
+            height: 500,
             marginTop: 40,
             paddingLeft: 30,
             paddingRight: 30,
@@ -3398,7 +3377,7 @@ function App() {
         className="scrollable-container"
         style={{
           overflow: "scroll",
-          height: windowInnerHeight - 100,
+          height: 500,
           marginTop: 20,
           paddingLeft: 30,
           paddingRight: 30,
