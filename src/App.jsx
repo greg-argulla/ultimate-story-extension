@@ -2138,7 +2138,7 @@ function App() {
             updatePlayer(playerGet);
           }}
         />
-        <Text>Init. Modifier: </Text>
+        <Text>Init. Mod: </Text>
         <input
           className="input-stat"
           type="number"
