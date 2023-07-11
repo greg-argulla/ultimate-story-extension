@@ -351,8 +351,6 @@ function App() {
                   ? playerGet.stats.maxHP
                   : stat === "currentMP"
                   ? playerGet.stats.maxMP
-                  : stat === "currentIP"
-                  ? playerGet.stats.maxIP
                   : null
               );
               updatePlayer(playerGet);
