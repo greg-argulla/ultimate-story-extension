@@ -342,6 +342,19 @@ function App() {
             if (selected && selected[0]) {
               const playerGet = { ...player };
               playerGet.linkedStats[stat] = selected[0];
+
+              updateNoteItem(
+                playerGet.linkedStats[stat],
+                playerGet.stats[stat],
+                stat,
+                stat === "currentHP"
+                  ? playerGet.stats.maxHP
+                  : stat === "currentMP"
+                  ? playerGet.stats.maxMP
+                  : stat === "currentIP"
+                  ? playerGet.stats.maxIP
+                  : null
+              );
               updatePlayer(playerGet);
             }
           }}
