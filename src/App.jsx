@@ -1494,6 +1494,21 @@ function App() {
                 parseInt(evt.target.value);
 
               playerGet.traits.level = parseInt(evt.target.value);
+
+              updateNoteItem(
+                playerGet.linkedStats.currentHP,
+                playerGet.stats.currentHP,
+                "currentHP",
+                playerGet.stats.maxHP
+              );
+
+              updateNoteItem(
+                playerGet.linkedStats.currentMP,
+                playerGet.stats.currentMP,
+                "currentMP",
+                playerGet.stats.maxMP
+              );
+
               updatePlayer(playerGet);
             }}
           />
