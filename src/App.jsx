@@ -2449,7 +2449,7 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 200,
+              width: 150,
               color: "lightgrey",
             }}
             value={data.categoryName}
@@ -2464,7 +2464,7 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 190,
+              width: 130,
               color: "lightgrey",
             }}
             value={data.categoryInfo}
@@ -2475,6 +2475,24 @@ function App() {
               updatePlayer(playerGet);
             }}
           />
+          <button
+            className="button"
+            style={{ width: 25, marginRight: 4 }}
+            onClick={() => {
+              sortCategoryUp(index);
+            }}
+          >
+            ↑
+          </button>
+          <button
+            className="button"
+            style={{ width: 25, marginRight: 4 }}
+            onClick={() => {
+              sortCategoryDown(index);
+            }}
+          >
+            ↓
+          </button>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <button
               className="button"
@@ -2597,6 +2615,28 @@ function App() {
       const actionTwo = playerGet.actions[index + 1];
       playerGet.actions[index] = actionTwo;
       playerGet.actions[index + 1] = actionOne;
+      updatePlayer(playerGet);
+    }
+  };
+
+  const sortCategoryUp = (index) => {
+    if (index !== 0) {
+      const playerGet = { ...player };
+      const skillOne = playerGet.skills[index];
+      const skillTwo = playerGet.skills[index - 1];
+      playerGet.skills[index] = skillTwo;
+      playerGet.skills[index - 1] = skillOne;
+      updatePlayer(playerGet);
+    }
+  };
+
+  const sortCategoryDown = (index) => {
+    if (index < player.skills.length - 1) {
+      const playerGet = { ...player };
+      const skillOne = playerGet.skills[index];
+      const skillTwo = playerGet.skills[index + 1];
+      playerGet.skills[index] = skillTwo;
+      playerGet.skills[index + 1] = skillOne;
       updatePlayer(playerGet);
     }
   };
