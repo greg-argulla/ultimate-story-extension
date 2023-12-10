@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import OBR from "@owlbear-rodeo/sdk";
 import landingBG from "./assets/bg.jpg";
 import "./App.css";
@@ -8,6 +8,21 @@ const Text = (props) => {
   const { children } = props;
   return <span className="outline">{children}</span>;
 };
+
+const readFile = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsText(file, "utf-8");
+    reader.onload = () => {
+      try {
+        const { result } = reader;
+        if (!result) reject();
+        resolve(JSON.parse(result));
+      } catch (error) {
+        reject();
+      }
+    };
+  });
 
 const newPlayer = (isGMPlayer) => {
   if (isGMPlayer) {
@@ -189,6 +204,7 @@ function App() {
   const [diceTwo, setDiceTwo] = useState("");
   const [message, setMessage] = useState("");
   const [ignoreFirstUpdate, setIgnoreFirstUpdate] = useState(false);
+  const uploaderRef = useRef(null);
 
   useEffect(() => {
     OBR.onReady(async () => {
@@ -282,6 +298,120 @@ function App() {
     setTimeout(() => {
       setMessage("");
     }, 1000);
+  };
+
+  const ImportFultimatorJSON = async (npc) => {
+    const playerGet = newPlayer(true);
+
+    const actionsFromNpc = [];
+
+    const attributeMap = {
+      dexterity: "dex",
+      insight: "ins",
+      might: "mig",
+      will: "wil",
+    };
+
+    npc.attacks.map((attack) => {
+      actionsFromNpc.push({
+        name: attack.name,
+        info:
+          attack.type.charAt(0).toUpperCase() +
+          attack.type.slice(1) +
+          " - " +
+          (attack.range === "distance" ? "Ranged" : "Melee"),
+        detail: attack.special.length
+          ? attack.special.reduce((prev, current) => prev + " " + current)
+          : "",
+        diceOne: attributeMap[attack.attr1],
+        diceTwo: attributeMap[attack.attr2],
+        bonus: Math.floor(npc.lvl / 10) + (npc.extra.precision ? 3 : 0),
+        damage: 5 + (attack.extraDamage ? 5 : 0) + Math.floor(npc.lvl / 20) * 5,
+        useHR: true,
+      });
+    });
+
+    npc.weaponattacks.map((attack) => {
+      actionsFromNpc.push({
+        name: attack.name,
+        info:
+          attack.weapon.type.charAt(0).toUpperCase() +
+          attack.weapon.type.slice(1) +
+          " - " +
+          (attack.weapon.range === "distance" ? "Ranged" : "Melee"),
+        detail: attack.special.length
+          ? attack.special.reduce((prev, current) => prev + " " + current)
+          : "",
+        diceOne: attributeMap[attack.weapon.att1],
+        diceTwo: attributeMap[attack.weapon.att2],
+        bonus:
+          Math.floor(npc.lvl / 10) +
+          (npc.extra.precision ? 3 : 0) +
+          (attack.flathit ? parseInt(attack.flathit) : 0),
+        damage:
+          attack.weapon.damage +
+          (attack.extraDamage ? 5 : 0) +
+          (attack.flatdmg ? parseInt(attack.flatdmg) : 0) +
+          Math.floor(npc.lvl / 20) * 5,
+        useHR: true,
+      });
+    });
+
+    npc.spells.map((attack) => {
+      if (attack.type === "offensive") {
+        actionsFromNpc.push({
+          name: attack.name,
+          info:
+            attack.mp +
+            " - " +
+            attack.target.charAt(0).toUpperCase() +
+            attack.target.slice(1) +
+            " - " +
+            attack.duration.charAt(0).toUpperCase() +
+            attack.duration.slice(1),
+          detail: attack.effect,
+          diceOne: attributeMap[attack.attr1],
+          diceTwo: attributeMap[attack.attr2],
+          bonus: Math.floor(npc.lvl / 10) + (npc.extra.magic ? 3 : 0),
+          damage: 0,
+          useHR: true,
+        });
+      }
+    });
+
+    const playerToImport = {
+      ...playerGet,
+      name: npc.name,
+      traits: { name: npc.name },
+      attributes: {
+        dex: "d" + npc.attributes.dexterity,
+        ins: "d" + npc.attributes.insight,
+        mig: "d" + npc.attributes.might,
+        wil: "d" + npc.attributes.will,
+        currentdex: "d" + npc.attributes.dexterity,
+        currentins: "d" + npc.attributes.insight,
+        currentmig: "d" + npc.attributes.might,
+        currentwil: "d" + npc.attributes.will,
+      },
+      actions: actionsFromNpc,
+    };
+
+    console.log("+++++++++++");
+    console.log(npc);
+
+    console.log(playerToImport);
+
+    const metadataData = await OBR.scene.getMetadata();
+    const metadata = metadataData["ultimate.story.extension/metadata"];
+    let metadataChange = { ...metadata };
+    metadataChange[playerToImport.id] = playerToImport;
+
+    OBR.scene.setMetadata({
+      "ultimate.story.extension/metadata": metadataChange,
+    });
+    if (!uploaderRef.current) return;
+    uploaderRef.current.value = "";
+    showMessage(`Added GM character!`);
   };
 
   const updateNoteItem = async (id, value, key, max) => {
@@ -3520,12 +3650,41 @@ function App() {
               <div>
                 {renderPlayerList()}
                 <div style={{ marginTop: 40 }}>
+                  <input
+                    type="file"
+                    ref={uploaderRef}
+                    multiple={false}
+                    accept=".json"
+                    style={{ display: " none" }}
+                    onChange={async ({ target }) => {
+                      const file = target.files?.[0];
+                      if (!file) return;
+                      ImportFultimatorJSON(await readFile(file));
+                    }}
+                  />
+
                   <span
                     style={{ fontSize: 13, color: "White" }}
                     className="outline"
                   >
                     Room Saved Character:
                   </span>
+                  <button
+                    type="button"
+                    className="button"
+                    style={{
+                      fontWeight: "bolder",
+                      width: 120,
+                      float: "right",
+                      marginRight: 4,
+                    }}
+                    onClick={() => {
+                      if (!uploaderRef.current) return;
+                      uploaderRef.current.click();
+                    }}
+                  >
+                    Import Fultimator NPC
+                  </button>
                   <button
                     className="button"
                     style={{
