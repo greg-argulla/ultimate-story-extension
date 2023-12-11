@@ -312,72 +312,79 @@ function App() {
       will: "wil",
     };
 
-    npc.attacks.map((attack) => {
-      actionsFromNpc.push({
-        name: attack.name,
-        info:
-          attack.type.charAt(0).toUpperCase() +
-          attack.type.slice(1) +
-          " - " +
-          (attack.range === "distance" ? "Ranged" : "Melee"),
-        detail: attack.special.length
-          ? attack.special.reduce((prev, current) => prev + " " + current)
-          : "",
-        diceOne: attributeMap[attack.attr1],
-        diceTwo: attributeMap[attack.attr2],
-        bonus: Math.floor(npc.lvl / 10) + (npc.extra.precision ? 3 : 0),
-        damage: 5 + (attack.extraDamage ? 5 : 0) + Math.floor(npc.lvl / 20) * 5,
-        useHR: true,
-      });
-    });
-
-    npc.weaponattacks.map((attack) => {
-      actionsFromNpc.push({
-        name: attack.name,
-        info:
-          attack.weapon.type.charAt(0).toUpperCase() +
-          attack.weapon.type.slice(1) +
-          " - " +
-          (attack.weapon.range === "distance" ? "Ranged" : "Melee"),
-        detail: attack.special.length
-          ? attack.special.reduce((prev, current) => prev + " " + current)
-          : "",
-        diceOne: attributeMap[attack.weapon.att1],
-        diceTwo: attributeMap[attack.weapon.att2],
-        bonus:
-          Math.floor(npc.lvl / 10) +
-          (npc.extra.precision ? 3 : 0) +
-          (attack.flathit ? parseInt(attack.flathit) : 0),
-        damage:
-          attack.weapon.damage +
-          (attack.extraDamage ? 5 : 0) +
-          (attack.flatdmg ? parseInt(attack.flatdmg) : 0) +
-          Math.floor(npc.lvl / 20) * 5,
-        useHR: true,
-      });
-    });
-
-    npc.spells.map((attack) => {
-      if (attack.type === "offensive") {
+    if (npc.attacks) {
+      npc.attacks.map((attack) => {
         actionsFromNpc.push({
           name: attack.name,
           info:
-            attack.mp +
+            attack.type.charAt(0).toUpperCase() +
+            attack.type.slice(1) +
             " - " +
-            attack.target.charAt(0).toUpperCase() +
-            attack.target.slice(1) +
-            " - " +
-            attack.duration.charAt(0).toUpperCase() +
-            attack.duration.slice(1),
-          detail: attack.effect,
+            (attack.range === "distance" ? "Ranged" : "Melee"),
+          detail: attack.special.length
+            ? attack.special.reduce((prev, current) => prev + " " + current)
+            : "",
           diceOne: attributeMap[attack.attr1],
           diceTwo: attributeMap[attack.attr2],
-          bonus: Math.floor(npc.lvl / 10) + (npc.extra.magic ? 3 : 0),
-          damage: 0,
+          bonus: Math.floor(npc.lvl / 10) + (npc.extra.precision ? 3 : 0),
+          damage:
+            5 + (attack.extraDamage ? 5 : 0) + Math.floor(npc.lvl / 20) * 5,
           useHR: true,
         });
-      }
-    });
+      });
+    }
+
+    if (npc.weaponattacks) {
+      npc.weaponattacks.map((attack) => {
+        actionsFromNpc.push({
+          name: attack.name,
+          info:
+            attack.weapon.type.charAt(0).toUpperCase() +
+            attack.weapon.type.slice(1) +
+            " - " +
+            (attack.weapon.range === "distance" ? "Ranged" : "Melee"),
+          detail: attack.special.length
+            ? attack.special.reduce((prev, current) => prev + " " + current)
+            : "",
+          diceOne: attributeMap[attack.weapon.att1],
+          diceTwo: attributeMap[attack.weapon.att2],
+          bonus:
+            Math.floor(npc.lvl / 10) +
+            (npc.extra.precision ? 3 : 0) +
+            (attack.flathit ? parseInt(attack.flathit) : 0),
+          damage:
+            attack.weapon.damage +
+            (attack.extraDamage ? 5 : 0) +
+            (attack.flatdmg ? parseInt(attack.flatdmg) : 0) +
+            Math.floor(npc.lvl / 20) * 5,
+          useHR: true,
+        });
+      });
+    }
+
+    if (npc.spells) {
+      npc.spells.map((attack) => {
+        if (attack.type === "offensive") {
+          actionsFromNpc.push({
+            name: attack.name,
+            info:
+              attack.mp +
+              " - " +
+              attack.target.charAt(0).toUpperCase() +
+              attack.target.slice(1) +
+              " - " +
+              attack.duration.charAt(0).toUpperCase() +
+              attack.duration.slice(1),
+            detail: attack.effect,
+            diceOne: attributeMap[attack.attr1],
+            diceTwo: attributeMap[attack.attr2],
+            bonus: Math.floor(npc.lvl / 10) + (npc.extra.magic ? 3 : 0),
+            damage: 0,
+            useHR: true,
+          });
+        }
+      });
+    }
 
     const playerToImport = {
       ...playerGet,
