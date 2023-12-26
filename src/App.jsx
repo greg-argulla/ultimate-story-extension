@@ -2291,23 +2291,6 @@ function App() {
             updatePlayer(playerGet);
           }}
         />
-        <Text>Init. Mod: </Text>
-        <input
-          className="input-stat"
-          type="number"
-          style={{
-            width: 20,
-            color: "lightgrey",
-          }}
-          value={player.stats.initMod}
-          onChange={(evt) => {
-            const playerGet = { ...player };
-            if (evt.target.value != "") {
-              playerGet.stats.initMod = parseInt(evt.target.value, "");
-            } else playerGet.stats.initMod = "";
-            updatePlayer(playerGet);
-          }}
-        />
         <Text>Experience: </Text>
         <input
           className="input-stat"
@@ -3023,25 +3006,6 @@ function App() {
             }}
           >
             Roll
-          </button>
-        )}
-
-        {diceOne === "" && diceTwo === "" && !player.isGMPlayer && (
-          <button
-            className="button"
-            style={{ width: 80, float: "right", marginTop: 2 }}
-            onClick={() => {
-              const value = parseInt(player.stats.initMod, 0);
-              const mod = isNaN(value) ? 0 : value;
-              sendRoll({
-                diceOne: "dex",
-                diceTwo: "ins",
-                bonus: mod,
-                name: "Initiative",
-              });
-            }}
-          >
-            Roll Initiative
           </button>
         )}
       </span>
