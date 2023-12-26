@@ -1590,13 +1590,13 @@ function App() {
             alignItems: "center",
           }}
         >
-          <div style={{ width: 40 }}>
+          <div style={{ width: 41 }}>
             <Text>Identity: </Text>
           </div>
           <input
             className="input-stat"
             style={{
-              width: 380,
+              width: 435,
               color: "white",
             }}
             value={player.traits.identity}
@@ -1606,48 +1606,6 @@ function App() {
               updatePlayer(playerGet);
             }}
             placeholder="This is a short sentence that sums up your character's general concept"
-          />
-
-          <Text>LVL:</Text>
-          <input
-            className="input-stat"
-            style={{
-              width: 20,
-              color: "white",
-            }}
-            type="number"
-            value={player.traits.level}
-            onChange={(evt) => {
-              const playerGet = { ...player };
-
-              playerGet.stats.maxHP =
-                getDiceStat(player.attributes.mig) * 5 +
-                player.stats.hpMod +
-                parseInt(evt.target.value);
-
-              playerGet.stats.maxMP =
-                getDiceStat(player.attributes.wil) * 5 +
-                player.stats.hpMod +
-                parseInt(evt.target.value);
-
-              playerGet.traits.level = parseInt(evt.target.value);
-
-              updateNoteItem(
-                playerGet.linkedStats.currentHP,
-                playerGet.stats.currentHP,
-                "currentHP",
-                playerGet.stats.maxHP
-              );
-
-              updateNoteItem(
-                playerGet.linkedStats.currentMP,
-                playerGet.stats.currentMP,
-                "currentMP",
-                playerGet.stats.maxMP
-              );
-
-              updatePlayer(playerGet);
-            }}
           />
         </div>
       </>
@@ -2203,10 +2161,68 @@ function App() {
   const renderItemStats = () => {
     return (
       <div>
+        <Text>Level:</Text>
+        <input
+          className="input-stat"
+          style={{
+            width: 20,
+            color: "white",
+          }}
+          type="number"
+          value={player.traits.level}
+          onChange={(evt) => {
+            const playerGet = { ...player };
+
+            playerGet.stats.maxHP =
+              getDiceStat(player.attributes.mig) * 5 +
+              player.stats.hpMod +
+              parseInt(evt.target.value);
+
+            playerGet.stats.maxMP =
+              getDiceStat(player.attributes.wil) * 5 +
+              player.stats.hpMod +
+              parseInt(evt.target.value);
+
+            playerGet.traits.level = parseInt(evt.target.value);
+
+            updateNoteItem(
+              playerGet.linkedStats.currentHP,
+              playerGet.stats.currentHP,
+              "currentHP",
+              playerGet.stats.maxHP
+            );
+
+            updateNoteItem(
+              playerGet.linkedStats.currentMP,
+              playerGet.stats.currentMP,
+              "currentMP",
+              playerGet.stats.maxMP
+            );
+
+            updatePlayer(playerGet);
+          }}
+        />
+        <Text>Experience:</Text>
+        <input
+          className="input-stat"
+          type="number"
+          style={{
+            width: 20,
+            color: "lightgreen",
+            marginRight: 0,
+          }}
+          value={player.stats.experience}
+          onChange={(evt) => {
+            const playerGet = { ...player };
+            playerGet.stats.experience = parseInt(evt.target.value);
+            updatePlayer(playerGet);
+          }}
+        />
         <button
           className="button"
           style={{
-            width: "auto",
+            width: 80,
+            marginLeft: 4,
             marginRight: 4,
             padding: 4,
           }}
@@ -2232,7 +2248,9 @@ function App() {
         >
           {player.stats.martialDef ? "Martial" : "Non Martial"}
         </button>
-        <Text>{player.stats.martialDef ? "Defense:" : "Defense Mod:"}</Text>
+        <Text>
+          {player.stats.martialDef ? "Total Defense:" : "Defense Mod:"}
+        </Text>
         <input
           className="input-stat"
           type="number"
@@ -2288,22 +2306,6 @@ function App() {
                 "mDefense"
               );
             }
-            updatePlayer(playerGet);
-          }}
-        />
-        <Text>Experience: </Text>
-        <input
-          className="input-stat"
-          type="number"
-          style={{
-            width: 20,
-            color: "lightgreen",
-            marginRight: 0,
-          }}
-          value={player.stats.experience}
-          onChange={(evt) => {
-            const playerGet = { ...player };
-            playerGet.stats.experience = parseInt(evt.target.value);
             updatePlayer(playerGet);
           }}
         />
