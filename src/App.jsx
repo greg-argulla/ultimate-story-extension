@@ -1209,7 +1209,7 @@ function App() {
         >
           Save
         </button>
-        {role === "GM" && editMode && (
+        {editMode && (
           <button
             className="button"
             style={{
