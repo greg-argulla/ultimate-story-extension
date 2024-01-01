@@ -3254,6 +3254,52 @@ function App() {
   const renderGMNav = () => {
     return (
       <div>
+        <div
+          style={{
+            display: "flex",
+            marginTop: 4,
+            alignItems: "center",
+            flexWrap: "wrap",
+          }}
+        >
+          <Text>NPCs: </Text>
+          {playerList
+            .sort((a, b) => a.traits.name.localeCompare(b.traits.name))
+            .map((data, index) => {
+              if (data.isGMPlayer)
+                return (
+                  <button
+                    className="button"
+                    style={{
+                      width: "auto",
+                      padding: 5,
+                      marginLeft: 5,
+                      color: "orange",
+                    }}
+                    onClick={() => {
+                      setPlayer(data);
+                    }}
+                  >
+                    {data.traits.name}
+                  </button>
+                );
+            })}
+          <button
+            className="button"
+            style={{
+              width: "auto",
+              padding: 5,
+              marginLeft: "auto",
+              color: "red",
+            }}
+            onClick={() => {
+              setPlayer(null);
+            }}
+          >
+            Close
+          </button>
+        </div>
+        <hr />
         <div style={{ display: "flex", marginTop: 4 }}>
           <div style={{ width: 44 }}>
             <Text>Name: </Text>
@@ -3316,20 +3362,6 @@ function App() {
             }}
           >
             Poisoned
-          </button>
-          <button
-            className="button"
-            style={{
-              width: "auto",
-              padding: 5,
-              marginLeft: "auto",
-              color: "red",
-            }}
-            onClick={() => {
-              setPlayer(null);
-            }}
-          >
-            Close
           </button>
         </div>
         <hr />
