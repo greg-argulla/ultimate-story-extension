@@ -139,9 +139,9 @@ const newPlayer = (isGMPlayer) => {
         items: [
           {
             name: "Sample Item",
-            info: '"Oh you\'re approaching me?"',
+            info: '"Come at me!"',
             detail:
-              "Add your details here. \n\n *This text is highlighted in red* \n\n `This text is highlighted in yellow` \n\n Use the format below to add images <https://64.media.tumblr.com/ed730f0983a9677e54d40462d48c54e1/5e1be258d5eee932-e5/s500x750/11af7cb09f4b98fd96ad8220ebf8ff1f1e4d1e98.gif>",
+              "Add your details here. \n\n *This text is highlighted in red* \n\n `This text is highlighted in yellow` \n\n Use the format below to add images <https://64.media.tumblr.com/65b2b9c388b86da9e30c14778600f2ff/tumblr_ncxgi0ieoI1qkye4lo4_400.gif>",
           },
         ],
       },
@@ -154,13 +154,13 @@ const newPlayer = (isGMPlayer) => {
     actions: [
       {
         name: "Sample Action",
-        info: '"Oh you\'re approaching me?"',
+        info: '"You are dead!"',
         detail:
-          "Add your details here. \n\n *This text is highlighted in red* \n\n `This text is highlighted in yellow` \n\n Use the format below to add images <https://64.media.tumblr.com/ed730f0983a9677e54d40462d48c54e1/5e1be258d5eee932-e5/s500x750/11af7cb09f4b98fd96ad8220ebf8ff1f1e4d1e98.gif>",
+          "Add your details here. \n\n *This text is highlighted in red* \n\n `This text is highlighted in yellow` \n\n Use the format below to add images <https://i0.wp.com/drunkenanimeblog.com/wp-content/uploads/2019/06/log-horizon.gif?fit=500%2C247>",
         diceOne: "dex",
         diceTwo: "dex",
-        bonus: 0,
-        damage: 0,
+        bonus: 1,
+        damage: 10,
         useHR: true,
       },
       {
