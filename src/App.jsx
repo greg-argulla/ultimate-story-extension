@@ -134,9 +134,16 @@ const newPlayer = (isGMPlayer) => {
     },
     skills: [
       {
-        categoryName: "",
-        categoryInfo: "",
-        items: [{ name: "", info: "", detail: "" }],
+        categoryName: "Sample Category",
+        categoryInfo: "Sample Side Information",
+        items: [
+          {
+            name: "Sample Item",
+            info: '"Oh you\'re approaching me?"',
+            detail:
+              "Add your details here. \n\n *This text is highlighted in red* \n\n `This text is highlighted in yellow` \n\n Use the format below to add images <https://64.media.tumblr.com/ed730f0983a9677e54d40462d48c54e1/5e1be258d5eee932-e5/s500x750/11af7cb09f4b98fd96ad8220ebf8ff1f1e4d1e98.gif>",
+          },
+        ],
       },
       {
         categoryName: "",
@@ -145,6 +152,17 @@ const newPlayer = (isGMPlayer) => {
       },
     ],
     actions: [
+      {
+        name: "Sample Action",
+        info: '"Oh you\'re approaching me?"',
+        detail:
+          "Add your details here. \n\n *This text is highlighted in red* \n\n `This text is highlighted in yellow` \n\n Use the format below to add images <https://64.media.tumblr.com/ed730f0983a9677e54d40462d48c54e1/5e1be258d5eee932-e5/s500x750/11af7cb09f4b98fd96ad8220ebf8ff1f1e4d1e98.gif>",
+        diceOne: "dex",
+        diceTwo: "dex",
+        bonus: 0,
+        damage: 0,
+        useHR: true,
+      },
       {
         name: "",
         info: "",
