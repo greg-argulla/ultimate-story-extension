@@ -1101,33 +1101,52 @@ function App() {
             >
               {data.traits ? data.traits.name : ""}
             </div>
-            <div style={{ display: "flex", flexDirection: "row", width: 130 }}>
-              <span className="outline" style={{ marginRight: 4 }}>
-                DMG:{" "}
-                <span className="outline" style={{ color: "red" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                width: 150,
+                gap: 4,
+                justifyContent: "center",
+              }}
+            >
+              <span
+                className="outline"
+                style={{ marginRight: 4, textAlign: "center" }}
+              >
+                DMG:
+                <div className="outline" style={{ color: "red" }}>
                   {data.stats ? data.stats.currentHP : 0}
-                </span>
+                </div>
               </span>
-              <span className="outline" style={{ marginRight: 4 }}>
-                SPENT:{" "}
-                <span className="outline" style={{ color: "lightblue" }}>
+              <span
+                className="outline"
+                style={{ marginRight: 4, textAlign: "center" }}
+              >
+                SPENT:
+                <div className="outline" style={{ color: "lightblue" }}>
                   {data.stats ? data.stats.currentMP : 0}
-                </span>
+                </div>
               </span>
-              <span className="outline" style={{ marginRight: 4 }}>
-                DEF:{" "}
-                <span className="outline" style={{ color: "violet" }}>
+              <span
+                className="outline"
+                style={{ marginRight: 4, textAlign: "center" }}
+              >
+                DEF:
+                <div className="outline" style={{ color: "violet" }}>
                   {(data.stats ? parseInt(data.stats.defense) : 0) +
                     getDiceStat(data.attributes.currentdex)}
-                </span>
+                </div>
               </span>
-
-              <span className="outline" style={{ marginRight: 4 }}>
-                M.DEF:{" "}
-                <span className="outline" style={{ color: "cyan" }}>
+              <span
+                className="outline"
+                style={{ marginRight: 4, textAlign: "center" }}
+              >
+                M.DEF:
+                <div className="outline" style={{ color: "cyan" }}>
                   {(data.stats ? parseInt(data.stats.mDefense) : 0) +
                     getDiceStat(data.attributes.currentins)}
-                </span>
+                </div>
               </span>
             </div>
             <button
