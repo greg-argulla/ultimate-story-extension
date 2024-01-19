@@ -1106,7 +1106,7 @@ function App() {
                 width: 20,
                 color: "Red",
               }}
-              value={data.stats.currentHP}
+              value={data.stats ? data.stats.currentHP : 0}
               readOnly
             />
             <Text>MP: </Text>
@@ -1116,7 +1116,7 @@ function App() {
                 width: 20,
                 color: "LightBlue",
               }}
-              value={data.stats.currentMP}
+              value={data.stats ? data.stats.currentMP : 0}
               readOnly
             />
             <button
