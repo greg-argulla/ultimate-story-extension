@@ -3511,7 +3511,7 @@ function App() {
         <hr />
         <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
           <span style={{ display: "inline-block" }}>
-            <Text>HP:</Text>
+            <Text>DMG:</Text>
             <input
               className="input-stat"
               type="number"
@@ -3546,7 +3546,7 @@ function App() {
               }}
               value={player.stats ? player.stats.currentHP : 0}
             />
-            <Text>MP:</Text>
+            <Text>Spent:</Text>
             <input
               className="input-stat"
               type="number"
@@ -3640,7 +3640,7 @@ function App() {
                   width: 50,
                   padding: 5,
                   marginLeft: 5,
-                  marginRight: 30,
+                  marginRight: 5,
                   color: "orange",
                 }}
                 onClick={async () => {
@@ -3668,7 +3668,7 @@ function App() {
                   width: 40,
                   padding: 5,
                   marginLeft: 5,
-                  marginRight: 30,
+                  marginRight: 5,
                   color: "orange",
                 }}
                 onClick={async () => {
