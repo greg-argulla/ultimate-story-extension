@@ -1083,64 +1083,60 @@ function App() {
             }}
           >
             <Text>Name: </Text>
-            <span
+            <div
               className="outline"
               style={{
-                display: "inline-block",
-                fontSize: 12,
-                color: "orange",
                 width: 150,
                 textAlign: "center",
-                padding: 4,
+                fontSize: 12,
+                marginRight: 4,
+                color: "orange",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
+                display: "inline-block",
+                paddingLeft: 4,
+                minHeight: 18,
               }}
             >
               {data.traits ? data.traits.name : ""}
-            </span>
-            <Text>HP:</Text>
-            <input
-              className="input-stat"
-              style={{
-                width: 20,
-                color: "Red",
-              }}
-              value={data.stats ? data.stats.currentHP : 0}
-              readOnly
-            />
-            <Text>MP: </Text>
-            <input
-              className="input-stat"
-              style={{
-                width: 20,
-                color: "LightBlue",
-              }}
-              value={data.stats ? data.stats.currentMP : 0}
-              readOnly
-            />
-            <button
-              className="button"
-              style={{
-                marginLeft: 4,
-                width: 60,
-                padding: 5,
-                marginRight: 4,
-              }}
-              onClick={async () => {
-                duplicateGMCharacter(data);
-              }}
-            >
-              Duplicate
-            </button>
+            </div>
+            <div style={{ display: "flex", flexDirection: "row", width: 130 }}>
+              <span className="outline" style={{ marginRight: 4 }}>
+                DMG:{" "}
+                <span className="outline" style={{ color: "red" }}>
+                  {data.stats ? data.stats.currentHP : 0}
+                </span>
+              </span>
+              <span className="outline" style={{ marginRight: 4 }}>
+                SPENT:{" "}
+                <span className="outline" style={{ color: "lightblue" }}>
+                  {data.stats ? data.stats.currentMP : 0}
+                </span>
+              </span>
+              <span className="outline" style={{ marginRight: 4 }}>
+                DEF:{" "}
+                <span className="outline" style={{ color: "violet" }}>
+                  {(data.stats ? parseInt(data.stats.defense) : 0) +
+                    getDiceStat(data.attributes.currentdex)}
+                </span>
+              </span>
+
+              <span className="outline" style={{ marginRight: 4 }}>
+                M.DEF:{" "}
+                <span className="outline" style={{ color: "cyan" }}>
+                  {(data.stats ? parseInt(data.stats.mDefense) : 0) +
+                    getDiceStat(data.attributes.currentins)}
+                </span>
+              </span>
+            </div>
             <button
               className="button"
               style={{
                 marginLeft: "auto",
-                width: 90,
+                width: 70,
                 padding: 5,
                 marginRight: 4,
-                float: "right",
               }}
               onClick={async () => {
                 setTab("actions");
@@ -1156,6 +1152,20 @@ function App() {
             >
               Open
             </button>
+            <button
+              className="button"
+              style={{
+                width: 40,
+                padding: 5,
+                marginRight: 4,
+              }}
+              onClick={async () => {
+                duplicateGMCharacter(data);
+              }}
+            >
+              Copy
+            </button>
+
             <button
               className="button"
               style={{ fontWeight: "bolder", width: 25, color: "darkred" }}
@@ -3485,18 +3495,16 @@ function App() {
           <span className="outline" style={{ marginRight: 4, marginTop: 4 }}>
             DEF:{" "}
             <span className="outline" style={{ color: "violet" }}>
-              {player.stats
-                ? parseInt(player.stats.defense)
-                : 0 + getDiceStat(player.attributes.currentdex)}
+              {(player.stats ? parseInt(player.stats.defense) : 0) +
+                getDiceStat(player.attributes.currentdex)}
             </span>
           </span>
 
           <span className="outline" style={{ marginRight: 4, marginTop: 4 }}>
             M.DEF:{" "}
             <span className="outline" style={{ color: "cyan" }}>
-              {player.stats
-                ? parseInt(player.stats.mDefense)
-                : 0 + getDiceStat(player.attributes.currentins)}
+              {(player.stats ? parseInt(player.stats.mDefense) : 0) +
+                getDiceStat(player.attributes.currentins)}
             </span>
           </span>
         </div>
