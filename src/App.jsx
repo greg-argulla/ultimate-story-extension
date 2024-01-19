@@ -1544,6 +1544,13 @@ function App() {
             updatePlayer(playerGet);
           }}
           value={player.stats.currentHP}
+          onBlur={() => {
+            const playerGet = { ...player };
+            if (isNaN(playerGet.stats.currentHP)) {
+              playerGet.stats.currentHP = 0;
+              updatePlayer(playerGet);
+            }
+          }}
         />
         <Text>MP: </Text>
         <input
@@ -1579,6 +1586,13 @@ function App() {
             updatePlayer(playerGet);
           }}
           value={player.stats.currentMP}
+          onBlur={() => {
+            const playerGet = { ...player };
+            if (isNaN(playerGet.stats.currentMP)) {
+              playerGet.stats.currentMP = 0;
+              updatePlayer(playerGet);
+            }
+          }}
         />
         <Text>IP: </Text>
         <input
@@ -1609,6 +1623,13 @@ function App() {
             updatePlayer(playerGet);
           }}
           value={player.stats.currentIP}
+          onBlur={() => {
+            const playerGet = { ...player };
+            if (isNaN(playerGet.stats.currentIP)) {
+              playerGet.stats.currentIP = 0;
+              updatePlayer(playerGet);
+            }
+          }}
         />
         <Text>FP: </Text>
         <input
@@ -1631,6 +1652,13 @@ function App() {
             updatePlayer(playerGet);
           }}
           value={player.stats.fabula}
+          onBlur={() => {
+            const playerGet = { ...player };
+            if (isNaN(playerGet.stats.fabula)) {
+              playerGet.stats.fabula = 0;
+              updatePlayer(playerGet);
+            }
+          }}
         />
         <button
           className="button"
@@ -2351,6 +2379,13 @@ function App() {
             playerGet.stats.experience = parseInt(evt.target.value);
             updatePlayer(playerGet);
           }}
+          onBlur={() => {
+            const playerGet = { ...player };
+            if (isNaN(playerGet.stats.experience)) {
+              playerGet.stats.experience = 0;
+              updatePlayer(playerGet);
+            }
+          }}
         />
         <button
           className="button"
@@ -2417,6 +2452,21 @@ function App() {
             }
             updatePlayer(playerGet);
           }}
+          onBlur={() => {
+            const playerGet = { ...player };
+            if (isNaN(playerGet.stats.defenseMartial)) {
+              playerGet.stats.defenseMartial = 0;
+              updatePlayer(playerGet);
+            }
+            if (isNaN(playerGet.stats.defense)) {
+              playerGet.stats.defense = 0;
+              updatePlayer(playerGet);
+            }
+            if (isNaN(playerGet.stats.defenseMod)) {
+              playerGet.stats.defenseMod = 0;
+              updatePlayer(playerGet);
+            }
+          }}
         />
         <Text>Magic Defense Mod: </Text>
         <input
@@ -2441,6 +2491,17 @@ function App() {
               );
             }
             updatePlayer(playerGet);
+          }}
+          onBlur={() => {
+            const playerGet = { ...player };
+            if (isNaN(playerGet.stats.mDefenseMod)) {
+              playerGet.stats.mDefenseMod = 0;
+              updatePlayer(playerGet);
+            }
+            if (isNaN(playerGet.stats.mDefense)) {
+              playerGet.stats.mDefense = 0;
+              updatePlayer(playerGet);
+            }
           }}
         />
       </div>
@@ -2486,6 +2547,15 @@ function App() {
             playerGet.stats.hpMod = parseInt(evt.target.value);
             updatePlayer(playerGet);
           }}
+          onBlur={() => {
+            const playerGet = { ...player };
+            if (isNaN(playerGet.stats.hpMod)) {
+              playerGet.stats.hpMod = 0;
+              playerGet.stats.maxHP =
+                getDiceStat(player.attributes.mig) * 5 + player.traits.level;
+              updatePlayer(playerGet);
+            }
+          }}
         />
         <Text>MP: </Text>
         <input
@@ -2505,6 +2575,15 @@ function App() {
               player.traits.level;
             playerGet.stats.mpMod = parseInt(evt.target.value);
             updatePlayer(playerGet);
+          }}
+          onBlur={() => {
+            const playerGet = { ...player };
+            if (isNaN(playerGet.stats.mpMod)) {
+              playerGet.stats.mpMod = 0;
+              playerGet.stats.maxMP =
+                getDiceStat(player.attributes.wil) * 5 + player.traits.level;
+              updatePlayer(playerGet);
+            }
           }}
         />
         <Text
@@ -2530,6 +2609,13 @@ function App() {
             playerGet.stats.maxIP = 6 + parseInt(evt.target.value);
             playerGet.stats.ipMod = parseInt(evt.target.value);
             updatePlayer(playerGet);
+          }}
+          onBlur={() => {
+            const playerGet = { ...player };
+            if (isNaN(playerGet.stats.ipMod)) {
+              playerGet.stats.ipMod = 0;
+              updatePlayer(playerGet);
+            }
           }}
         />
       </div>
@@ -2996,6 +3082,13 @@ function App() {
               playerGet.actions[index].bonus = evt.target.value;
               updatePlayer(playerGet);
             }}
+            onBlur={() => {
+              const playerGet = { ...player };
+              if (isNaN(parseInt(playerGet.actions[index].bonus))) {
+                playerGet.actions[index].bonus = 0;
+                updatePlayer(playerGet);
+              }
+            }}
           />
           <button
             className="button"
@@ -3021,6 +3114,13 @@ function App() {
               const playerGet = { ...player };
               playerGet.actions[index].damage = evt.target.value;
               updatePlayer(playerGet);
+            }}
+            onBlur={() => {
+              const playerGet = { ...player };
+              if (isNaN(parseInt(playerGet.actions[index].damage))) {
+                playerGet.actions[index].damage = 0;
+                updatePlayer(playerGet);
+              }
             }}
           />
           <button
@@ -3110,6 +3210,11 @@ function App() {
             onChange={(evt) => {
               setBonus(evt.target.value);
             }}
+            onBlur={() => {
+              if (isNaN(parseInt(bonus))) {
+                setBonus(0);
+              }
+            }}
           />
         </span>
 
@@ -3163,6 +3268,11 @@ function App() {
             value={healthModifier}
             onChange={(evt) => {
               setHealthModifier(evt.target.value);
+            }}
+            onBlur={() => {
+              if (isNaN(parseInt(healthModifier))) {
+                setHealthModifier(0);
+              }
             }}
           />
         </span>
@@ -3248,6 +3358,11 @@ function App() {
             value={mindModifier}
             onChange={(evt) => {
               setMindModifier(evt.target.value);
+            }}
+            onBlur={() => {
+              if (isNaN(parseInt(mindModifier))) {
+                setMindModifier(0);
+              }
             }}
           />
         </span>
@@ -3564,6 +3679,13 @@ function App() {
                 updatePlayer(playerGet);
               }}
               value={player.stats ? player.stats.currentHP : 0}
+              onBlur={() => {
+                const playerGet = { ...player };
+                if (isNaN(playerGet.stats.currentHP)) {
+                  playerGet.stats.currentHP = 0;
+                  updatePlayer(playerGet);
+                }
+              }}
             />
             <Text>Spent:</Text>
             <input
@@ -3599,6 +3721,13 @@ function App() {
                 updatePlayer(playerGet);
               }}
               value={player.stats ? player.stats.currentMP : 0}
+              onBlur={() => {
+                const playerGet = { ...player };
+                if (isNaN(playerGet.stats.currentMP)) {
+                  playerGet.stats.currentMP = 0;
+                  updatePlayer(playerGet);
+                }
+              }}
             />
             <Text>DEF:</Text>
             <input
@@ -3651,6 +3780,13 @@ function App() {
                 updatePlayer(playerGet);
               }}
               value={player.stats ? player.stats.mDefense : 0}
+              onBlur={() => {
+                const playerGet = { ...player };
+                if (isNaN(playerGet.stats.mDefense)) {
+                  playerGet.stats.mDefense = 0;
+                  updatePlayer(playerGet);
+                }
+              }}
             />
             {!player.linkedStats && (
               <button
@@ -3711,6 +3847,11 @@ function App() {
               value={healthModifier}
               onChange={(evt) => {
                 setHealthModifier(evt.target.value);
+              }}
+              onBlur={() => {
+                if (isNaN(parseInt(healthModifier))) {
+                  setHealthModifier(0);
+                }
               }}
             />
           </span>
@@ -4021,6 +4162,13 @@ function App() {
                         const playerGet = { ...player };
                         playerGet.items.zenit = parseInt(evt.target.value);
                         updatePlayer(playerGet);
+                      }}
+                      onBlur={() => {
+                        const playerGet = { ...player };
+                        if (isNaN(playerGet.items.zenit)) {
+                          playerGet.items.items = 0;
+                          updatePlayer(playerGet);
+                        }
                       }}
                     />
                   </span>
