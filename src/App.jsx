@@ -33,6 +33,12 @@ const newPlayer = (isGMPlayer) => {
       traits: {
         name: "",
       },
+      stats: {
+        defense: 0,
+        mDefense: 0,
+        currentHP: 0,
+        currentMP: 0,
+      },
       attributes: {
         dex: "d8",
         ins: "d8",
@@ -63,6 +69,7 @@ const newPlayer = (isGMPlayer) => {
           useHR: true,
         },
       ],
+      linkedStats: "",
     };
   }
 
@@ -408,6 +415,12 @@ function App() {
       ...playerGet,
       name: npc.name,
       traits: { name: npc.name },
+      stats: {
+        defense: npc.extra.def,
+        mDefense: npc.extra.mDef,
+        currentHP: 0,
+        currentMP: 0,
+      },
       attributes: {
         dex: "d" + npc.attributes.dexterity,
         ins: "d" + npc.attributes.insight,
@@ -462,6 +475,24 @@ function App() {
         } else {
           image.text.richText[0].children[0].text = valueGet.toString();
         }
+      }
+    });
+  };
+
+  const updateGMNoteItem = async (id, hp, mp) => {
+    if (id === "") return;
+    const hpGet = isNaN(hp) ? 0 : hp;
+    const mpGet = isNaN(mp) ? 0 : mp;
+    await OBR.scene.items.updateItems([id], (images) => {
+      for (let image of images) {
+        image.text.richText[0] = {
+          type: "paragraph",
+          children: [{ text: hpGet.toString() }],
+        };
+        image.text.richText[1] = {
+          type: "paragraph",
+          children: [{ text: mpGet.toString() }],
+        };
       }
     });
   };
@@ -889,6 +920,33 @@ function App() {
     showMessage(`Added GM character!`);
   };
 
+  const duplicateGMCharacter = async (playerGet) => {
+    playerGet.id = Date.now();
+    playerGet.traits.name = playerGet.traits.name;
+
+    if (playerGet.stats) {
+      playerGet.stats.currentHP = 0;
+      playerGet.stats.currentMP = 0;
+    } else {
+      playerGet.stats = {
+        defense: 0,
+        mDefense: 0,
+        currentHP: 0,
+        currentMP: 0,
+      };
+    }
+    playerGet.linkedStats = "";
+    const metadataData = await OBR.scene.getMetadata();
+    const metadata = metadataData["ultimate.story.extension/metadata"];
+    let metadataChange = { ...metadata };
+    metadataChange[playerGet.id] = playerGet;
+
+    OBR.scene.setMetadata({
+      "ultimate.story.extension/metadata": metadataChange,
+    });
+    showMessage(`Added GM character!`);
+  };
+
   const debuffItem = (debuff, stat) => {
     return (
       <span
@@ -1041,20 +1099,48 @@ function App() {
             >
               {data.traits ? data.traits.name : ""}
             </span>
-            <Text>Debuff:</Text>
-            {debuffItem(data.debuff.slow, "slow")}
-            {debuffItem(data.debuff.dazed, "dazed")}
-            {debuffItem(data.debuff.weak, "weak")}
-            {debuffItem(data.debuff.shaken, "shaken")}
-            {debuffItem(data.debuff.enraged, "enraged")}
-            {debuffItem(data.debuff.poisoned, "poisoned")}
+            <Text>HP:</Text>
+            <input
+              className="input-stat"
+              style={{
+                width: 20,
+                color: "Red",
+              }}
+              value={data.stats.currentHP}
+              readOnly
+            />
+            <Text>MP: </Text>
+            <input
+              className="input-stat"
+              style={{
+                width: 20,
+                color: "LightBlue",
+              }}
+              value={data.stats.currentMP}
+              readOnly
+            />
             <button
               className="button"
               style={{
                 marginLeft: 4,
-                width: 96,
+                width: 60,
                 padding: 5,
                 marginRight: 4,
+              }}
+              onClick={async () => {
+                duplicateGMCharacter(data);
+              }}
+            >
+              Duplicate
+            </button>
+            <button
+              className="button"
+              style={{
+                marginLeft: "auto",
+                width: 90,
+                padding: 5,
+                marginRight: 4,
+                float: "right",
               }}
               onClick={async () => {
                 setTab("actions");
@@ -1070,17 +1156,15 @@ function App() {
             >
               Open
             </button>
-            {editMode && (
-              <button
-                className="button"
-                style={{ fontWeight: "bolder", width: 25, color: "darkred" }}
-                onClick={() => {
-                  removePlayer(data.id);
-                }}
-              >
-                ✖
-              </button>
-            )}
+            <button
+              className="button"
+              style={{ fontWeight: "bolder", width: 25, color: "darkred" }}
+              onClick={() => {
+                removePlayer(data.id);
+              }}
+            >
+              ✖
+            </button>
           </div>
           <hr />
         </div>
@@ -1764,9 +1848,12 @@ function App() {
     const { stat, label } = props;
     return (
       <div>
-        <Text>
-          {label}: {player.attributes["current" + stat]}
-        </Text>
+        <span className="outline">
+          {label}:{" "}
+          <span style={{ color: "orange" }}>
+            {player.attributes["current" + stat]}
+          </span>
+        </span>
         <select
           className="attribute-stat"
           value={player.attributes[stat]}
@@ -3269,6 +3356,8 @@ function App() {
     );
   };
 
+  const [currentNPC, setCurrentNPC] = useState(0);
+
   const renderGMNav = () => {
     return (
       <div>
@@ -3280,28 +3369,33 @@ function App() {
             flexWrap: "wrap",
           }}
         >
-          <Text>NPCs: </Text>
-          {playerList
-            .sort((a, b) => a.traits.name.localeCompare(b.traits.name))
-            .map((data, index) => {
-              if (data.isGMPlayer)
-                return (
-                  <button
-                    className="button"
-                    style={{
-                      width: "auto",
-                      padding: 5,
-                      marginLeft: 5,
-                      color: "orange",
-                    }}
-                    onClick={() => {
-                      setPlayer(data);
-                    }}
-                  >
-                    {data.traits.name}
-                  </button>
-                );
-            })}
+          <Text>Name: </Text>
+          <div
+            className="outline"
+            style={{ marginRight: 20, marginLeft: 5, color: "orange" }}
+          >
+            {player.traits.name}
+          </div>
+
+          <Text>Switch NPC: </Text>
+          <select
+            className="attribute-stat"
+            style={{ color: "lightgrey" }}
+            value={currentNPC}
+            onChange={(evt) => {
+              setPlayer(playerList[evt.target.value]);
+              sendCharacter(playerList[evt.target.value]);
+              setCurrentNPC(evt.target.value);
+            }}
+          >
+            {playerList
+              .sort((a, b) => a.traits.name.localeCompare(b.traits.name))
+              .map((data, index) => {
+                if (data.isGMPlayer)
+                  return <option value={index}>{data.traits.name}</option>;
+              })}
+          </select>
+
           <button
             className="button"
             style={{
@@ -3383,13 +3477,261 @@ function App() {
           </button>
         </div>
         <hr />
-        <div style={{ display: "flex", gap: 10 }}>
-          <GMAttribute stat="dex" label="Dexterity" />
-          <GMAttribute stat="ins" label="Insight" />
-          <GMAttribute stat="mig" label="Might" />
-          <GMAttribute stat="wil" label="Willpower" />
+        <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+          <GMAttribute stat="dex" label="DEX" />
+          <GMAttribute stat="ins" label="INS" />
+          <GMAttribute stat="mig" label="MIG" />
+          <GMAttribute stat="wil" label="WIL" />
+          <span className="outline" style={{ marginRight: 4, marginTop: 4 }}>
+            DEF:{" "}
+            <span className="outline" style={{ color: "violet" }}>
+              {player.stats
+                ? parseInt(player.stats.defense)
+                : 0 + getDiceStat(player.attributes.currentdex)}
+            </span>
+          </span>
+
+          <span className="outline" style={{ marginRight: 4, marginTop: 4 }}>
+            M.DEF:{" "}
+            <span className="outline" style={{ color: "cyan" }}>
+              {player.stats
+                ? parseInt(player.stats.mDefense)
+                : 0 + getDiceStat(player.attributes.currentins)}
+            </span>
+          </span>
         </div>
-        <div></div>
+        <hr />
+        <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
+          <span style={{ display: "inline-block" }}>
+            <Text>HP:</Text>
+            <input
+              className="input-stat"
+              type="number"
+              style={{
+                width: 20,
+                color: "Red",
+              }}
+              onChange={(evt) => {
+                const playerGet = { ...player };
+
+                let value = parseInt(evt.target.value, 0);
+                if (playerGet.stats) {
+                  playerGet.stats.currentHP = value;
+                } else {
+                  playerGet.stats = {
+                    defense: 0,
+                    mDefense: 0,
+                    currentHP: value,
+                    currentMP: 0,
+                  };
+                }
+
+                if (playerGet.linkedStats) {
+                  updateGMNoteItem(
+                    playerGet.linkedStats,
+                    playerGet.stats.currentHP,
+                    playerGet.stats.currentMP
+                  );
+                }
+
+                updatePlayer(playerGet);
+              }}
+              value={player.stats ? player.stats.currentHP : 0}
+            />
+            <Text>MP:</Text>
+            <input
+              className="input-stat"
+              type="number"
+              style={{
+                width: 20,
+                color: "LightBlue",
+              }}
+              onChange={(evt) => {
+                const playerGet = { ...player };
+
+                let value = parseInt(evt.target.value, 0);
+                if (playerGet.stats) {
+                  playerGet.stats.currentMP = value;
+                } else {
+                  playerGet.stats = {
+                    defense: 0,
+                    mDefense: 0,
+                    currentHP: 0,
+                    currentMP: value,
+                  };
+                }
+
+                if (playerGet.linkedStats) {
+                  updateGMNoteItem(
+                    playerGet.linkedStats,
+                    playerGet.stats.currentHP,
+                    playerGet.stats.currentMP
+                  );
+                }
+
+                updatePlayer(playerGet);
+              }}
+              value={player.stats ? player.stats.currentMP : 0}
+            />
+            <Text>DEF:</Text>
+            <input
+              className="input-stat"
+              type="number"
+              style={{
+                width: 20,
+                color: "violet",
+              }}
+              onChange={(evt) => {
+                const playerGet = { ...player };
+
+                let value = parseInt(evt.target.value, 0);
+                if (playerGet.stats) {
+                  playerGet.stats.defense = value;
+                } else {
+                  playerGet.stats = {
+                    defense: 8,
+                    mDefense: 8,
+                    currentHP: 0,
+                    currentMP: 0,
+                  };
+                }
+                updatePlayer(playerGet);
+              }}
+              value={player.stats ? player.stats.defense : 0}
+            />
+            <Text>M.DEF:</Text>
+            <input
+              className="input-stat"
+              type="number"
+              style={{
+                width: 20,
+                color: "cyan",
+              }}
+              onChange={(evt) => {
+                const playerGet = { ...player };
+
+                let value = parseInt(evt.target.value, 0);
+                if (playerGet.stats) {
+                  playerGet.stats.mDefense = value;
+                } else {
+                  playerGet.stats = {
+                    defense: 8,
+                    mDefense: 8,
+                    currentHP: 0,
+                    currentMP: 0,
+                  };
+                }
+                updatePlayer(playerGet);
+              }}
+              value={player.stats ? player.stats.mDefense : 0}
+            />
+            {!player.linkedStats && (
+              <button
+                className="button"
+                style={{
+                  width: 50,
+                  padding: 5,
+                  marginLeft: 5,
+                  marginRight: 30,
+                  color: "orange",
+                }}
+                onClick={async () => {
+                  const selected = await OBR.player.getSelection();
+                  if (selected && selected[0]) {
+                    const playerGet = { ...player };
+                    playerGet.linkedStats = selected[0];
+
+                    updateGMNoteItem(
+                      playerGet.linkedStats,
+                      playerGet.stats.currentHP,
+                      playerGet.stats.currentMP
+                    );
+                    updatePlayer(playerGet);
+                  }
+                }}
+              >
+                Link
+              </button>
+            )}
+            {player.linkedStats && (
+              <button
+                className="button"
+                style={{
+                  width: 40,
+                  padding: 5,
+                  marginLeft: 5,
+                  marginRight: 30,
+                  color: "orange",
+                }}
+                onClick={async () => {
+                  const playerGet = { ...player };
+                  playerGet.linkedStats = "";
+                  updatePlayer(playerGet);
+                }}
+              >
+                Unlink
+              </button>
+            )}
+
+            <Text>Calc:</Text>
+            <input
+              className="input-stat"
+              type="number"
+              style={{
+                width: 20,
+                color: "LightGray",
+              }}
+              value={healthModifier}
+              onChange={(evt) => {
+                setHealthModifier(evt.target.value);
+              }}
+            />
+          </span>
+          <button
+            className="button"
+            style={{ width: 50, marginRight: 4, fontSize: 10, marginTop: 2 }}
+            onClick={() => {
+              const playerGet = { ...player };
+              if (playerGet.linkedStats) {
+                (playerGet.stats.currentHP =
+                  parseInt(playerGet.stats.currentHP) +
+                  parseInt(healthModifier)),
+                  updateGMNoteItem(
+                    playerGet.linkedStats,
+                    playerGet.stats.currentHP,
+                    playerGet.stats.currentMP
+                  );
+              }
+              updatePlayer(playerGet);
+              showMessage(`Inflicted ${healthModifier} damage!`);
+              setHealthModifier(0);
+            }}
+          >
+            Damage
+          </button>
+          <button
+            className="button"
+            style={{ width: 50, marginRight: 4, fontSize: 10, marginTop: 2 }}
+            onClick={() => {
+              const playerGet = { ...player };
+              if (playerGet.linkedStats) {
+                (playerGet.stats.currentMP =
+                  parseInt(playerGet.stats.currentMP) +
+                  parseInt(healthModifier)),
+                  updateGMNoteItem(
+                    playerGet.linkedStats,
+                    playerGet.stats.currentHP,
+                    playerGet.stats.currentMP
+                  );
+              }
+              updatePlayer(playerGet);
+              showMessage(`Inflicted ${healthModifier} damage!`);
+              setHealthModifier(0);
+            }}
+          >
+            Spend
+          </button>
+        </div>
       </div>
     );
   };
