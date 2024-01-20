@@ -340,9 +340,23 @@ function App() {
 
     if (npc.description) {
       actionsFromNpc.push({
-        name: "Description",
-        info: npc.traits,
+        name: npc.name,
+        info:
+          "LVL " +
+          npc.lvl +
+          " " +
+          npc.rank.toUpperCase() +
+          " | " +
+          npc.species.toUpperCase(),
         detail: npc.description,
+        noDice: true,
+      });
+    }
+
+    if (npc.traits) {
+      actionsFromNpc.push({
+        name: "Traits",
+        detail: npc.traits,
         noDice: true,
       });
     }
