@@ -409,7 +409,43 @@ function App() {
             damage: 0,
             useHR: true,
           });
+        } else {
+          actionsFromNpc.push({
+            name: attack.name,
+            info:
+              attack.mp +
+              " - " +
+              attack.target.charAt(0).toUpperCase() +
+              attack.target.slice(1) +
+              " - " +
+              attack.duration.charAt(0).toUpperCase() +
+              attack.duration.slice(1),
+            detail: attack.effect,
+            noDice: true,
+          });
         }
+      });
+    }
+
+    if (npc.actions) {
+      npc.actions.map((action) => {
+        actionsFromNpc.push({
+          name: action.name,
+          info: "",
+          detail: action.effect,
+          noDice: true,
+        });
+      });
+    }
+
+    if (npc.special) {
+      npc.special.map((special) => {
+        actionsFromNpc.push({
+          name: special.name,
+          info: "",
+          detail: special.effect,
+          noDice: true,
+        });
       });
     }
 
@@ -3040,6 +3076,15 @@ function App() {
               updatePlayer(playerGet);
             }}
           />
+          {data.noDice && (
+            <button
+              className="button"
+              style={{ marginRight: 4, width: 40 }}
+              onClick={() => sendSkill(data)}
+            >
+              Show
+            </button>
+          )}
 
           <button
             className="button"
@@ -3051,126 +3096,129 @@ function App() {
             ✖
           </button>
         </div>
-        <div style={{ display: "flex", alignItems: "center", marginTop: 4 }}>
-          <Text>Dice 1: </Text>
-          <select
-            className="attribute-stat"
-            value={data.diceOne}
-            onChange={(evt) => {
-              const playerGet = { ...player };
-              playerGet.actions[index].diceOne = evt.target.value;
-              updatePlayer(playerGet);
-            }}
-          >
-            <option value="dex">DEX</option>
-            <option value="ins">INS</option>
-            <option value="mig">MIG</option>
-            <option value="wil">WIL</option>
-            <option value="d12">d12</option>
-            <option value="d10">d10</option>
-            <option value="d8">d8</option>
-            <option value="d6">d6</option>
-          </select>
-          <Text>Dice 2: </Text>
-          <select
-            className="attribute-stat"
-            value={data.diceTwo}
-            onChange={(evt) => {
-              const playerGet = { ...player };
-              playerGet.actions[index].diceTwo = evt.target.value;
-              updatePlayer(playerGet);
-            }}
-          >
-            <option value="dex">DEX</option>
-            <option value="ins">INS</option>
-            <option value="mig">MIG</option>
-            <option value="wil">WIL</option>
-            <option value="d12">d12</option>
-            <option value="d10">d10</option>
-            <option value="d8">d8</option>
-            <option value="d6">d6</option>
-          </select>
-          <Text>Modifier:</Text>
-          <input
-            className="input-stat"
-            type="number"
-            style={{
-              width: 20,
-              color: "lightblue",
-            }}
-            value={data.bonus}
-            onChange={(evt) => {
-              const playerGet = { ...player };
-              playerGet.actions[index].bonus = evt.target.value;
-              updatePlayer(playerGet);
-            }}
-            onBlur={() => {
-              const playerGet = { ...player };
-              if (isNaN(parseInt(playerGet.actions[index].bonus))) {
-                playerGet.actions[index].bonus = 0;
+        {!data.noDice && (
+          <div style={{ display: "flex", alignItems: "center", marginTop: 4 }}>
+            <Text>Dice 1: </Text>
+            <select
+              className="attribute-stat"
+              value={data.diceOne}
+              onChange={(evt) => {
+                const playerGet = { ...player };
+                playerGet.actions[index].diceOne = evt.target.value;
                 updatePlayer(playerGet);
-              }
-            }}
-          />
-          <button
-            className="button"
-            style={{ marginRight: 4 }}
-            onClick={() => {
-              const playerGet = { ...player };
-              playerGet.actions[index].useHR = !playerGet.actions[index].useHR;
-              updatePlayer(playerGet);
-            }}
-          >
-            {data.useHR ? "With HR" : "No HR"}
-          </button>
-          <Text>Damage:</Text>
-          <input
-            className="input-stat"
-            type="number"
-            style={{
-              width: 20,
-              color: "red",
-            }}
-            value={data.damage}
-            onChange={(evt) => {
-              const playerGet = { ...player };
-              playerGet.actions[index].damage = evt.target.value;
-              updatePlayer(playerGet);
-            }}
-            onBlur={() => {
-              const playerGet = { ...player };
-              if (isNaN(parseInt(playerGet.actions[index].damage))) {
-                playerGet.actions[index].damage = 0;
+              }}
+            >
+              <option value="dex">DEX</option>
+              <option value="ins">INS</option>
+              <option value="mig">MIG</option>
+              <option value="wil">WIL</option>
+              <option value="d12">d12</option>
+              <option value="d10">d10</option>
+              <option value="d8">d8</option>
+              <option value="d6">d6</option>
+            </select>
+            <Text>Dice 2: </Text>
+            <select
+              className="attribute-stat"
+              value={data.diceTwo}
+              onChange={(evt) => {
+                const playerGet = { ...player };
+                playerGet.actions[index].diceTwo = evt.target.value;
                 updatePlayer(playerGet);
-              }
-            }}
-          />
-          <button
-            className="button"
-            style={{ marginRight: 4, width: 40 }}
-            onClick={() => sendRoll(data)}
-          >
-            Roll
-          </button>
-          <button
-            className="button"
-            style={{ width: 25, marginRight: 4 }}
-            onClick={() => {
-              sortUp(index);
-            }}
-          >
-            ↑
-          </button>
-          <button
-            className="button"
-            style={{ width: 25 }}
-            onClick={() => {
-              sortDown(index);
-            }}
-          >
-            ↓
-          </button>
-        </div>
+              }}
+            >
+              <option value="dex">DEX</option>
+              <option value="ins">INS</option>
+              <option value="mig">MIG</option>
+              <option value="wil">WIL</option>
+              <option value="d12">d12</option>
+              <option value="d10">d10</option>
+              <option value="d8">d8</option>
+              <option value="d6">d6</option>
+            </select>
+            <Text>Modifier:</Text>
+            <input
+              className="input-stat"
+              type="number"
+              style={{
+                width: 20,
+                color: "lightblue",
+              }}
+              value={data.bonus}
+              onChange={(evt) => {
+                const playerGet = { ...player };
+                playerGet.actions[index].bonus = evt.target.value;
+                updatePlayer(playerGet);
+              }}
+              onBlur={() => {
+                const playerGet = { ...player };
+                if (isNaN(parseInt(playerGet.actions[index].bonus))) {
+                  playerGet.actions[index].bonus = 0;
+                  updatePlayer(playerGet);
+                }
+              }}
+            />
+            <button
+              className="button"
+              style={{ marginRight: 4 }}
+              onClick={() => {
+                const playerGet = { ...player };
+                playerGet.actions[index].useHR =
+                  !playerGet.actions[index].useHR;
+                updatePlayer(playerGet);
+              }}
+            >
+              {data.useHR ? "With HR" : "No HR"}
+            </button>
+            <Text>Damage:</Text>
+            <input
+              className="input-stat"
+              type="number"
+              style={{
+                width: 20,
+                color: "red",
+              }}
+              value={data.damage}
+              onChange={(evt) => {
+                const playerGet = { ...player };
+                playerGet.actions[index].damage = evt.target.value;
+                updatePlayer(playerGet);
+              }}
+              onBlur={() => {
+                const playerGet = { ...player };
+                if (isNaN(parseInt(playerGet.actions[index].damage))) {
+                  playerGet.actions[index].damage = 0;
+                  updatePlayer(playerGet);
+                }
+              }}
+            />
+            <button
+              className="button"
+              style={{ marginRight: 4, width: 40 }}
+              onClick={() => sendRoll(data)}
+            >
+              Roll
+            </button>
+            <button
+              className="button"
+              style={{ width: 25, marginRight: 4 }}
+              onClick={() => {
+                sortUp(index);
+              }}
+            >
+              ↑
+            </button>
+            <button
+              className="button"
+              style={{ width: 25 }}
+              onClick={() => {
+                sortDown(index);
+              }}
+            >
+              ↓
+            </button>
+          </div>
+        )}
         <textarea
           className="input-stat"
           rows="40"
@@ -3532,7 +3580,6 @@ function App() {
             display: "flex",
             marginTop: 4,
             alignItems: "center",
-            flexWrap: "wrap",
           }}
         >
           <Text>Name: </Text>
@@ -3547,7 +3594,7 @@ function App() {
           </div>
           <select
             className="attribute-stat"
-            style={{ color: "lightgrey" }}
+            style={{ color: "lightgrey", width: 100 }}
             value={currentNPC}
             onChange={(evt) => {
               setPlayer(playerList[evt.target.value]);
