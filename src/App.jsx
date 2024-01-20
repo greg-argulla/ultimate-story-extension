@@ -2076,7 +2076,7 @@ function App() {
       <button
         className="button"
         style={{
-          marginLeft: 4,
+          marginRight: 4,
           fontSize: 10,
           width: 40,
           textTransform: "capitalize",
@@ -3070,6 +3070,18 @@ function App() {
     showMessage(`Added new action.`);
   };
 
+  const addActionNoRoll = () => {
+    const playerGet = { ...player };
+    playerGet.actions.push({
+      name: "",
+      info: "",
+      detail: "",
+      noDice: true,
+    });
+    updatePlayer(playerGet);
+    showMessage(`Added new action.`);
+  };
+
   const removeAction = (index) => {
     if (confirm("Are you sure you want to delete the action?") == true) {
       const playerGet = { ...player };
@@ -3147,7 +3159,7 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 258,
+              width: data.noDice ? 180 : 258,
               color: "lightgrey",
             }}
             value={data.info}
@@ -3159,13 +3171,33 @@ function App() {
             }}
           />
           {data.noDice && (
-            <button
-              className="button"
-              style={{ marginRight: 4, width: 40 }}
-              onClick={() => sendSkill(data)}
-            >
-              Show
-            </button>
+            <>
+              <button
+                className="button"
+                style={{ width: 25, marginRight: 4 }}
+                onClick={() => {
+                  sortUp(index);
+                }}
+              >
+                ↑
+              </button>
+              <button
+                className="button"
+                style={{ width: 25, marginRight: 4 }}
+                onClick={() => {
+                  sortDown(index);
+                }}
+              >
+                ↓
+              </button>
+              <button
+                className="button"
+                style={{ marginRight: 4, width: 50 }}
+                onClick={() => sendSkill(data)}
+              >
+                Show
+              </button>
+            </>
           )}
 
           <button
@@ -3276,13 +3308,6 @@ function App() {
             />
             <button
               className="button"
-              style={{ marginRight: 4, width: 40 }}
-              onClick={() => sendRoll(data)}
-            >
-              Roll
-            </button>
-            <button
-              className="button"
               style={{ width: 25, marginRight: 4 }}
               onClick={() => {
                 sortUp(index);
@@ -3298,6 +3323,13 @@ function App() {
               }}
             >
               ↓
+            </button>
+            <button
+              className="button"
+              style={{ marginLeft: 4, width: 50 }}
+              onClick={() => sendRoll(data)}
+            >
+              Roll
             </button>
           </div>
         )}
@@ -3605,7 +3637,7 @@ function App() {
         <div>
           {renderStatRolls()}
           <hr />
-          <Text>Search By Name: </Text>
+          <span className="outline">Search:</span>
           <input
             className="input-stat"
             style={{
@@ -3628,20 +3660,43 @@ function App() {
               Clear
             </button>
           )}
+
           <button
             className="button"
             style={{
               fontWeight: "bolder",
-              width: 80,
+              width: 60,
               float: "right",
               marginTop: 2,
+              marginRight: 4,
             }}
             onClick={() => {
               addAction();
             }}
           >
-            Add Action
+            With Roll
           </button>
+          <button
+            className="button"
+            style={{
+              fontWeight: "bolder",
+              width: 60,
+              float: "right",
+              marginTop: 2,
+              marginRight: 4,
+            }}
+            onClick={() => {
+              addActionNoRoll();
+            }}
+          >
+            No Roll
+          </button>
+          <span
+            className="outline"
+            style={{ float: "right", marginTop: 6, marginRight: 4 }}
+          >
+            Add Action:
+          </span>
         </div>
         <hr />
 
@@ -4067,7 +4122,7 @@ function App() {
           <button
             className="button"
             style={{
-              marginLeft: 4,
+              marginRight: 4,
               fontSize: 10,
               width: 50,
               textTransform: "capitalize",
@@ -4087,8 +4142,7 @@ function App() {
           <button
             className="button"
             style={{
-              marginLeft: 4,
-              marginRight: 5,
+              marginRight: 4,
               fontSize: 10,
               width: 50,
               textTransform: "capitalize",
@@ -4112,7 +4166,7 @@ function App() {
           >
             <select
               className="attribute-stat"
-              style={{ color: "orange" }}
+              style={{ color: "orange", marginLeft: 4 }}
               value={damageTypeSelected}
               onChange={(evt) => {
                 setSelectedDamageType(evt.target.value);
@@ -4473,7 +4527,7 @@ function App() {
                   >
                     Room Saved Character:
                   </span>
-                  <a
+                  {/* <a
                     className="outline"
                     style={{
                       textDecoration: "underline",
@@ -4483,7 +4537,7 @@ function App() {
                     href="https://fabula-ultima-helper.web.app/"
                   >
                     Link
-                  </a>
+                  </a> */}
                   <button
                     type="button"
                     className="button"
