@@ -326,6 +326,59 @@ function App() {
     }, 1000);
   };
 
+  function calcHP(npc) {
+    let hp = 2 * npc.lvl + 5 * npc.attributes.might;
+
+    // Skill Extra HP
+    if (npc.extra?.hp) {
+      hp += parseInt(npc.extra.hp);
+    }
+
+    // Rank
+    if (npc.rank === "elite" || npc.rank === "champion2") {
+      hp = hp * 2;
+    }
+
+    if (npc.rank === "champion3") {
+      hp = hp * 3;
+    }
+
+    if (npc.rank === "champion4") {
+      hp = hp * 4;
+    }
+
+    if (npc.rank === "champion5") {
+      hp = hp * 5;
+    }
+
+    if (npc.rank === "companion") {
+      const sl = npc.companionlvl || 1;
+      const lvl = npc.companionpclvl || 5;
+      hp = sl * npc.attributes.might + Math.floor(lvl / 2);
+    }
+
+    return hp;
+  }
+
+  function calcMP(npc) {
+    let mp = npc.lvl + 5 * npc.attributes.will;
+    // Skill Extra MP
+    if (npc.extra?.mp) {
+      mp += parseInt(npc.extra.mp);
+    }
+    // Rank
+    if (
+      npc.rank === "champion2" ||
+      npc.rank === "champion3" ||
+      npc.rank === "champion4" ||
+      npc.rank === "champion5"
+    ) {
+      mp = mp * 2;
+    }
+
+    return mp;
+  }
+
   const ImportFultimatorJSON = async (npc) => {
     const playerGet = newPlayer(true);
 
@@ -355,7 +408,8 @@ function App() {
 
     if (npc.traits) {
       actionsFromNpc.push({
-        name: "Traits",
+        name: "Stats/Traits",
+        info: "Max HP: " + calcHP(npc) + "/ Max MP: " + calcMP(npc),
         detail: npc.traits,
         noDice: true,
       });
