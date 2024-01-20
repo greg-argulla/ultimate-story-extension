@@ -362,7 +362,9 @@ function App() {
     if (npc.weaponattacks) {
       npc.weaponattacks.map((attack) => {
         actionsFromNpc.push({
-          name: attack.name,
+          name: attack.name
+            ? attack.name + ` (${attack.weapon.name})`
+            : attack.weapon.name,
           info:
             attack.weapon.type.charAt(0).toUpperCase() +
             attack.weapon.type.slice(1) +
@@ -411,13 +413,31 @@ function App() {
       });
     }
 
+    let def = 0;
+    if (npc.armor) {
+      if (npc.armor.def) {
+        def = npc.armor.def + npc.extra.def - npc.attributes.dexterity;
+      } else {
+        def = npc.armor.defbonus + npc.extra.def;
+      }
+    }
+
+    let mDef = 0;
+    if (npc.armor) {
+      if (npc.armor.mdefbonus) {
+        mDef = npc.armor.mdefbonus + npc.extra.mdef;
+      } else {
+        mDef = npc.extra.mdef ? npc.extra.mdef : 0;
+      }
+    }
+
     const playerToImport = {
       ...playerGet,
       name: npc.name,
       traits: { name: npc.name },
       stats: {
-        defense: npc.extra.def,
-        mDefense: npc.extra.mDef,
+        defense: def,
+        mDefense: mDef,
         currentHP: 0,
         currentMP: 0,
       },
