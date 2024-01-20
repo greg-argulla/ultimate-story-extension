@@ -33,6 +33,7 @@ const newPlayer = (isGMPlayer) => {
       traits: {
         name: "",
       },
+      affinities: {},
       stats: {
         defense: 0,
         mDefense: 0,
@@ -337,6 +338,15 @@ function App() {
       will: "wil",
     };
 
+    if (npc.description) {
+      actionsFromNpc.push({
+        name: "Description",
+        info: npc.traits,
+        detail: npc.description,
+        noDice: true,
+      });
+    }
+
     if (npc.attacks) {
       npc.attacks.map((attack) => {
         actionsFromNpc.push({
@@ -396,7 +406,7 @@ function App() {
             name: attack.name,
             info:
               attack.mp +
-              " - " +
+              " MP - " +
               attack.target.charAt(0).toUpperCase() +
               attack.target.slice(1) +
               " - " +
@@ -414,7 +424,7 @@ function App() {
             name: attack.name,
             info:
               attack.mp +
-              " - " +
+              " MP - " +
               attack.target.charAt(0).toUpperCase() +
               attack.target.slice(1) +
               " - " +
@@ -452,9 +462,12 @@ function App() {
     let def = 0;
     if (npc.armor) {
       if (npc.armor.def) {
-        def = npc.armor.def + npc.extra.def - npc.attributes.dexterity;
+        def =
+          npc.armor.def + npc.extra.def
+            ? npc.extra.def
+            : 0 - npc.attributes.dexterity;
       } else {
-        def = npc.armor.defbonus + npc.extra.def;
+        def = npc.armor.defbonus + (npc.extra.def ? npc.extra.def : 0);
       }
     } else {
       def = npc.extra.def ? npc.extra.def : 0;
@@ -463,7 +476,7 @@ function App() {
     let mDef = 0;
     if (npc.armor) {
       if (npc.armor.mdefbonus) {
-        mDef = npc.armor.mdefbonus + npc.extra.mDef;
+        mDef = npc.armor.mdefbonus + (npc.extra.mDef ? npc.extra.mDef : 0);
       }
     } else {
       mDef = npc.extra.mDef ? npc.extra.mDef : 0;
@@ -479,6 +492,7 @@ function App() {
         currentHP: 0,
         currentMP: 0,
       },
+      affinities: npc.affinities,
       attributes: {
         dex: "d" + npc.attributes.dexterity,
         ins: "d" + npc.attributes.insight,
@@ -3571,6 +3585,68 @@ function App() {
   };
 
   const [currentNPC, setCurrentNPC] = useState(0);
+  const [damageTypeSelected, setSelectedDamageType] = useState("physical");
+
+  const damageTypes = [
+    "physical",
+    "wind",
+    "bolt",
+    "dark",
+    "earth",
+    "fire",
+    "ice",
+    "light",
+    "poison",
+  ];
+
+  const affinityDictionary = {
+    vu: " is *Vulnerable* to ",
+    na: " is `Neutral` to ",
+    rs: " is *Resistant* to ",
+    im: " is *Immune* to ",
+    ab: " *absorbs* ",
+  };
+
+  const sendAffinity = (targetName, type, affinity) => {
+    const skillData = {
+      skillName: targetName,
+      detail: affinityDictionary[affinity] + `\`${type}\``,
+      characterName: player.traits.name,
+      userId: id,
+      username: name,
+      characterID: player.id,
+      id: Date.now(),
+    };
+    OBR.room.setMetadata({
+      "ultimate.story.extension/sendskill": skillData,
+    });
+    showMessage("Affinity Info Sent!");
+  };
+
+  const sendAllAffinity = (targetName, affinity) => {
+    let affinities = "";
+
+    damageTypes.forEach((type, index) => {
+      affinities +=
+        (index > 0 ? "\n" : "") +
+        affinityDictionary[affinity[type] ? affinity[type] : "na"] +
+        `\`${type}\``;
+    });
+
+    const skillData = {
+      skillName: targetName,
+      detail: affinities,
+      characterName: player.traits.name,
+      userId: id,
+      username: name,
+      characterID: player.id,
+      id: Date.now(),
+    };
+    OBR.room.setMetadata({
+      "ultimate.story.extension/sendskill": skillData,
+    });
+    showMessage("Affinity Info Sent!");
+  };
 
   const renderGMNav = () => {
     return (
@@ -3582,13 +3658,23 @@ function App() {
             alignItems: "center",
           }}
         >
-          <Text>Name: </Text>
-          <div
-            className="outline"
-            style={{ marginRight: 20, marginLeft: 5, color: "orange" }}
-          >
-            {player.traits.name}
+          <div style={{ width: 44 }}>
+            <Text>Name: </Text>
           </div>
+          <input
+            className="input-stat"
+            style={{
+              width: 220,
+              color: "white",
+            }}
+            value={player.traits.name}
+            onChange={(evt) => {
+              const playerGet = { ...player };
+              playerGet.traits.name = evt.target.value;
+              updatePlayer(playerGet);
+            }}
+            placeholder="Your Enemy Name"
+          />
           <div className="outline" style={{ marginLeft: "auto" }}>
             Switch NPC:
           </div>
@@ -3623,93 +3709,6 @@ function App() {
           >
             Close
           </button>
-        </div>
-        <hr />
-        <div style={{ display: "flex", marginTop: 4 }}>
-          <div style={{ width: 44 }}>
-            <Text>Name: </Text>
-          </div>
-          <input
-            className="input-stat"
-            style={{
-              width: 160,
-              color: "white",
-            }}
-            value={player.traits.name}
-            onChange={(evt) => {
-              const playerGet = { ...player };
-              playerGet.traits.name = evt.target.value;
-              updatePlayer(playerGet);
-            }}
-            placeholder="Your Enemy Name"
-          />
-          <GMCondition stat="dex" condition="slow" />
-          <GMCondition stat="ins" condition="dazed" />
-          <GMCondition stat="mig" condition="weak" />
-          <GMCondition stat="wil" condition="shaken" />
-          <button
-            className="button"
-            style={{
-              marginLeft: 4,
-              fontSize: 10,
-              width: 50,
-              textTransform: "capitalize",
-              backgroundColor: player.debuff.enraged ? "darkred" : "#222",
-              color: player.debuff.enraged ? "white" : "#ffd433",
-            }}
-            onClick={() => {
-              const playerGet = { ...player };
-              playerGet.debuff.enraged = !player.debuff.enraged;
-              playerGet.attributes["currentdex"] = getCurrentAttribute("dex");
-              playerGet.attributes["currentins"] = getCurrentAttribute("ins");
-              updatePlayer(playerGet);
-            }}
-          >
-            Enraged
-          </button>
-          <button
-            className="button"
-            style={{
-              marginLeft: 4,
-              marginRight: 10,
-              fontSize: 10,
-              width: 50,
-              textTransform: "capitalize",
-              backgroundColor: player.debuff.poisoned ? "darkred" : "#222",
-              color: player.debuff.poisoned ? "white" : "#ffd433",
-            }}
-            onClick={() => {
-              const playerGet = { ...player };
-              playerGet.debuff.poisoned = !player.debuff.poisoned;
-              playerGet.attributes["currentmig"] = getCurrentAttribute("mig");
-              playerGet.attributes["currentwil"] = getCurrentAttribute("wil");
-              updatePlayer(playerGet);
-            }}
-          >
-            Poisoned
-          </button>
-        </div>
-        <hr />
-        <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-          <GMAttribute stat="dex" label="DEX" />
-          <GMAttribute stat="ins" label="INS" />
-          <GMAttribute stat="mig" label="MIG" />
-          <GMAttribute stat="wil" label="WIL" />
-          <span className="outline" style={{ marginRight: 4, marginTop: 4 }}>
-            DEF:{" "}
-            <span className="outline" style={{ color: "violet" }}>
-              {(player.stats ? parseInt(player.stats.defense) : 0) +
-                getDiceStat(player.attributes.currentdex)}
-            </span>
-          </span>
-
-          <span className="outline" style={{ marginRight: 4, marginTop: 4 }}>
-            M.DEF:{" "}
-            <span className="outline" style={{ color: "cyan" }}>
-              {(player.stats ? parseInt(player.stats.mDefense) : 0) +
-                getDiceStat(player.attributes.currentins)}
-            </span>
-          </span>
         </div>
         <hr />
         <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
@@ -3968,6 +3967,134 @@ function App() {
           >
             Spend
           </button>
+        </div>
+        <hr />
+        <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+          <GMAttribute stat="dex" label="DEX" />
+          <GMAttribute stat="ins" label="INS" />
+          <GMAttribute stat="mig" label="MIG" />
+          <GMAttribute stat="wil" label="WIL" />
+          <span className="outline" style={{ marginRight: 4, marginTop: 4 }}>
+            DEF:{" "}
+            <span className="outline" style={{ color: "violet" }}>
+              {(player.stats ? parseInt(player.stats.defense) : 0) +
+                getDiceStat(player.attributes.currentdex)}
+            </span>
+          </span>
+
+          <span className="outline" style={{ marginRight: 4, marginTop: 4 }}>
+            M.DEF:{" "}
+            <span className="outline" style={{ color: "cyan" }}>
+              {(player.stats ? parseInt(player.stats.mDefense) : 0) +
+                getDiceStat(player.attributes.currentins)}
+            </span>
+          </span>
+        </div>
+        <hr />
+        <div style={{ display: "flex", marginTop: 4 }}>
+          <GMCondition stat="dex" condition="slow" />
+          <GMCondition stat="ins" condition="dazed" />
+          <GMCondition stat="mig" condition="weak" />
+          <GMCondition stat="wil" condition="shaken" />
+          <button
+            className="button"
+            style={{
+              marginLeft: 4,
+              fontSize: 10,
+              width: 50,
+              textTransform: "capitalize",
+              backgroundColor: player.debuff.enraged ? "darkred" : "#222",
+              color: player.debuff.enraged ? "white" : "#ffd433",
+            }}
+            onClick={() => {
+              const playerGet = { ...player };
+              playerGet.debuff.enraged = !player.debuff.enraged;
+              playerGet.attributes["currentdex"] = getCurrentAttribute("dex");
+              playerGet.attributes["currentins"] = getCurrentAttribute("ins");
+              updatePlayer(playerGet);
+            }}
+          >
+            Enraged
+          </button>
+          <button
+            className="button"
+            style={{
+              marginLeft: 4,
+              marginRight: 5,
+              fontSize: 10,
+              width: 50,
+              textTransform: "capitalize",
+              backgroundColor: player.debuff.poisoned ? "darkred" : "#222",
+              color: player.debuff.poisoned ? "white" : "#ffd433",
+            }}
+            onClick={() => {
+              const playerGet = { ...player };
+              playerGet.debuff.poisoned = !player.debuff.poisoned;
+              playerGet.attributes["currentmig"] = getCurrentAttribute("mig");
+              playerGet.attributes["currentwil"] = getCurrentAttribute("wil");
+              updatePlayer(playerGet);
+            }}
+          >
+            Poisoned
+          </button>
+          <span style={{ color: "grey" }}>|</span>
+          <div
+            className="outline"
+            style={{ display: "flex", alignItems: "center" }}
+          >
+            <select
+              className="attribute-stat"
+              style={{ color: "orange" }}
+              value={damageTypeSelected}
+              onChange={(evt) => {
+                setSelectedDamageType(evt.target.value);
+              }}
+            >
+              {damageTypes.map((item) => (
+                <option value={item}>
+                  {item}
+                  {player.affinities && player.affinities[item] ? "*" : ""}
+                </option>
+              ))}
+            </select>
+            Affinity:{" "}
+            <span style={{ textTransform: "uppercase", marginLeft: 4 }}>
+              {player.affinities
+                ? player.affinities[damageTypeSelected]
+                : "N/A"}
+            </span>
+            <button
+              className="button"
+              style={{
+                marginLeft: 4,
+                fontSize: 10,
+                width: 40,
+              }}
+              onClick={() => {
+                sendAffinity(
+                  player.traits.name,
+                  damageTypeSelected,
+                  player.affinities[damageTypeSelected]
+                    ? player.affinities[damageTypeSelected]
+                    : "na"
+                );
+              }}
+            >
+              Send
+            </button>
+            <button
+              className="button"
+              style={{
+                marginLeft: 4,
+                fontSize: 10,
+              }}
+              onClick={() => {
+                sendAllAffinity(player.traits.name, player.affinities);
+              }}
+            >
+              Send All
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -4278,6 +4405,17 @@ function App() {
                   >
                     Room Saved Character:
                   </span>
+                  <a
+                    className="outline"
+                    style={{
+                      textDecoration: "underline",
+                      float: "right",
+                      marginTop: 4,
+                    }}
+                    href="https://fabula-ultima-helper.web.app/"
+                  >
+                    Link
+                  </a>
                   <button
                     type="button"
                     className="button"
