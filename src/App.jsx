@@ -3520,8 +3520,9 @@ function App() {
           >
             {player.traits.name}
           </div>
-
-          <Text>Switch NPC: </Text>
+          <div className="outline" style={{ marginLeft: "auto" }}>
+            Switch NPC:
+          </div>
           <select
             className="attribute-stat"
             style={{ color: "lightgrey" }}
@@ -3545,7 +3546,6 @@ function App() {
             style={{
               width: "auto",
               padding: 5,
-              marginLeft: "auto",
               color: "red",
             }}
             onClick={() => {
