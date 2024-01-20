@@ -420,15 +420,17 @@ function App() {
       } else {
         def = npc.armor.defbonus + npc.extra.def;
       }
+    } else {
+      def = npc.extra.def ? npc.extra.def : 0;
     }
 
     let mDef = 0;
     if (npc.armor) {
       if (npc.armor.mdefbonus) {
-        mDef = npc.armor.mdefbonus + npc.extra.mdef;
-      } else {
-        mDef = npc.extra.mdef ? npc.extra.mdef : 0;
+        mDef = npc.armor.mdefbonus + npc.extra.mDef;
       }
+    } else {
+      mDef = npc.extra.mDef ? npc.extra.mDef : 0;
     }
 
     const playerToImport = {
