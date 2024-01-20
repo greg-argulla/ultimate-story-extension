@@ -409,7 +409,7 @@ function App() {
     if (npc.traits) {
       actionsFromNpc.push({
         name: "Stats/Traits",
-        info: "Max HP: " + calcHP(npc) + "/ Max MP: " + calcMP(npc),
+        info: "Max HP: " + calcHP(npc) + " / Max MP: " + calcMP(npc),
         detail: npc.traits,
         noDice: true,
       });
