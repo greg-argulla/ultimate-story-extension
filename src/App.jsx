@@ -379,6 +379,19 @@ function App() {
     return mp;
   }
 
+  const rankDictionary = {
+    soldier: "Solider",
+    elite: "Elite",
+    champion2: "Champion (2)",
+    champion3: "Champion (3)",
+    champion4: "Champion (4)",
+    champion5: "Champion (5)",
+  };
+
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
   const ImportFultimatorJSON = async (npc) => {
     const playerGet = newPlayer(true);
 
@@ -398,9 +411,9 @@ function App() {
           "LVL " +
           npc.lvl +
           " " +
-          npc.rank.toUpperCase() +
+          rankDictionary[npc.rank] +
           " | " +
-          npc.species.toUpperCase(),
+          capitalizeFirstLetter(npc.species),
         detail: npc.description,
         noDice: true,
       });
@@ -473,6 +486,7 @@ function App() {
           actionsFromNpc.push({
             name: attack.name,
             info:
+              "Spell - " +
               attack.mp +
               " MP - " +
               attack.target.charAt(0).toUpperCase() +
@@ -491,6 +505,7 @@ function App() {
           actionsFromNpc.push({
             name: attack.name,
             info:
+              "Spell - " +
               attack.mp +
               " MP - " +
               attack.target.charAt(0).toUpperCase() +
@@ -509,7 +524,7 @@ function App() {
       npc.actions.map((action) => {
         actionsFromNpc.push({
           name: action.name,
-          info: "",
+          info: "Other Action",
           detail: action.effect,
           noDice: true,
         });
@@ -520,7 +535,7 @@ function App() {
       npc.special.map((special) => {
         actionsFromNpc.push({
           name: special.name,
-          info: "",
+          info: "Special Action",
           detail: special.effect,
           noDice: true,
         });
@@ -3336,7 +3351,7 @@ function App() {
         <textarea
           className="input-stat"
           rows="40"
-          cols="88"
+          cols="40"
           style={{
             textAlign: "left",
             color: "#FFF",
