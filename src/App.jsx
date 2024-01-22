@@ -494,7 +494,7 @@ function App() {
               " - " +
               attack.duration.charAt(0).toUpperCase() +
               attack.duration.slice(1),
-            detail: attack.effect,
+            detail: "(*ϟ*) " + attack.effect,
             diceOne: attributeMap[attack.attr1],
             diceTwo: attributeMap[attack.attr2],
             bonus: Math.floor(npc.lvl / 10) + (npc.extra.magic ? 3 : 0),
