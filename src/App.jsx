@@ -4554,7 +4554,7 @@ function App() {
                         id: "rodeo.owlbear.example/popover",
                         url: "https://fabula-ultima-helper.web.app/",
                         height: 700,
-                        width: 700,
+                        width: 1200,
                         anchorElementId: "test",
                         anchorOrigin: { horizontal: "LEFT", vertical: "TOP" },
                       });
