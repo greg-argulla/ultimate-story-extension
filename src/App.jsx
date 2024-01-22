@@ -1061,20 +1061,6 @@ function App() {
     }
   };
 
-  const addGMCharacter = async () => {
-    const playerGet = newPlayer(true);
-
-    const metadataData = await OBR.scene.getMetadata();
-    const metadata = metadataData["ultimate.story.extension/metadata"];
-    let metadataChange = { ...metadata };
-    metadataChange[playerGet.id] = playerGet;
-
-    OBR.scene.setMetadata({
-      "ultimate.story.extension/metadata": metadataChange,
-    });
-    showMessage(`Added GM character!`);
-  };
-
   const duplicateGMCharacter = async (playerGet) => {
     playerGet.id = Date.now();
     playerGet.traits.name = playerGet.traits.name;
@@ -1567,23 +1553,6 @@ function App() {
           >
             Add Character
           </button>
-
-          {role === "GM" && (
-            <button
-              className="button"
-              style={{
-                fontWeight: "bolder",
-                width: 100,
-                float: "right",
-                marginRight: 4,
-              }}
-              onClick={() => {
-                addGMCharacter();
-              }}
-            >
-              Add GM Character
-            </button>
-          )}
 
           <button
             className="button"
@@ -4551,11 +4520,10 @@ function App() {
                     }}
                     onClick={() => {
                       OBR.popover.open({
-                        id: "rodeo.owlbear.example/popover",
+                        id: "fultimator/popover",
                         url: "https://fabula-ultima-helper.web.app/",
                         height: 700,
                         width: 1200,
-                        anchorElementId: "test",
                         anchorOrigin: { horizontal: "LEFT", vertical: "TOP" },
                       });
                     }}
