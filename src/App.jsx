@@ -4567,7 +4567,7 @@ function App() {
                     className="button"
                     style={{
                       fontWeight: "bolder",
-                      width: 120,
+                      width: 140,
                       float: "right",
                       marginRight: 4,
                     }}
@@ -4576,7 +4576,7 @@ function App() {
                       uploaderRef.current.click();
                     }}
                   >
-                    Import Fultimator NPC
+                    Import Fultimator NPC json
                   </button>
                   <button
                     className="button"
