@@ -1533,17 +1533,7 @@ function App() {
           <span style={{ fontSize: 13, color: "white" }} className="outline">
             Characters:
           </span>
-          {searchActions !== "" && (
-            <button
-              className="button"
-              style={{ fontWeight: "bolder", width: 40 }}
-              onClick={() => {
-                setSearchActions("");
-              }}
-            >
-              Clear
-            </button>
-          )}
+
           <button
             className="button"
             style={{ fontWeight: "bolder", width: 80, float: "right" }}
@@ -1574,12 +1564,64 @@ function App() {
         </div>
         <hr />
         {playerList
+          .filter((item) => !item.isGMPlayer)
           .sort((a, b) => a.traits.name.localeCompare(b.traits.name))
-          .sort((a, b) => {
-            if (a.isGMPlayer && !b.isGMPlayer) return 1;
-            if (!a.isGMPlayer && b.isGMPlayer) return -1;
-            return 0;
-          })
+          .map((data, index) => {
+            return playerItem(data, index);
+          })}
+      </div>
+    );
+  };
+
+  const renderAdversaryList = () => {
+    return (
+      <div style={{ marginTop: 30 }}>
+        <div>
+          <span style={{ fontSize: 13, color: "white" }} className="outline">
+            Adversaries:
+          </span>
+          <button
+            type="button"
+            className="button"
+            style={{
+              fontWeight: "bolder",
+              width: 80,
+              float: "right",
+              marginRight: 4,
+            }}
+            onClick={() => {
+              OBR.popover.open({
+                id: "fultimator/popover",
+                url: "https://fabula-ultima-helper.web.app/",
+                height: 700,
+                width: 1200,
+                anchorOrigin: { horizontal: "LEFT", vertical: "TOP" },
+              });
+            }}
+          >
+            Fultimator
+          </button>
+          <button
+            type="button"
+            className="button"
+            style={{
+              fontWeight: "bolder",
+              width: 140,
+              float: "right",
+              marginRight: 4,
+            }}
+            onClick={() => {
+              if (!uploaderRef.current) return;
+              uploaderRef.current.click();
+            }}
+          >
+            Import Fultimator NPC json
+          </button>
+        </div>
+        <hr />
+        {playerList
+          .filter((item) => item.isGMPlayer)
+          .sort((a, b) => a.traits.name.localeCompare(b.traits.name))
           .map((data, index) => {
             return playerItem(data, index);
           })}
@@ -4490,61 +4532,15 @@ function App() {
             ) : (
               <div>
                 {renderPlayerList()}
+                {role === "GM" && renderAdversaryList()}
                 <div style={{ marginTop: 40 }}>
-                  <input
-                    type="file"
-                    ref={uploaderRef}
-                    multiple={false}
-                    accept=".json"
-                    style={{ display: " none" }}
-                    onChange={async ({ target }) => {
-                      const file = target.files?.[0];
-                      if (!file) return;
-                      ImportFultimatorJSON(await readFile(file));
-                    }}
-                  />
-
                   <span
                     style={{ fontSize: 13, color: "White" }}
                     className="outline"
                   >
                     Room Saved Character:
                   </span>
-                  <span
-                    className="outline"
-                    style={{
-                      textDecoration: "underline",
-                      float: "right",
-                      marginTop: 4,
-                    }}
-                    onClick={() => {
-                      OBR.popover.open({
-                        id: "fultimator/popover",
-                        url: "https://fabula-ultima-helper.web.app/",
-                        height: 700,
-                        width: 1200,
-                        anchorOrigin: { horizontal: "LEFT", vertical: "TOP" },
-                      });
-                    }}
-                  >
-                    Link
-                  </span>
-                  <button
-                    type="button"
-                    className="button"
-                    style={{
-                      fontWeight: "bolder",
-                      width: 140,
-                      float: "right",
-                      marginRight: 4,
-                    }}
-                    onClick={() => {
-                      if (!uploaderRef.current) return;
-                      uploaderRef.current.click();
-                    }}
-                  >
-                    Import Fultimator NPC json
-                  </button>
+
                   <button
                     className="button"
                     style={{
