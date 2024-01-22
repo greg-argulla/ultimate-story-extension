@@ -3351,7 +3351,7 @@ function App() {
         <textarea
           className="input-stat"
           rows="40"
-          cols="40"
+          cols="88"
           style={{
             textAlign: "left",
             color: "#FFF",
@@ -4542,17 +4542,26 @@ function App() {
                   >
                     Room Saved Character:
                   </span>
-                  {/* <a
+                  <span
                     className="outline"
                     style={{
                       textDecoration: "underline",
                       float: "right",
                       marginTop: 4,
                     }}
-                    href="https://fabula-ultima-helper.web.app/"
+                    onClick={() => {
+                      OBR.popover.open({
+                        id: "rodeo.owlbear.example/popover",
+                        url: "https://fabula-ultima-helper.web.app/",
+                        height: 700,
+                        width: 700,
+                        anchorElementId: "test",
+                        anchorOrigin: { horizontal: "LEFT", vertical: "TOP" },
+                      });
+                    }}
                   >
                     Link
-                  </a> */}
+                  </span>
                   <button
                     type="button"
                     className="button"
