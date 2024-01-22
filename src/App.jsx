@@ -1577,6 +1577,18 @@ function App() {
     return (
       <div style={{ marginTop: 30 }}>
         <div>
+          <input
+            type="file"
+            ref={uploaderRef}
+            multiple={false}
+            accept=".json"
+            style={{ display: " none" }}
+            onChange={async ({ target }) => {
+              const file = target.files?.[0];
+              if (!file) return;
+              ImportFultimatorJSON(await readFile(file));
+            }}
+          />
           <span style={{ fontSize: 13, color: "white" }} className="outline">
             Adversaries:
           </span>
