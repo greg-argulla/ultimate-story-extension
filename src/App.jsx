@@ -411,7 +411,7 @@ function App() {
           "LVL " +
           npc.lvl +
           " " +
-          rankDictionary[npc.rank] +
+          (rankDictionary[npc.rank] ? rankDictionary[npc.rank] : "Solider") +
           " | " +
           capitalizeFirstLetter(npc.species),
         detail: npc.description,
