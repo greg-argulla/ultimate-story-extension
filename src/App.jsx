@@ -4035,15 +4035,15 @@ function App() {
             style={{ width: 50, marginRight: 4, fontSize: 10, marginTop: 2 }}
             onClick={() => {
               const playerGet = { ...player };
+              playerGet.stats.currentHP =
+                parseInt(playerGet.stats.currentHP) + parseInt(healthModifier);
+
               if (playerGet.linkedStats) {
-                (playerGet.stats.currentHP =
-                  parseInt(playerGet.stats.currentHP) +
-                  parseInt(healthModifier)),
-                  updateGMNoteItem(
-                    playerGet.linkedStats,
-                    playerGet.stats.currentHP,
-                    playerGet.stats.currentMP
-                  );
+                updateGMNoteItem(
+                  playerGet.linkedStats,
+                  playerGet.stats.currentHP,
+                  playerGet.stats.currentMP
+                );
               }
               updatePlayer(playerGet);
               showMessage(`Inflicted ${healthModifier} damage!`);
@@ -4057,15 +4057,14 @@ function App() {
             style={{ width: 50, marginRight: 4, fontSize: 10, marginTop: 2 }}
             onClick={() => {
               const playerGet = { ...player };
+              playerGet.stats.currentMP =
+                parseInt(playerGet.stats.currentMP) + parseInt(healthModifier);
               if (playerGet.linkedStats) {
-                (playerGet.stats.currentMP =
-                  parseInt(playerGet.stats.currentMP) +
-                  parseInt(healthModifier)),
-                  updateGMNoteItem(
-                    playerGet.linkedStats,
-                    playerGet.stats.currentHP,
-                    playerGet.stats.currentMP
-                  );
+                updateGMNoteItem(
+                  playerGet.linkedStats,
+                  playerGet.stats.currentHP,
+                  playerGet.stats.currentMP
+                );
               }
               updatePlayer(playerGet);
               showMessage(`Inflicted ${healthModifier} damage!`);
