@@ -3460,7 +3460,7 @@ function App() {
           </button>
         )}
 
-        {diceOne && diceTwo && (
+        {diceOne && (
           <button
             className="button"
             style={{ width: 80, float: "right", marginTop: 2 }}
