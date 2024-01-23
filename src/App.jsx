@@ -3747,7 +3747,6 @@ function App() {
     );
   };
 
-  const [currentNPC, setCurrentNPC] = useState(0);
   const [damageTypeSelected, setSelectedDamageType] = useState("physical");
 
   const damageTypes = [
@@ -3844,18 +3843,20 @@ function App() {
           <select
             className="attribute-stat"
             style={{ color: "lightgrey", width: 100 }}
-            value={currentNPC}
+            value={player.id}
             onChange={(evt) => {
-              setPlayer(playerList[evt.target.value]);
-              sendCharacter(playerList[evt.target.value]);
-              setCurrentNPC(evt.target.value);
+              const playerGet = playerList.find((player) => {
+                return player.id === parseInt(evt.target.value);
+              });
+              setPlayer(playerGet);
+              sendCharacter(playerGet);
             }}
           >
             {playerList
               .sort((a, b) => a.traits.name.localeCompare(b.traits.name))
               .map((data, index) => {
                 if (data.isGMPlayer)
-                  return <option value={index}>{data.traits.name}</option>;
+                  return <option value={data.id}>{data.traits.name}</option>;
               })}
           </select>
 
