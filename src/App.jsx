@@ -70,7 +70,9 @@ const newPlayer = (isGMPlayer) => {
           useHR: true,
         },
       ],
-      linkedStats: "",
+      linkedStats: {
+        currentStats: "",
+      },
     };
   }
 
@@ -757,6 +759,7 @@ function App() {
   const [timeoutID, setTimeoutID] = useState(null);
 
   const updatePlayer = (playerGet) => {
+    setPlayer(playerGet);
     if (!timeoutID) {
       const myTimeout = setTimeout(() => {
         savePlayer();
@@ -770,7 +773,6 @@ function App() {
       setTimeoutID(myTimeout);
     }
     setIgnoreFirstUpdate(true);
-    setPlayer(playerGet);
   };
 
   const savePlayer = async () => {
@@ -1076,7 +1078,7 @@ function App() {
         currentMP: 0,
       };
     }
-    playerGet.linkedStats = "";
+    playerGet.linkedStats = { currentStats: "" };
     const metadataData = await OBR.scene.getMetadata();
     const metadata = metadataData["ultimate.story.extension/metadata"];
     let metadataChange = { ...metadata };
@@ -3899,7 +3901,7 @@ function App() {
 
                 if (playerGet.linkedStats) {
                   updateGMNoteItem(
-                    playerGet.linkedStats,
+                    playerGet.linkedStats.currentStats,
                     playerGet.stats.currentHP,
                     playerGet.stats.currentMP
                   );
@@ -3941,7 +3943,7 @@ function App() {
 
                 if (playerGet.linkedStats) {
                   updateGMNoteItem(
-                    playerGet.linkedStats,
+                    playerGet.linkedStats.currentStats,
                     playerGet.stats.currentHP,
                     playerGet.stats.currentMP
                   );
@@ -4017,7 +4019,8 @@ function App() {
                 }
               }}
             />
-            {!player.linkedStats && (
+            {(typeof player.linkedStats === "string" ||
+              !player.linkedStats.currentStats) && (
               <button
                 className="button"
                 style={{
@@ -4031,10 +4034,17 @@ function App() {
                   const selected = await OBR.player.getSelection();
                   if (selected && selected[0]) {
                     const playerGet = { ...player };
-                    playerGet.linkedStats = selected[0];
+                    if (
+                      playerGet.linkedStats &&
+                      typeof playerGet.linkedStats !== "string"
+                    ) {
+                      playerGet.linkedStats.currentStats = selected[0];
+                    } else {
+                      playerGet.linkedStats = { currentStats: selected[0] };
+                    }
 
                     updateGMNoteItem(
-                      playerGet.linkedStats,
+                      playerGet.linkedStats.currentStats,
                       playerGet.stats.currentHP,
                       playerGet.stats.currentMP
                     );
@@ -4045,7 +4055,7 @@ function App() {
                 Link
               </button>
             )}
-            {player.linkedStats && (
+            {player.linkedStats && player.linkedStats.currentStats && (
               <button
                 className="button"
                 style={{
@@ -4057,7 +4067,14 @@ function App() {
                 }}
                 onClick={async () => {
                   const playerGet = { ...player };
-                  playerGet.linkedStats = "";
+                  if (
+                    playerGet.linkedStats &&
+                    typeof playerGet.linkedStats !== "string"
+                  ) {
+                    playerGet.linkedStats.currentStats = "";
+                  } else {
+                    playerGet.linkedStats = { currentStats: "" };
+                  }
                   updatePlayer(playerGet);
                 }}
               >
@@ -4094,7 +4111,7 @@ function App() {
 
               if (playerGet.linkedStats) {
                 updateGMNoteItem(
-                  playerGet.linkedStats,
+                  playerGet.linkedStats.currentStats,
                   playerGet.stats.currentHP,
                   playerGet.stats.currentMP
                 );
@@ -4115,7 +4132,7 @@ function App() {
                 parseInt(playerGet.stats.currentMP) + parseInt(healthModifier);
               if (playerGet.linkedStats) {
                 updateGMNoteItem(
-                  playerGet.linkedStats,
+                  playerGet.linkedStats.currentStats,
                   playerGet.stats.currentHP,
                   playerGet.stats.currentMP
                 );
