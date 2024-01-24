@@ -2522,7 +2522,7 @@ function App() {
 
             playerGet.stats.maxMP =
               getDiceStat(player.attributes.wil) * 5 +
-              player.stats.hpMod +
+              player.stats.mpMod +
               parseInt(evt.target.value);
 
             playerGet.traits.level = parseInt(evt.target.value);
