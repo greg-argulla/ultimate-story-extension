@@ -409,13 +409,6 @@ function App() {
     if (npc.description) {
       actionsFromNpc.push({
         name: npc.name,
-        info:
-          "LVL " +
-          npc.lvl +
-          " " +
-          (rankDictionary[npc.rank] ? rankDictionary[npc.rank] : "Solider") +
-          " | " +
-          capitalizeFirstLetter(npc.species),
         detail: npc.description,
         noDice: true,
       });
@@ -423,9 +416,70 @@ function App() {
 
     if (npc.traits) {
       actionsFromNpc.push({
-        name: "Stats/Traits",
-        info: "Max HP: " + calcHP(npc) + " / Max MP: " + calcMP(npc),
-        detail: npc.traits,
+        name: "Enemy Study Check 7+",
+        info: "Rank/Species/Traits/Max HP/Max MP",
+        detail:
+          "LVL `" +
+          npc.lvl +
+          "` `" +
+          (rankDictionary[npc.rank] ? rankDictionary[npc.rank] : "Solider") +
+          "` | `" +
+          capitalizeFirstLetter(npc.species) +
+          "`\n" +
+          "Max HP: *" +
+          calcHP(npc) +
+          "* / Max MP: *" +
+          calcMP(npc) +
+          "*\nTraits: `" +
+          npc.traits +
+          "`",
+        noDice: true,
+      });
+    }
+
+    let def = 0;
+    if (npc.armor) {
+      if (npc.armor.def) {
+        def =
+          npc.armor.def + npc.extra.def
+            ? npc.extra.def
+            : 0 - npc.attributes.dexterity;
+      } else {
+        def = npc.armor.defbonus + (npc.extra.def ? npc.extra.def : 0);
+      }
+    } else {
+      def = npc.extra.def ? npc.extra.def : 0;
+    }
+
+    let affinities = "";
+
+    damageTypes.forEach((type, index) => {
+      affinities +=
+        (index > 0 ? "\n" : "") +
+        affinityDictionary[npc.affinities[type] ? npc.affinities[type] : "na"] +
+        `\`${type}\``;
+    });
+
+    let mDef = 0;
+    if (npc.armor) {
+      if (npc.armor.mdefbonus) {
+        mDef = npc.armor.mdefbonus + (npc.extra.mDef ? npc.extra.mDef : 0);
+      }
+    } else {
+      mDef = npc.extra.mDef ? npc.extra.mDef : 0;
+    }
+
+    if (npc.traits) {
+      actionsFromNpc.push({
+        name: "Enemy Study Check 10+",
+        info: "Defense/Magic Defense/Damage",
+        detail:
+          "DEF: *" +
+          (def + npc.attributes.dexterity) +
+          "* M.DEF: *" +
+          (mDef + +npc.attributes.insight) +
+          "*\n" +
+          affinities,
         noDice: true,
       });
     }
@@ -471,7 +525,7 @@ function App() {
           bonus:
             Math.floor(npc.lvl / 10) +
             (npc.extra.precision ? 3 : 0) +
-            (attack.flathit ? parseInt(attack.flathit) : 0),
+            (attack.weapon.prec ? attack.weapon.prec : 0),
           damage:
             attack.weapon.damage +
             (attack.extraDamage ? 5 : 0) +
@@ -542,29 +596,6 @@ function App() {
           noDice: true,
         });
       });
-    }
-
-    let def = 0;
-    if (npc.armor) {
-      if (npc.armor.def) {
-        def =
-          npc.armor.def + npc.extra.def
-            ? npc.extra.def
-            : 0 - npc.attributes.dexterity;
-      } else {
-        def = npc.armor.defbonus + (npc.extra.def ? npc.extra.def : 0);
-      }
-    } else {
-      def = npc.extra.def ? npc.extra.def : 0;
-    }
-
-    let mDef = 0;
-    if (npc.armor) {
-      if (npc.armor.mdefbonus) {
-        mDef = npc.armor.mdefbonus + (npc.extra.mDef ? npc.extra.mDef : 0);
-      }
-    } else {
-      mDef = npc.extra.mDef ? npc.extra.mDef : 0;
     }
 
     const playerToImport = {
@@ -3762,42 +3793,17 @@ function App() {
   ];
 
   const affinityDictionary = {
-    vu: " is *Vulnerable* to ",
-    na: " is `Neutral` to ",
-    rs: " is *Resistant* to ",
-    im: " is *Immune* to ",
-    ab: " *absorbs* ",
+    vu: "*Vulnerable* to ",
+    na: "`Neutral` to ",
+    rs: "*Resistant* to ",
+    im: "*Immune* to ",
+    ab: "*Absorbs* ",
   };
 
   const sendAffinity = (targetName, type, affinity) => {
     const skillData = {
       skillName: targetName,
       detail: affinityDictionary[affinity] + `\`${type}\``,
-      characterName: player.traits.name,
-      userId: id,
-      username: name,
-      characterID: player.id,
-      id: Date.now(),
-    };
-    OBR.room.setMetadata({
-      "ultimate.story.extension/sendskill": skillData,
-    });
-    showMessage("Affinity Info Sent!");
-  };
-
-  const sendAllAffinity = (targetName, affinity) => {
-    let affinities = "";
-
-    damageTypes.forEach((type, index) => {
-      affinities +=
-        (index > 0 ? "\n" : "") +
-        affinityDictionary[affinity[type] ? affinity[type] : "na"] +
-        `\`${type}\``;
-    });
-
-    const skillData = {
-      skillName: targetName,
-      detail: affinities,
       characterName: player.traits.name,
       userId: id,
       username: name,
@@ -4235,11 +4241,26 @@ function App() {
               ))}
             </select>
             Affinity:{" "}
-            <span style={{ textTransform: "uppercase", marginLeft: 4 }}>
-              {player.affinities
-                ? player.affinities[damageTypeSelected]
-                : "N/A"}
-            </span>
+            <select
+              className="attribute-stat"
+              style={{ color: "orange", marginLeft: 4 }}
+              value={
+                player.affinities && player.affinities[damageTypeSelected]
+                  ? player.affinities[damageTypeSelected]
+                  : "N/A"
+              }
+              onChange={(evt) => {
+                const playerGet = { ...player };
+                playerGet.affinities[damageTypeSelected] = evt.target.value;
+                updatePlayer(playerGet);
+              }}
+            >
+              <option value={"vu"}>VU</option>
+              <option value={"N/A"}>N/A</option>
+              <option value={"rs"}>RS</option>
+              <option value={"im"}>IM</option>
+              <option value={"ab"}>AB</option>
+            </select>
             <button
               className="button"
               style={{
@@ -4258,18 +4279,6 @@ function App() {
               }}
             >
               Send
-            </button>
-            <button
-              className="button"
-              style={{
-                marginLeft: 4,
-                fontSize: 10,
-              }}
-              onClick={() => {
-                sendAllAffinity(player.traits.name, player.affinities);
-              }}
-            >
-              Send All
             </button>
           </div>
         </div>
