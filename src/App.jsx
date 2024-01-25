@@ -3856,13 +3856,14 @@ function App() {
             alignItems: "center",
           }}
         >
-          <div style={{ width: 44 }}>
+          <div style={{ width: 32 }}>
             <Text>Name: </Text>
           </div>
           <input
             className="input-stat"
             style={{
-              width: 220,
+              width: 180,
+              marginRight: 10,
               color: "white",
             }}
             value={player.traits.name}
@@ -3873,12 +3874,10 @@ function App() {
             }}
             placeholder="Your Enemy Name"
           />
-          <div className="outline" style={{ marginLeft: "auto" }}>
-            Switch NPC:
-          </div>
+          <div className="outline">Switch NPC:</div>
           <select
             className="attribute-stat"
-            style={{ color: "lightgrey", width: 100 }}
+            style={{ color: "lightgrey", width: 80 }}
             value={player.id}
             onChange={(evt) => {
               const playerGet = playerList.find((player) => {
@@ -3899,6 +3898,56 @@ function App() {
           <button
             className="button"
             style={{
+              width: 25,
+              marginLeft: 4,
+              marginRight: 4,
+              color: "orange",
+            }}
+            onClick={() => {
+              const adversaryList = playerList
+                .filter((item) => item.isGMPlayer)
+                .sort((a, b) => a.traits.name.localeCompare(b.traits.name));
+              const index = adversaryList.findIndex(
+                (item) => item.id === player.id
+              );
+
+              if (index !== 0 && adversaryList.length > 1) {
+                setPlayer(adversaryList[index - 1]);
+              }
+            }}
+          >
+            ←
+          </button>
+          <button
+            className="button"
+            style={{
+              width: 25,
+              marginRight: 4,
+              color: "orange",
+            }}
+            onClick={() => {
+              const adversaryList = playerList
+                .filter((item) => item.isGMPlayer)
+                .sort((a, b) => a.traits.name.localeCompare(b.traits.name));
+              const index = adversaryList.findIndex(
+                (item) => item.id === player.id
+              );
+
+              if (
+                index !== adversaryList.length - 1 &&
+                adversaryList.length > 1
+              ) {
+                setPlayer(adversaryList[index + 1]);
+              }
+            }}
+          >
+            →
+          </button>
+
+          <button
+            className="button"
+            style={{
+              marginLeft: "auto",
               width: "auto",
               padding: 5,
               color: "red",
