@@ -394,6 +394,20 @@ function App() {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
+  const addGMCharacter = async () => {
+    const playerGet = newPlayer(true);
+
+    const metadataData = await OBR.scene.getMetadata();
+    const metadata = metadataData["ultimate.story.extension/metadata"];
+    let metadataChange = { ...metadata };
+    metadataChange[playerGet.id] = playerGet;
+
+    OBR.scene.setMetadata({
+      "ultimate.story.extension/metadata": metadataChange,
+    });
+    showMessage(`Added GM character!`);
+  };
+
   const ImportFultimatorJSON = async (npc) => {
     const playerGet = newPlayer(true);
 
@@ -1630,7 +1644,7 @@ function App() {
             className="button"
             style={{
               fontWeight: "bolder",
-              width: 80,
+              width: 60,
               float: "right",
               marginRight: 4,
             }}
@@ -1662,6 +1676,22 @@ function App() {
           >
             Import Fultimator NPC json
           </button>
+          {role === "GM" && (
+            <button
+              className="button"
+              style={{
+                fontWeight: "bolder",
+                width: 80,
+                float: "right",
+                marginRight: 4,
+              }}
+              onClick={() => {
+                addGMCharacter();
+              }}
+            >
+              Add Adversary
+            </button>
+          )}
         </div>
         <hr />
         {playerList
