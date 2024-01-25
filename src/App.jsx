@@ -325,7 +325,7 @@ function App() {
 
     setTimeout(() => {
       setMessage("");
-    }, 1000);
+    }, 2500);
   };
 
   function calcHP(npc) {
@@ -4692,7 +4692,7 @@ function App() {
         <div
           style={{
             position: "absolute",
-            background: "rgba(52, 52, 52, 0.8)",
+            background: "#222",
             borderRadius: 4,
             left: 0,
             right: 0,
@@ -4705,7 +4705,9 @@ function App() {
             textAlign: "center",
           }}
         >
-          <Text>{message}</Text>
+          <span className="outline" style={{ fontSize: 12 }}>
+            {message}
+          </span>
         </div>
       )}
     </div>
