@@ -4266,7 +4266,11 @@ function App() {
               {damageTypes.map((item) => (
                 <option value={item}>
                   {item}
-                  {player.affinities && player.affinities[item] ? "*" : ""}
+                  {player.affinities &&
+                  player.affinities[item] &&
+                  player.affinities[item] != "N/A"
+                    ? "*"
+                    : ""}
                 </option>
               ))}
             </select>
