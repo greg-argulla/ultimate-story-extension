@@ -3762,27 +3762,14 @@ function App() {
             </button>
           )}
 
+          <span className="outline" style={{ marginTop: 6, marginRight: 4 }}>
+            Add Action:
+          </span>
           <button
             className="button"
             style={{
               fontWeight: "bolder",
               width: 60,
-              float: "right",
-              marginTop: 2,
-              marginRight: 4,
-            }}
-            onClick={() => {
-              addAction();
-            }}
-          >
-            With Roll
-          </button>
-          <button
-            className="button"
-            style={{
-              fontWeight: "bolder",
-              width: 60,
-              float: "right",
               marginTop: 2,
               marginRight: 4,
             }}
@@ -3792,12 +3779,20 @@ function App() {
           >
             No Roll
           </button>
-          <span
-            className="outline"
-            style={{ float: "right", marginTop: 6, marginRight: 4 }}
+          <button
+            className="button"
+            style={{
+              fontWeight: "bolder",
+              width: 60,
+              marginTop: 2,
+              marginRight: 4,
+            }}
+            onClick={() => {
+              addAction();
+            }}
           >
-            Add Action:
-          </span>
+            With Roll
+          </button>
         </div>
         <hr />
 
@@ -3877,7 +3872,7 @@ function App() {
           <div className="outline">Switch NPC:</div>
           <select
             className="attribute-stat"
-            style={{ color: "lightgrey", width: 80 }}
+            style={{ color: "lightgrey", width: 80, marginLeft: 4 }}
             value={player.id}
             onChange={(evt) => {
               const playerGet = playerList.find((player) => {
