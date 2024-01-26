@@ -3762,13 +3762,11 @@ function App() {
             </button>
           )}
 
-          <span className="outline" style={{ marginTop: 6, marginRight: 4 }}>
-            Add Action:
-          </span>
           <button
             className="button"
             style={{
               fontWeight: "bolder",
+              float: "right",
               width: 60,
               marginTop: 2,
               marginRight: 4,
@@ -3777,12 +3775,13 @@ function App() {
               addActionNoRoll();
             }}
           >
-            No Roll
+            Action
           </button>
           <button
             className="button"
             style={{
               fontWeight: "bolder",
+              float: "right",
               width: 60,
               marginTop: 2,
               marginRight: 4,
@@ -3791,9 +3790,17 @@ function App() {
               addAction();
             }}
           >
-            With Roll
+            Roll
           </button>
         </div>
+
+        <span
+          className="outline"
+          style={{ float: "right", marginTop: 6, marginRight: 4 }}
+        >
+          Add:
+        </span>
+
         <hr />
 
         {items.map((item, index) => {
