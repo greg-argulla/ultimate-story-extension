@@ -3792,14 +3792,13 @@ function App() {
           >
             Roll
           </button>
+          <span
+            className="outline"
+            style={{ float: "right", marginTop: 6, marginRight: 4 }}
+          >
+            Add:
+          </span>
         </div>
-
-        <span
-          className="outline"
-          style={{ float: "right", marginTop: 6, marginRight: 4 }}
-        >
-          Add:
-        </span>
 
         <hr />
 
