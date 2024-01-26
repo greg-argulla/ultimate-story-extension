@@ -605,7 +605,7 @@ function App() {
       npc.special.map((special) => {
         actionsFromNpc.push({
           name: special.name,
-          info: "Special Action",
+          info: "Special Rules",
           detail: special.effect,
           noDice: true,
         });
