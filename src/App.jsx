@@ -3878,6 +3878,7 @@ function App() {
               const playerGet = playerList.find((player) => {
                 return player.id === parseInt(evt.target.value);
               });
+
               setPlayer(playerGet);
               sendCharacter(playerGet);
             }}
@@ -3908,6 +3909,7 @@ function App() {
 
               if (index !== 0 && adversaryList.length > 1) {
                 setPlayer(adversaryList[index - 1]);
+                sendCharacter(adversaryList[index - 1]);
               }
             }}
           >
@@ -3933,6 +3935,7 @@ function App() {
                 adversaryList.length > 1
               ) {
                 setPlayer(adversaryList[index + 1]);
+                sendCharacter(adversaryList[index + 1]);
               }
             }}
           >
