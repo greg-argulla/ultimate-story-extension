@@ -681,19 +681,24 @@ function App() {
     });
   };
 
-  const updateGMNoteItem = async (id, hp, mp) => {
+  const updateGMNoteItem = async (id, hp, mp, name) => {
     if (id === "") return;
     const hpGet = isNaN(hp) ? 0 : hp;
     const mpGet = isNaN(mp) ? 0 : mp;
+    console.log(name);
     await OBR.scene.items.updateItems([id], (images) => {
       for (let image of images) {
         image.text.richText[0] = {
           type: "paragraph",
-          children: [{ text: hpGet.toString() }],
+          children: [{ text: name }],
         };
         image.text.richText[1] = {
           type: "paragraph",
-          children: [{ text: mpGet.toString() }],
+          children: [{ text: "           " + hpGet.toString() }],
+        };
+        image.text.richText[2] = {
+          type: "paragraph",
+          children: [{ text: "           " + mpGet.toString() }],
         };
       }
     });
@@ -3993,7 +3998,8 @@ function App() {
                   updateGMNoteItem(
                     playerGet.linkedStats.currentStats,
                     playerGet.stats.currentHP,
-                    playerGet.stats.currentMP
+                    playerGet.stats.currentMP,
+                    playerGet.traits.name
                   );
                 }
 
@@ -4035,7 +4041,8 @@ function App() {
                   updateGMNoteItem(
                     playerGet.linkedStats.currentStats,
                     playerGet.stats.currentHP,
-                    playerGet.stats.currentMP
+                    playerGet.stats.currentMP,
+                    playerGet.traits.name
                   );
                 }
 
@@ -4136,7 +4143,8 @@ function App() {
                     updateGMNoteItem(
                       playerGet.linkedStats.currentStats,
                       playerGet.stats.currentHP,
-                      playerGet.stats.currentMP
+                      playerGet.stats.currentMP,
+                      playerGet.traits.name
                     );
                     updatePlayer(playerGet);
                   }
@@ -4203,7 +4211,8 @@ function App() {
                 updateGMNoteItem(
                   playerGet.linkedStats.currentStats,
                   playerGet.stats.currentHP,
-                  playerGet.stats.currentMP
+                  playerGet.stats.currentMP,
+                  playerGet.traits.name
                 );
               }
               updatePlayer(playerGet);
@@ -4224,7 +4233,8 @@ function App() {
                 updateGMNoteItem(
                   playerGet.linkedStats.currentStats,
                   playerGet.stats.currentHP,
-                  playerGet.stats.currentMP
+                  playerGet.stats.currentMP,
+                  playerGet.traits.name
                 );
               }
               updatePlayer(playerGet);
@@ -4686,6 +4696,24 @@ function App() {
                 </div>
                 <hr />
                 {renderLocalPlayerList()}
+                <div
+                  className="outline"
+                  style={{
+                    marginTop: 20,
+                    marginBottom: 5,
+                    fontSize: 9,
+                    textAlign: "center",
+                  }}
+                >
+                  Join our discord for support on how to setup and report any
+                  bugs:
+                  <a
+                    href="https://discord.gg/HJjcrqnk"
+                    style={{ textDecoration: "underline", marginLeft: 4 }}
+                  >
+                    Link Here
+                  </a>
+                </div>
               </div>
             )}
           </>
