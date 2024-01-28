@@ -4818,6 +4818,7 @@ function App() {
                   any bugs:
                   <a
                     href="https://discord.gg/HJjcrqnk"
+                    target="_blank"
                     style={{ textDecoration: "underline", marginLeft: 4 }}
                   >
                     Link Here
