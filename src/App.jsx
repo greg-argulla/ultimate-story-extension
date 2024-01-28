@@ -4814,8 +4814,8 @@ function App() {
                     textAlign: "center",
                   }}
                 >
-                  Join our discord for support on how to setup and report any
-                  bugs:
+                  Join our discord for support, preview of features, and report
+                  any bugs:
                   <a
                     href="https://discord.gg/HJjcrqnk"
                     style={{ textDecoration: "underline", marginLeft: 4 }}
