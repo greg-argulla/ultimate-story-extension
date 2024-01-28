@@ -1094,7 +1094,7 @@ function App() {
     showMessage(`Loaded character!`);
   };
 
-  const removeCharacterLocally = (index) => {
+  const removeCharacterLocally = (id) => {
     if (
       confirm(
         "Are you sure you want to delete this locally stored character?"
@@ -1103,6 +1103,8 @@ function App() {
       const localPlayerList = JSON.parse(
         localStorage.getItem("ultimate.story.extension/metadata")
       );
+
+      const index = localPlayerList.findIndex((item) => item.id === id);
       localPlayerList.splice(index, 1);
       localStorage.setItem(
         "ultimate.story.extension/metadata",
@@ -1174,7 +1176,7 @@ function App() {
               display: "inline-block",
               fontSize: 12,
               color: "orange",
-              width: 150,
+              width: 100,
               textAlign: "center",
               padding: 4,
               whiteSpace: "nowrap",
@@ -1190,7 +1192,7 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 380,
+              width: 180,
               color: "white",
             }}
             value={data.traits.identity}
@@ -1199,7 +1201,7 @@ function App() {
           <button
             className="button"
             style={{
-              width: 96,
+              width: 40,
               padding: 5,
               marginRight: 4,
               marginLeft: "auto",
@@ -1213,7 +1215,7 @@ function App() {
           <button
             className="button"
             style={{
-              width: 96,
+              width: 40,
               padding: 5,
               marginRight: 4,
               marginLeft: "auto",
@@ -1234,7 +1236,7 @@ function App() {
               color: "darkred",
             }}
             onClick={() => {
-              removeCharacterLocally(index);
+              removeCharacterLocally(data.id);
             }}
           >
             ✖
@@ -1245,10 +1247,102 @@ function App() {
     );
   };
 
+  const localAdversaryItem = (data, index) => {
+    return (
+      <div key={index}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 5,
+            marginTop: 5,
+          }}
+        >
+          <Text>Name: </Text>
+          <span
+            className="outline"
+            style={{
+              display: "inline-block",
+              fontSize: 12,
+              color: "orange",
+              width: 112,
+              textAlign: "center",
+              padding: 4,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {data.traits ? data.traits.name : ""}
+          </span>
+          <button
+            className="button"
+            style={{
+              width: 60,
+              padding: 5,
+              marginRight: 4,
+            }}
+            onClick={async () => {
+              duplicateGMCharacter(data);
+            }}
+          >
+            Add
+          </button>
+          <button
+            className="button"
+            style={{
+              fontWeight: "bolder",
+              width: 25,
+              color: "darkred",
+            }}
+            onClick={() => {
+              removeCharacterLocally(data.id);
+            }}
+          >
+            ✖
+          </button>
+        </div>
+        <hr />
+      </div>
+    );
+  };
+
+  const renderLocalAdversaryList = () => {
+    if (savedPlayerList) {
+      if (savedPlayerList.length) {
+        return (
+          <div style={{ display: "flex", columnGap: 6 }}>
+            <div>
+              {savedPlayerList
+                .filter((item) => item.isGMPlayer)
+                .sort((a, b) => a.traits.name.localeCompare(b.traits.name))
+                .map((data, index) => {
+                  if (index % 2 === 0) return localAdversaryItem(data, index);
+                  else return "";
+                })}
+            </div>
+            <div>
+              {savedPlayerList
+                .filter((item) => item.isGMPlayer)
+                .sort((a, b) => a.traits.name.localeCompare(b.traits.name))
+                .map((data, index) => {
+                  if (index % 2 === 1) return localAdversaryItem(data, index);
+                  else return "";
+                })}
+            </div>
+          </div>
+        );
+      }
+    }
+    return "";
+  };
+
   const renderLocalPlayerList = () => {
     if (savedPlayerList) {
       if (savedPlayerList.length) {
         return savedPlayerList
+          .filter((item) => !item.isGMPlayer)
           .sort((a, b) => a.traits.name.localeCompare(b.traits.name))
           .map((data, index) => {
             return localPlayerItem(data, index);
@@ -1370,14 +1464,14 @@ function App() {
                 width: 40,
                 padding: 5,
                 marginRight: 4,
+                float: "right",
               }}
-              onClick={async () => {
-                duplicateGMCharacter(data);
+              onClick={() => {
+                saveCharacterLocally(data.id);
               }}
             >
-              Copy
+              Save
             </button>
-
             <button
               className="button"
               style={{ fontWeight: "bolder", width: 25, color: "darkred" }}
@@ -4668,8 +4762,23 @@ function App() {
             ) : (
               <div>
                 {renderPlayerList()}
-                {role === "GM" && renderAdversaryList()}
-                <div style={{ marginTop: 40 }}>
+                {role === "GM" && (
+                  <>
+                    {renderAdversaryList()}
+                    <div style={{ marginTop: 20 }}>
+                      <span
+                        style={{ fontSize: 13, color: "White" }}
+                        className="outline"
+                      >
+                        Room Saved Adversaries:
+                      </span>
+                    </div>
+                    <hr />
+                    {renderLocalAdversaryList()}
+                  </>
+                )}
+
+                <div style={{ marginTop: 20 }}>
                   <span
                     style={{ fontSize: 13, color: "White" }}
                     className="outline"
