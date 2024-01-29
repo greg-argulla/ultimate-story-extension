@@ -4817,7 +4817,7 @@ function App() {
                   Join our discord for support, unlock extra features, and
                   report any bugs:
                   <a
-                    href="https://discord.gg/HJjcrqnk"
+                    href="https://discord.gg/2jCNVk6wMK"
                     target="_blank"
                     style={{ textDecoration: "underline", marginLeft: 4 }}
                   >
