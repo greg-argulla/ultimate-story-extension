@@ -4210,7 +4210,7 @@ function App() {
                 }
               }}
             />
-            {(typeof player.linkedStats === "string" ||
+            {(typeof player.linkedStats === "string" || !player.linkedStats ||
               !player.linkedStats.currentStats) && (
               <button
                 className="button"
