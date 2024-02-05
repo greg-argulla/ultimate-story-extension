@@ -909,7 +909,7 @@ function App() {
     OBR.room.setMetadata({
       "ultimate.story.extension/sendskill": skillData,
     });
-    showMessage("Skill Info Sent!");
+    showMessage("Information Sent!");
   };
 
   const sendCharacter = (playerGet) => {
