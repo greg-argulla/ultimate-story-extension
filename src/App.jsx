@@ -2288,6 +2288,19 @@ function App() {
           playerGet.debuff[condition] = !player.debuff[condition];
           playerGet.attributes["current" + stat] = getCurrentAttribute(stat);
           updatePlayer(playerGet);
+          sendSkill({
+            name:
+              playerGet.traits.name +
+              (playerGet.debuff[condition] ? " suffers " : " recovers from ") +
+              condition +
+              "!",
+            info: "",
+            detail:
+              "Bringing their `" +
+              stat.toUpperCase() +
+              "` one die size " +
+              (playerGet.debuff[condition] ? "lower." : "higher."),
+          });
         }}
       >
         {condition}
@@ -2391,6 +2404,20 @@ function App() {
                 "mDefense"
               );
             }
+
+            sendSkill({
+              name:
+                player.traits.name +
+                (playerGet.debuff[condition] ? " suffers" : " recovers from") +
+                ` ${condition}!`,
+              info: "",
+              detail:
+                "Bringing their `" +
+                stat.toUpperCase() +
+                "` to `" +
+                playerGet.attributes["current" + stat] +
+                "`",
+            });
             updatePlayer(playerGet);
           }}
         >
@@ -2466,7 +2493,21 @@ function App() {
                 "mDefense"
               );
             }
+
             updatePlayer(playerGet);
+            sendSkill({
+              name:
+                player.traits.name +
+                (playerGet.debuff.enraged ? " suffers" : " recovers from") +
+                " enraged!",
+              info: "",
+              detail:
+                "Bringing their `DEX` to `" +
+                playerGet.attributes["currentdex"] +
+                "` and `INS` to `" +
+                playerGet.attributes["currentins"] +
+                "`",
+            });
           }}
         >
           Enraged
@@ -2489,6 +2530,19 @@ function App() {
             playerGet.attributes["currentmig"] = getCurrentAttribute("mig");
             playerGet.attributes["currentwil"] = getCurrentAttribute("wil");
             updatePlayer(playerGet);
+            sendSkill({
+              name:
+                player.traits.name +
+                (playerGet.debuff.poisoned ? " suffers" : " recovers from") +
+                " poisoned!",
+              info: "",
+              detail:
+                "Bringing their `MIG` to `" +
+                playerGet.attributes["currentmig"] +
+                "` and `WIL` to `" +
+                playerGet.attributes["currentwil"] +
+                "`",
+            });
           }}
         >
           Poisoned
@@ -2513,9 +2567,10 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 332,
+              width: 286,
               color: "white",
-              margin: 0,
+              marginLeft: 0,
+              marginRight: 4,
               fontSize: 10,
             }}
             value={player.items.accessory}
@@ -2525,6 +2580,15 @@ function App() {
               updatePlayer(playerGet);
             }}
           />
+          <button
+            className="button"
+            style={{ marginRight: 4, width: 40 }}
+            onClick={() =>
+              sendSkill({ name: "Accessory", detail: player.items.accessory })
+            }
+          >
+            Show
+          </button>
         </div>
         <div>
           <div>
@@ -2533,9 +2597,10 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 332,
+              width: 286,
               color: "white",
-              margin: 0,
+              marginLeft: 0,
+              marginRight: 4,
               fontSize: 10,
             }}
             value={player.items.armor}
@@ -2545,6 +2610,15 @@ function App() {
               updatePlayer(playerGet);
             }}
           />
+          <button
+            className="button"
+            style={{ marginRight: 4, width: 40 }}
+            onClick={() =>
+              sendSkill({ name: "Armor", detail: player.items.armor })
+            }
+          >
+            Show
+          </button>
         </div>
         <div>
           <div>
@@ -2553,9 +2627,10 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 332,
+              width: 286,
               color: "white",
-              margin: 0,
+              marginLeft: 0,
+              marginRight: 4,
               fontSize: 10,
             }}
             value={player.items.mainhand}
@@ -2565,6 +2640,15 @@ function App() {
               updatePlayer(playerGet);
             }}
           />
+          <button
+            className="button"
+            style={{ marginRight: 4, width: 40 }}
+            onClick={() =>
+              sendSkill({ name: "Main Hand", detail: player.items.mainhand })
+            }
+          >
+            Show
+          </button>
         </div>
         <div>
           <div>
@@ -2573,9 +2657,10 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 332,
+              width: 286,
               color: "white",
-              margin: 0,
+              marginLeft: 0,
+              marginRight: 4,
               fontSize: 10,
             }}
             value={player.items.offhand}
@@ -2585,6 +2670,15 @@ function App() {
               updatePlayer(playerGet);
             }}
           />
+          <button
+            className="button"
+            style={{ marginRight: 4, width: 40 }}
+            onClick={() =>
+              sendSkill({ name: "Off Hand", detail: player.items.offhand })
+            }
+          >
+            Show
+          </button>
         </div>
       </div>
     );
@@ -4210,7 +4304,8 @@ function App() {
                 }
               }}
             />
-            {(typeof player.linkedStats === "string" || !player.linkedStats ||
+            {(typeof player.linkedStats === "string" ||
+              !player.linkedStats ||
               !player.linkedStats.currentStats) && (
               <button
                 className="button"
@@ -4383,6 +4478,16 @@ function App() {
               playerGet.attributes["currentdex"] = getCurrentAttribute("dex");
               playerGet.attributes["currentins"] = getCurrentAttribute("ins");
               updatePlayer(playerGet);
+              sendSkill({
+                name:
+                  playerGet.traits.name +
+                  (playerGet.debuff.enraged ? " suffers" : " recovers from") +
+                  " enraged!",
+                info: "",
+                detail:
+                  "Bringing their `DEX` to `INS` one die size " +
+                  (playerGet.debuff.enraged ? "lower." : "higher."),
+              });
             }}
           >
             Enraged
@@ -4403,6 +4508,16 @@ function App() {
               playerGet.attributes["currentmig"] = getCurrentAttribute("mig");
               playerGet.attributes["currentwil"] = getCurrentAttribute("wil");
               updatePlayer(playerGet);
+              sendSkill({
+                name:
+                  playerGet.traits.name +
+                  (playerGet.debuff.poisoned ? " suffers" : " recovers from") +
+                  " poisoned!",
+                info: "",
+                detail:
+                  "Bringing their `MIG` to `WIL` one die size " +
+                  (playerGet.debuff.poisoned ? "lower." : "higher."),
+              });
             }}
           >
             Poisoned
