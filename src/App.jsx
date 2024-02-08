@@ -2575,7 +2575,7 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 286,
+              width: 280,
               color: "white",
               marginLeft: 0,
               marginRight: 4,
@@ -2605,7 +2605,7 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 286,
+              width: 280,
               color: "white",
               marginLeft: 0,
               marginRight: 4,
@@ -2635,7 +2635,7 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 286,
+              width: 280,
               color: "white",
               marginLeft: 0,
               marginRight: 4,
@@ -2665,7 +2665,7 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 286,
+              width: 280,
               color: "white",
               marginLeft: 0,
               marginRight: 4,
