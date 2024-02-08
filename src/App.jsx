@@ -1866,7 +1866,7 @@ function App() {
           className="input-stat"
           type="number"
           style={{
-            width: 18,
+            width: 20,
             color: "Red",
           }}
           onChange={(evt) => {
@@ -1900,12 +1900,12 @@ function App() {
             }
           }}
         />
-        <Text>MP: </Text>
+        <Text>MP:</Text>
         <input
           className="input-stat"
           type="number"
           style={{
-            width: 18,
+            width: 20,
             color: "LightBlue",
           }}
           onChange={(evt) => {
@@ -1942,12 +1942,12 @@ function App() {
             }
           }}
         />
-        <Text>IP: </Text>
+        <Text>IP:</Text>
         <input
           className="input-stat"
           type="number"
           style={{
-            width: 18,
+            width: 20,
             color: "Orange",
           }}
           onChange={(evt) => {
@@ -1979,12 +1979,12 @@ function App() {
             }
           }}
         />
-        <Text>FP: </Text>
+        <Text>FP:</Text>
         <input
           className="input-stat"
           type="number"
           style={{
-            width: 18,
+            width: 20,
             color: "White",
           }}
           onChange={(evt) => {
