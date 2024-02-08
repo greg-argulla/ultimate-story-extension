@@ -431,7 +431,7 @@ function App() {
     if (npc.traits) {
       actionsFromNpc.push({
         name: "Enemy Study Check 7+",
-        info: "Rank/Species/Traits/Max HP/Max MP",
+        info: "Rank/Species/Max HP/Max MP",
         detail:
           "LVL `" +
           npc.lvl +
@@ -444,9 +444,7 @@ function App() {
           calcHP(npc) +
           "* / Max MP: *" +
           calcMP(npc) +
-          "*\nTraits: `" +
-          npc.traits +
-          "`",
+          "*",
         noDice: true,
       });
     }
@@ -486,9 +484,19 @@ function App() {
     if (npc.traits) {
       actionsFromNpc.push({
         name: "Enemy Study Check 10+",
-        info: "Defense/Magic Defense/Damage",
+        info: "Traits/Attributes/Defense/Magic Defense/Damage",
         detail:
-          "DEF: *" +
+          "Traits: `" +
+          npc.traits +
+          "`\n Attributes: `DEX:" +
+          npc.attributes.dexterity +
+          " INS:" +
+          npc.attributes.insight +
+          " MIG:" +
+          npc.attributes.might +
+          " WIL:" +
+          npc.attributes.will +
+          "`\nDEF: *" +
           (def + npc.attributes.dexterity) +
           "* M.DEF: *" +
           (mDef + +npc.attributes.insight) +
