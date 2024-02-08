@@ -1866,7 +1866,7 @@ function App() {
           className="input-stat"
           type="number"
           style={{
-            width: 20,
+            width: 18,
             color: "Red",
           }}
           onChange={(evt) => {
@@ -1905,7 +1905,7 @@ function App() {
           className="input-stat"
           type="number"
           style={{
-            width: 20,
+            width: 18,
             color: "LightBlue",
           }}
           onChange={(evt) => {
@@ -1947,7 +1947,7 @@ function App() {
           className="input-stat"
           type="number"
           style={{
-            width: 20,
+            width: 18,
             color: "Orange",
           }}
           onChange={(evt) => {
@@ -1984,7 +1984,7 @@ function App() {
           className="input-stat"
           type="number"
           style={{
-            width: 20,
+            width: 18,
             color: "White",
           }}
           onChange={(evt) => {
@@ -2319,7 +2319,7 @@ function App() {
   const Attribute = (props) => {
     const { stat, condition, label } = props;
     return (
-      <div>
+      <div style={{ width: 95 }}>
         <div>
           <Text>{label}:</Text>
         </div>
@@ -2442,6 +2442,7 @@ function App() {
           display: "flex",
           justifyContent: "left",
           flexDirection: "column",
+          width: 92,
         }}
       >
         <Attribute stat="dex" label="Dexterity" condition="slow" />
@@ -2575,7 +2576,7 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 284,
+              width: 280,
               color: "white",
               marginLeft: 0,
               marginRight: 4,
@@ -2605,7 +2606,7 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 284,
+              width: 280,
               color: "white",
               marginLeft: 0,
               marginRight: 4,
@@ -2635,7 +2636,7 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 284,
+              width: 280,
               color: "white",
               marginLeft: 0,
               marginRight: 4,
@@ -2665,7 +2666,7 @@ function App() {
           <input
             className="input-stat"
             style={{
-              width: 284,
+              width: 280,
               color: "white",
               marginLeft: 0,
               marginRight: 4,
