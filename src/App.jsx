@@ -2109,7 +2109,7 @@ function App() {
               justifyContent: "space-between",
             }}
           >
-            <div style={{ width: 38 }}>
+            <div style={{ width: 37 }}>
               <Text>Theme: </Text>
             </div>
             <input
