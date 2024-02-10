@@ -2030,7 +2030,7 @@ function App() {
 
   const renderInfo = () => {
     return (
-      <div style={{ display: "flex", gap: 8 }}>
+      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
         <div
           style={{
             textAlign: "center",
