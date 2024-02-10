@@ -2055,7 +2055,7 @@ function App() {
               fontSize: 8,
               position: "absolute",
               left: 24,
-              bottom: 0,
+              bottom: -3,
             }}
             onClick={async () => {
               const selected = await OBR.player.getSelection();
