@@ -2156,18 +2156,19 @@ function App() {
             <div style={{ width: 40 }}>
               <Text>Identity: </Text>
             </div>
-            <textarea
+            <div
               className="input-stat"
+              contentEditable="true"
               style={{
                 width: 326,
                 color: "white",
-                paddingTop: 8,
-                paddingLeft: 8,
-                paddingRight: 8,
-                height: 30,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "auto",
                 resize: "none",
+                padding: "4px 8px",
               }}
-              value={player.traits.identity}
               rows={4}
               onChange={(evt) => {
                 const playerGet = { ...player };
@@ -2175,7 +2176,9 @@ function App() {
                 updatePlayer(playerGet);
               }}
               placeholder="This is a short sentence that sums up your character's general concept"
-            />
+            >
+              {player.traits.identity}
+            </div>
           </div>
         </div>
       </div>
