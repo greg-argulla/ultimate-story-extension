@@ -2167,7 +2167,7 @@ function App() {
                 justifyContent: "center",
                 height: "auto",
                 resize: "none",
-                padding: "4px 8px",
+                padding: "5px 8px",
               }}
               rows={4}
               onChange={(evt) => {
