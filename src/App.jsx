@@ -85,6 +85,7 @@ const newPlayer = (isGMPlayer) => {
       identity: "",
       theme: "",
       origin: "",
+      avatar: "",
       level: 5,
     },
     bonds: [
@@ -2029,93 +2030,155 @@ function App() {
 
   const renderInfo = () => {
     return (
-      <>
+      <div style={{ display: "flex", gap: 8 }}>
         <div
           style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
+            textAlign: "center",
+            position: "relative",
+            backgroundImage: `url(${player.traits.avatar})`,
+            minWidth: 100,
+            height: 100,
+            backgroundSize: "cover",
           }}
         >
-          <div style={{ width: 44 }}>
-            <Text>Name: </Text>
-          </div>
-          <input
-            className="input-stat"
+          {!player.traits.avatar && (
+            <div className="outline" style={{ width: 100, color: "orange" }}>
+              Select a token and press change to add an avatar to your sheet
+            </div>
+          )}
+          <button
+            className="button"
             style={{
-              width: 160,
-              color: "white",
+              width: 50,
+              padding: 0,
+              height: 15,
+              fontSize: 8,
+              position: "absolute",
+              left: 24,
+              bottom: 0,
             }}
-            value={player.traits.name}
-            onChange={(evt) => {
-              const playerGet = { ...player };
-              playerGet.traits.name = evt.target.value;
-              updatePlayer(playerGet);
+            onClick={async () => {
+              const selected = await OBR.player.getSelection();
+              if (selected && selected[0]) {
+                const items = await OBR.scene.items.getItems([selected[0]]);
+                console.log(items[0].image.url);
+
+                const playerGet = { ...player };
+                if (items[0].image && items[0].image.url) {
+                  playerGet.traits.avatar = items[0].image.url;
+                  updatePlayer(playerGet);
+                }
+              }
             }}
-            placeholder="Your name and pronouns"
-          />
-          <div style={{ width: 40 }}>
-            <Text>Theme: </Text>
-          </div>
-          <input
-            className="input-stat"
-            style={{
-              width: 70,
-              color: "white",
-            }}
-            value={player.traits.theme}
-            onChange={(evt) => {
-              const playerGet = { ...player };
-              playerGet.traits.theme = evt.target.value;
-              updatePlayer(playerGet);
-            }}
-            placeholder="A strong ideal"
-          />
-          <div style={{ width: 35 }}>
-            <Text>Origin: </Text>
-          </div>
-          <input
-            className="input-stat"
-            style={{
-              width: 130,
-              color: "white",
-            }}
-            value={player.traits.origin}
-            onChange={(evt) => {
-              const playerGet = { ...player };
-              playerGet.traits.origin = evt.target.value;
-              updatePlayer(playerGet);
-            }}
-            placeholder={"Where they are from"}
-          />
+          >
+            Change
+          </button>
         </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            paddingTop: 4,
-            alignItems: "center",
-          }}
-        >
-          <div style={{ width: 41 }}>
-            <Text>Identity: </Text>
-          </div>
-          <input
-            className="input-stat"
+        <div>
+          <div
             style={{
-              width: 435,
-              color: "white",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
             }}
-            value={player.traits.identity}
-            onChange={(evt) => {
-              const playerGet = { ...player };
-              playerGet.traits.identity = evt.target.value;
-              updatePlayer(playerGet);
+          >
+            <div style={{ width: 40 }}>
+              <Text>Name: </Text>
+            </div>
+            <input
+              className="input-stat"
+              style={{
+                width: 338,
+                color: "white",
+              }}
+              value={player.traits.name}
+              onChange={(evt) => {
+                const playerGet = { ...player };
+                playerGet.traits.name = evt.target.value;
+                updatePlayer(playerGet);
+              }}
+              placeholder="Your name and pronouns"
+            />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              paddingTop: 4,
+              justifyContent: "space-between",
             }}
-            placeholder="This is a short sentence that sums up your character's general concept"
-          />
+          >
+            <div style={{ width: 38 }}>
+              <Text>Theme: </Text>
+            </div>
+            <input
+              className="input-stat"
+              style={{
+                width: 140,
+                color: "white",
+              }}
+              value={player.traits.theme}
+              onChange={(evt) => {
+                const playerGet = { ...player };
+                playerGet.traits.theme = evt.target.value;
+                updatePlayer(playerGet);
+              }}
+              placeholder="A strong ideal"
+            />
+            <br />
+            <div style={{ width: 35 }}>
+              <Text>Origin: </Text>
+            </div>
+            <input
+              className="input-stat"
+              style={{
+                width: 140,
+                color: "white",
+              }}
+              value={player.traits.origin}
+              onChange={(evt) => {
+                const playerGet = { ...player };
+                playerGet.traits.origin = evt.target.value;
+                updatePlayer(playerGet);
+              }}
+              placeholder={"Where they are from"}
+            />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              paddingTop: 4,
+              alignItems: "center",
+            }}
+          >
+            <div style={{ width: 40 }}>
+              <Text>Identity: </Text>
+            </div>
+            <textarea
+              className="input-stat"
+              style={{
+                width: 326,
+                color: "white",
+                paddingTop: 8,
+                paddingLeft: 8,
+                paddingRight: 8,
+                height: 30,
+                resize: "none",
+              }}
+              value={player.traits.identity}
+              rows={4}
+              onChange={(evt) => {
+                const playerGet = { ...player };
+                playerGet.traits.identity = evt.target.value;
+                updatePlayer(playerGet);
+              }}
+              placeholder="This is a short sentence that sums up your character's general concept"
+            />
+          </div>
         </div>
-      </>
+      </div>
     );
   };
 
