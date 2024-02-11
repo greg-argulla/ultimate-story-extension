@@ -924,6 +924,7 @@ function App() {
   const sendCharacter = (playerGet) => {
     const characterData = {
       characterName: playerGet.traits.name,
+      avatar: playerGet.traits.avatar,
       userId: id,
       characterID: playerGet.id,
       dex: playerGet.attributes.currentdex,
