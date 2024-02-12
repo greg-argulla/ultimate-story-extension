@@ -694,7 +694,6 @@ function App() {
     if (id === "") return;
     const hpGet = isNaN(hp) ? 0 : hp;
     const mpGet = isNaN(mp) ? 0 : mp;
-    console.log(name);
     await OBR.scene.items.updateItems([id], (images) => {
       for (let image of images) {
         image.text.richText[0] = {
@@ -2062,8 +2061,6 @@ function App() {
               const selected = await OBR.player.getSelection();
               if (selected && selected[0]) {
                 const items = await OBR.scene.items.getItems([selected[0]]);
-                console.log(items[0].image.url);
-
                 const playerGet = { ...player };
                 if (items[0].image && items[0].image.url) {
                   playerGet.traits.avatar = items[0].image.url;
@@ -4233,7 +4230,13 @@ function App() {
           </button>
         </div>
         <hr />
-        <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: 5,
+            alignItems: "center",
+          }}
+        >
           <span style={{ display: "inline-block" }}>
             <Text>DMG:</Text>
             <input
