@@ -4398,14 +4398,76 @@ function App() {
                 onClick={async () => {
                   const selected = await OBR.player.getSelection();
                   if (selected && selected[0]) {
+                    const items = await OBR.scene.items.getItems([selected[0]]);
+                    const healthBarId = Date.now() + "_healthbar";
+
+                    OBR.scene.items.addItems([
+                      {
+                        type: "IMAGE",
+                        attachedTo: items[0].id,
+                        id: healthBarId,
+                        name: "Healthbox",
+                        position: {
+                          x: items[0].position.x - items[0].grid.offset.x,
+                          y: items[0].position.y - items[0].grid.offset.y,
+                        },
+                        rotation: 0,
+                        scale: { x: 1, y: 1 },
+                        visible: true,
+                        locked: false,
+                        createdUserId: id,
+                        zIndex: 1707801869642,
+                        lastModifiedUserId: id,
+                        metadata: {},
+                        image: {
+                          width: 800,
+                          height: 164,
+                          mime: "image/png",
+                          url: "https://images.owlbear.rodeo/691aa845-022d-4c0f-948f-4bfc5a4037f3/items/7cfe136c-3e03-4933-9af4-cb8ef4812847.png",
+                        },
+                        grid: {
+                          dpi: 286.3961813842481,
+                          offset: {
+                            x: -7.251733151494488,
+                            y: -55.42646714987139,
+                          },
+                        },
+                        text: {
+                          richText: [
+                            { type: "paragraph", children: [{ text: "" }] },
+                          ],
+                          plainText: "",
+                          style: {
+                            padding: 16,
+                            fontFamily: "Roboto",
+                            fontSize: 18,
+                            fontWeight: 400,
+                            textAlign: "LEFT",
+                            textAlignVertical: "TOP",
+                            fillColor: "#ffffff",
+                            fillOpacity: 1,
+                            strokeColor: "#222222",
+                            strokeOpacity: 1,
+                            strokeWidth: 5,
+                            lineHeight: 1.5,
+                          },
+                          type: "RICH",
+                          width: "AUTO",
+                          height: "AUTO",
+                        },
+                        textItemType: "TEXT",
+                        layer: "ATTACHMENT",
+                      },
+                    ]);
+
                     const playerGet = { ...player };
                     if (
                       playerGet.linkedStats &&
                       typeof playerGet.linkedStats !== "string"
                     ) {
-                      playerGet.linkedStats.currentStats = selected[0];
+                      playerGet.linkedStats.currentStats = healthBarId;
                     } else {
-                      playerGet.linkedStats = { currentStats: selected[0] };
+                      playerGet.linkedStats = { currentStats: healthBarId };
                     }
 
                     updateGMNoteItem(
