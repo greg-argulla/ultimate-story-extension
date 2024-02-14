@@ -2168,9 +2168,9 @@ function App() {
                 padding: "5px 8px",
               }}
               rows={4}
-              onChange={(evt) => {
+              onInput={(evt) => {
                 const playerGet = { ...player };
-                playerGet.traits.identity = evt.target.value;
+                playerGet.traits.identity = evt.currentTarget.textContent;
                 updatePlayer(playerGet);
               }}
               placeholder="This is a short sentence that sums up your character's general concept"
