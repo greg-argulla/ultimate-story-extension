@@ -2159,14 +2159,7 @@ function App() {
               style={{
                 width: 326,
                 color: "white",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                height: "auto",
-                resize: "none",
-                padding: "5px 8px",
               }}
-              rows={4}
               value={player.traits.identity}
               onChange={(evt) => {
                 const playerGet = { ...player };
