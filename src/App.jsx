@@ -2154,9 +2154,8 @@ function App() {
             <div style={{ width: 40 }}>
               <Text>Identity: </Text>
             </div>
-            <div
+            <input
               className="input-stat"
-              contentEditable="true"
               style={{
                 width: 326,
                 color: "white",
@@ -2168,15 +2167,14 @@ function App() {
                 padding: "5px 8px",
               }}
               rows={4}
-              onInput={(evt) => {
+              value={player.traits.identity}
+              onChange={(evt) => {
                 const playerGet = { ...player };
-                playerGet.traits.identity = evt.currentTarget.textContent;
+                playerGet.traits.identity = evt.target.value;
                 updatePlayer(playerGet);
               }}
               placeholder="This is a short sentence that sums up your character's general concept"
-            >
-              {player.traits.identity}
-            </div>
+            ></input>
           </div>
         </div>
       </div>
