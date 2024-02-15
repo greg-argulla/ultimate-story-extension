@@ -2157,7 +2157,7 @@ function App() {
             <input
               className="input-stat"
               style={{
-                width: 326,
+                width: 338,
                 color: "white",
               }}
               value={player.traits.identity}
