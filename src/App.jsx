@@ -848,7 +848,7 @@ function App() {
   };
 
   useEffect(() => {
-    if (player && !ignoreFirstUpdate) {
+    if (player && !ignoreFirstUpdate && metadataUpdate[player.id]) {
       if (metadataUpdate[player.id].lastEdit !== id) {
         setPlayer(metadataUpdate[player.id]);
       }
