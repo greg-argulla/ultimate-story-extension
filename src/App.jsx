@@ -2159,6 +2159,7 @@ function App() {
               style={{
                 width: 338,
                 color: "white",
+                height: 25,
               }}
               value={player.traits.identity}
               onChange={(evt) => {
