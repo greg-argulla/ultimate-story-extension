@@ -1045,23 +1045,27 @@ function App() {
     );
 
     if (localPlayerList) {
-      const foundIndex = localPlayerList.findIndex((item) => id === item.id);
+      const foundIndex = localPlayerList.findIndex((item) => {
+        if (item) return id === item.id;
+      });
 
       if (foundIndex !== -1) {
         localPlayerList[foundIndex] = metadataChange[id];
+
         localStorage.setItem(
           "ultimate.story.extension/metadata",
           JSON.stringify(localPlayerList)
         );
         setSavePlayerList(localPlayerList);
       } else if (localPlayerList) {
-        localPlayerList.push(metadataChange[id]);
-        localStorage.setItem(
-          "ultimate.story.extension/metadata",
-          JSON.stringify(localPlayerList)
-        );
-
-        setSavePlayerList(localPlayerList);
+        if (metadataChange[id]) {
+          localPlayerList.push(metadataChange[id]);
+          localStorage.setItem(
+            "ultimate.story.extension/metadata",
+            JSON.stringify(localPlayerList)
+          );
+          setSavePlayerList(localPlayerList);
+        }
       } else {
         localStorage.setItem(
           "ultimate.story.extension/metadata",
@@ -1125,8 +1129,16 @@ function App() {
   };
 
   const duplicateGMCharacter = async (playerGet) => {
+    const count = playerList.filter((item) => {
+      return item.originalId === playerGet.id;
+    }).length;
+
+    playerGet.originalId = playerGet.id;
     playerGet.id = Date.now();
-    playerGet.traits.name = playerGet.traits.name;
+
+    playerGet.traits.name =
+      playerGet.traits.name.replace(/ *\([^)]*\) */g, "") +
+      (count > 0 ? ` (${count})` : "");
 
     if (playerGet.stats) {
       playerGet.stats.currentHP = 0;
@@ -1293,7 +1305,7 @@ function App() {
               marginRight: 4,
             }}
             onClick={async () => {
-              duplicateGMCharacter(data);
+              duplicateGMCharacter({ ...data });
             }}
           >
             Add
@@ -1324,7 +1336,9 @@ function App() {
           <div style={{ display: "flex", columnGap: 6 }}>
             <div>
               {savedPlayerList
-                .filter((item) => item.isGMPlayer)
+                .filter((item) => {
+                  if (item) return item.isGMPlayer;
+                })
                 .sort((a, b) => a.traits.name.localeCompare(b.traits.name))
                 .map((data, index) => {
                   if (index % 2 === 0) return localAdversaryItem(data, index);
@@ -1333,7 +1347,9 @@ function App() {
             </div>
             <div>
               {savedPlayerList
-                .filter((item) => item.isGMPlayer)
+                .filter((item) => {
+                  if (item) return item.isGMPlayer;
+                })
                 .sort((a, b) => a.traits.name.localeCompare(b.traits.name))
                 .map((data, index) => {
                   if (index % 2 === 1) return localAdversaryItem(data, index);
@@ -1351,7 +1367,9 @@ function App() {
     if (savedPlayerList) {
       if (savedPlayerList.length) {
         return savedPlayerList
-          .filter((item) => !item.isGMPlayer)
+          .filter((item) => {
+            if (item) return !item.isGMPlayer;
+          })
           .sort((a, b) => a.traits.name.localeCompare(b.traits.name))
           .map((data, index) => {
             return localPlayerItem(data, index);
