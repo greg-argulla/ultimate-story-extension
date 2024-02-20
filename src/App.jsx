@@ -1138,7 +1138,7 @@ function App() {
 
     playerGet.traits.name =
       playerGet.traits.name.replace(/ *\([^)]*\) */g, "") +
-      (count > 0 ? ` (${count})` : "");
+      (count > 0 ? ` (${count + 1})` : "");
 
     if (playerGet.stats) {
       playerGet.stats.currentHP = 0;
