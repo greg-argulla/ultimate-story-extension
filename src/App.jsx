@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import OBR from "@owlbear-rodeo/sdk";
 import landingBG from "./assets/bg.jpg";
+import layout from "../layout.json";
 import "./App.css";
 
 const Text = (props) => {
@@ -1709,21 +1710,10 @@ function App() {
 
           <button
             className="button"
-            style={{ fontWeight: "bolder", width: 80, float: "right" }}
-            onClick={() => {
-              addPlayer();
-            }}
-          >
-            Add Character
-          </button>
-
-          <button
-            className="button"
             style={{
               fontWeight: "bolder",
               width: 60,
               float: "right",
-              marginRight: 4,
             }}
             onClick={() => {
               if (editMode) {
@@ -1734,6 +1724,50 @@ function App() {
           >
             {editMode ? "Done Edit" : "Edit"}
           </button>
+
+          {!editMode && (
+            <button
+              className="button"
+              style={{
+                fontWeight: "bolder",
+                width: 80,
+                float: "right",
+                marginRight: 4,
+              }}
+              onClick={() => {
+                addPlayer();
+              }}
+            >
+              Add Character
+            </button>
+          )}
+
+          {editMode && (
+            <button
+              className="button"
+              style={{
+                fontWeight: "bolder",
+                width: 110,
+                float: "right",
+                marginRight: 4,
+              }}
+              onClick={async () => {
+                const allItems = await OBR.scene.items.getItems((item) => true);
+
+                if (allItems.length > 0) {
+                  showMessage("Need empty scene in order to add game layout!");
+                } else {
+                  layout.forEach((item, index) => {
+                    setTimeout(async () => {
+                      await OBR.scene.items.addItems([item]);
+                    }, 50 * index);
+                  });
+                }
+              }}
+            >
+              Create Game Layout
+            </button>
+          )}
         </div>
         <hr />
         {playerList
@@ -5107,7 +5141,7 @@ function App() {
             top: 0,
             bottom: 0,
             margin: "auto",
-            width: 200,
+            width: 300,
             height: 28,
             padding: 8,
             textAlign: "center",
