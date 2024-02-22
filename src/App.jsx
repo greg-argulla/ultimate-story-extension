@@ -4181,6 +4181,12 @@ function App() {
             onChange={(evt) => {
               const playerGet = { ...player };
               playerGet.traits.name = evt.target.value;
+              updateGMNoteItem(
+                playerGet.linkedStats.currentStats,
+                playerGet.stats.currentHP,
+                playerGet.stats.currentMP,
+                playerGet.traits.name
+              );
               updatePlayer(playerGet);
             }}
             placeholder="Your Enemy Name"
@@ -4464,10 +4470,10 @@ function App() {
                         lastModifiedUserId: id,
                         metadata: {},
                         image: {
-                          width: 800,
+                          width: 312,
                           height: 164,
                           mime: "image/png",
-                          url: "https://images.owlbear.rodeo/691aa845-022d-4c0f-948f-4bfc5a4037f3/items/7cfe136c-3e03-4933-9af4-cb8ef4812847.png",
+                          url: "https://images.owlbear.rodeo/691aa845-022d-4c0f-948f-4bfc5a4037f3/items/8e51ab1b-300b-477a-bd43-fcfdad184063.png",
                         },
                         grid: {
                           dpi: 286.3961813842481,
