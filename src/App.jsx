@@ -422,6 +422,10 @@ function App() {
       will: "wil",
     };
 
+    if (!npc.extra) {
+      npc.extra = {};
+    }
+
     if (npc.description) {
       actionsFromNpc.push({
         name: npc.name,
