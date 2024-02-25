@@ -5,6 +5,40 @@ import landingBG from "./assets/bg.jpg";
 import layout from "../layout.json";
 import "./App.css";
 
+const debuffList = [
+  {
+    name: "slow",
+    label: "Slow",
+    url: "https://images.owlbear.rodeo/691aa845-022d-4c0f-948f-4bfc5a4037f3/items/a7dd52d4-6064-4f32-a742-27adc8c77cda.png",
+  },
+  {
+    name: "dazed",
+    label: "Dazed",
+    url: "https://images.owlbear.rodeo/691aa845-022d-4c0f-948f-4bfc5a4037f3/items/6ad33f4f-c756-4320-b62b-8c4719a3f294.png",
+  },
+  {
+    name: "weak",
+    label: "Weak",
+    url: "https://images.owlbear.rodeo/691aa845-022d-4c0f-948f-4bfc5a4037f3/items/01fc0c8b-68b9-40a3-859c-680edde55008.png",
+  },
+  {
+    name: "shaken",
+    label: "Shaken",
+    url: "https://images.owlbear.rodeo/691aa845-022d-4c0f-948f-4bfc5a4037f3/items/21a042d4-1b16-4984-96bb-79117db6b4e5.png",
+  },
+  {
+    name: "enraged",
+    label: "Enraged",
+    url: "https://images.owlbear.rodeo/691aa845-022d-4c0f-948f-4bfc5a4037f3/items/88cdb66c-9926-4d5d-9f7e-4fb51c95858a.png",
+  },
+
+  {
+    name: "poisoned",
+    label: "Poisoned",
+    url: "https://images.owlbear.rodeo/691aa845-022d-4c0f-948f-4bfc5a4037f3/items/283a97c9-cf33-411b-a105-6c605d7d3b25.png",
+  },
+];
+
 const Text = (props) => {
   const { children } = props;
   return <span className="outline">{children}</span>;
@@ -2421,11 +2455,86 @@ function App() {
               "` one die size " +
               (playerGet.debuff[condition] ? "lower." : "higher."),
           });
+
+          addGMStatusEffectIcon(playerGet);
         }}
       >
         {condition}
       </button>
     );
+  };
+
+  const addStatusEffectIcon = async (playerGet) => {
+    const items = await OBR.scene.items.getItems([
+      playerGet.linkedStats.currentHP,
+    ]);
+
+    if (!items.length) return;
+
+    let statusTrue = 0;
+
+    debuffList.forEach((debuff) => {
+      if (playerGet.debuff[debuff.name]) {
+        OBR.scene.items.addItems([
+          {
+            type: "IMAGE",
+            id: playerGet.linkedStats.currentHP + "_" + debuff.name,
+            name: debuff.name,
+            position: {
+              x: items[0].position.x + statusTrue * 80 - 50,
+              y: items[0].position.y - 120,
+            },
+            attachedTo: playerGet.linkedStats.currentHP,
+            rotation: 0,
+            scale: { x: 0.7, y: 0.7 },
+            visible: true,
+            locked: true,
+            createdUserId: "691aa845-022d-4c0f-948f-4bfc5a4037f3",
+            zIndex: 2708870140636,
+            lastModified: "2024-02-25T14:09:00.636Z",
+            lastModifiedUserId: "691aa845-022d-4c0f-948f-4bfc5a4037f3",
+            metadata: {},
+            image: {
+              url: debuff.url,
+              mime: "image/png",
+              width: 126,
+              height: 117,
+            },
+            grid: { dpi: 150, offset: { x: 2, y: -42 } },
+            text: {
+              type: "RICH",
+              style: {
+                padding: 16,
+                fontSize: 24,
+                fillColor: "#ffd433",
+                textAlign: "CENTER",
+                fontFamily: "Roboto",
+                fontWeight: 400,
+                lineHeight: 1.5,
+                fillOpacity: 1,
+                strokeColor: "#222222",
+                strokeWidth: 5,
+                strokeOpacity: 1,
+                textAlignVertical: "TOP",
+              },
+              width: "AUTO",
+              height: "AUTO",
+              richText: [
+                { type: "paragraph", children: [{ text: debuff.label }] },
+              ],
+              plainText: "",
+            },
+            textItemType: "TEXT",
+            layer: "TEXT",
+          },
+        ]);
+        statusTrue++;
+      } else {
+        OBR.scene.items.deleteItems([
+          playerGet.linkedStats.currentHP + "_" + debuff.name,
+        ]);
+      }
+    });
   };
 
   const Attribute = (props) => {
@@ -2481,6 +2590,17 @@ function App() {
               );
             }
             updatePlayer(playerGet);
+
+            sendSkill({
+              name: player.traits.name + " changed their " + stat.toUpperCase(),
+              info: "",
+              detail:
+                "Bringing their `" +
+                stat.toUpperCase() +
+                "` to `" +
+                playerGet.attributes["current" + stat] +
+                "`",
+            });
           }}
         >
           <option value="d12">d12</option>
@@ -2539,6 +2659,8 @@ function App() {
                 "`",
             });
             updatePlayer(playerGet);
+
+            addStatusEffectIcon(playerGet);
           }}
         >
           {condition}
@@ -2629,6 +2751,7 @@ function App() {
                 playerGet.attributes["currentins"] +
                 "`",
             });
+            addStatusEffectIcon(playerGet);
           }}
         >
           Enraged
@@ -2664,6 +2787,7 @@ function App() {
                 playerGet.attributes["currentwil"] +
                 "`",
             });
+            addStatusEffectIcon(playerGet);
           }}
         >
           Poisoned
@@ -4123,6 +4247,79 @@ function App() {
     );
   };
 
+  const addGMStatusEffectIcon = async (playerGet) => {
+    const items = await OBR.scene.items.getItems([
+      playerGet.linkedStats.currentStats,
+    ]);
+
+    if (!items.length) return;
+
+    let statusTrue = 0;
+
+    debuffList.forEach((debuff) => {
+      if (playerGet.debuff[debuff.name]) {
+        OBR.scene.items.addItems([
+          {
+            type: "IMAGE",
+            id: playerGet.linkedStats.currentStats + "_" + debuff.name,
+            name: debuff.name,
+            position: {
+              x: items[0].position.x + statusTrue * 80,
+              y: items[0].position.y - 90,
+            },
+            attachedTo: playerGet.linkedStats.currentStats,
+            rotation: 0,
+            scale: { x: 0.7, y: 0.7 },
+            visible: true,
+            locked: true,
+            createdUserId: "691aa845-022d-4c0f-948f-4bfc5a4037f3",
+            zIndex: 1708870140636,
+            lastModified: "2024-02-25T14:09:00.636Z",
+            lastModifiedUserId: "691aa845-022d-4c0f-948f-4bfc5a4037f3",
+            metadata: {},
+            image: {
+              url: debuff.url,
+              mime: "image/png",
+              width: 126,
+              height: 117,
+            },
+            grid: { dpi: 150, offset: { x: 2, y: -42 } },
+            text: {
+              type: "RICH",
+              style: {
+                padding: 16,
+                fontSize: 24,
+                fillColor: "#ffd433",
+                textAlign: "CENTER",
+                fontFamily: "Roboto",
+                fontWeight: 400,
+                lineHeight: 1.5,
+                fillOpacity: 1,
+                strokeColor: "#222222",
+                strokeWidth: 5,
+                strokeOpacity: 1,
+                textAlignVertical: "TOP",
+              },
+              width: "AUTO",
+              height: "AUTO",
+              richText: [
+                { type: "paragraph", children: [{ text: debuff.label }] },
+              ],
+              plainText: "",
+            },
+            textItemType: "TEXT",
+            layer: "ATTACHMENT",
+          },
+        ]);
+        statusTrue++;
+      } else {
+        OBR.scene.items.deleteItems([
+          playerGet.linkedStats.currentStats + "_" + debuff.name,
+        ]);
+      }
+    });
+  };
+
   const [damageTypeSelected, setSelectedDamageType] = useState("physical");
 
   const damageTypes = [
@@ -4453,7 +4650,7 @@ function App() {
                   const selected = await OBR.player.getSelection();
                   if (selected && selected[0]) {
                     const items = await OBR.scene.items.getItems([selected[0]]);
-                    const healthBarId = Date.now() + "_healthbar";
+                    const healthBarId = items[0].id + "_healthbar";
 
                     OBR.scene.items.addItems([
                       {
@@ -4531,6 +4728,7 @@ function App() {
                       playerGet.traits.name
                     );
                     updatePlayer(playerGet);
+                    addGMStatusEffectIcon(playerGet);
                   }
                 }}
               >
@@ -4667,8 +4865,9 @@ function App() {
               backgroundColor: player.debuff.enraged ? "darkred" : "#222",
               color: player.debuff.enraged ? "white" : "#ffd433",
             }}
-            onClick={() => {
+            onClick={async () => {
               const playerGet = { ...player };
+
               playerGet.debuff.enraged = !player.debuff.enraged;
               playerGet.attributes["currentdex"] = getCurrentAttribute("dex");
               playerGet.attributes["currentins"] = getCurrentAttribute("ins");
@@ -4683,6 +4882,8 @@ function App() {
                   "Bringing their `DEX` to `INS` one die size " +
                   (playerGet.debuff.enraged ? "lower." : "higher."),
               });
+
+              addGMStatusEffectIcon(playerGet);
             }}
           >
             Enraged
@@ -4713,6 +4914,8 @@ function App() {
                   "Bringing their `MIG` to `WIL` one die size " +
                   (playerGet.debuff.poisoned ? "lower." : "higher."),
               });
+
+              addGMStatusEffectIcon(playerGet);
             }}
           >
             Poisoned
