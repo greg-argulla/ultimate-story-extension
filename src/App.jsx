@@ -2519,9 +2519,7 @@ function App() {
               },
               width: "AUTO",
               height: "AUTO",
-              richText: [
-                { type: "paragraph", children: [{ text: debuff.label }] },
-              ],
+              richText: [{ type: "paragraph", children: [{ text: "" }] }],
               plainText: "",
             },
             textItemType: "TEXT",
