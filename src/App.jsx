@@ -4109,6 +4109,7 @@ function App() {
       bonus: 0,
       damage: 0,
       useHR: true,
+      edit: true,
     });
     updatePlayer(playerGet);
     showMessage(`Added new action.`);
@@ -4121,6 +4122,7 @@ function App() {
       info: "",
       detail: "",
       noDice: true,
+      edit: true,
     });
     updatePlayer(playerGet);
     showMessage(`Added new action.`);
