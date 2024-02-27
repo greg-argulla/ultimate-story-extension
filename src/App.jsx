@@ -3586,8 +3586,6 @@ function App() {
           style={{
             display: "flex",
             alignItems: "center",
-            marginBottom: 5,
-            marginLeft: 2,
             cursor: "pointer",
           }}
           onClick={() => {
