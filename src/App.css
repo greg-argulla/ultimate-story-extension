@@ -88,6 +88,13 @@ input[type="number"] {
   border-radius: 3px;
   border: 1px solid #222;
 }
+.skill-detail {
+  font-size: 10px;
+  background-color: #111;
+  padding: 10px;
+  border-radius: 5px;
+  color: #ddd;
+}
 
 .bond-stat {
   background-color: #333;

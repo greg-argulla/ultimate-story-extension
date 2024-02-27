@@ -3325,7 +3325,11 @@ function App() {
 
   const addSkill = (index) => {
     const playerGet = { ...player };
-    playerGet.skills[index].items.push({ name: "", info: "", detail: "" }),
+    playerGet.skills[index].items.push({
+      name: "",
+      info: "",
+      detail: "",
+    }),
       updatePlayer(playerGet);
     showMessage(`Added new item.`);
   };
@@ -3337,6 +3341,136 @@ function App() {
       updatePlayer(playerGet);
       showMessage(`Removed item.`);
     }
+  };
+
+  const parseQuote = (str) => {
+    const split = str.split("`");
+
+    return split.map((item, index) => {
+      if (index % 2 !== 0) {
+        return (
+          <span key={"parseTilde" + index} style={{ color: "moccasin" }}>
+            {item}
+          </span>
+        );
+      }
+      return <span key={"parseTilde" + index}>{item}</span>;
+    });
+  };
+
+  const parseAsterisk = (str) => {
+    const split = str.split("*");
+
+    return split.map((item, index) => {
+      if (index % 2 !== 0) {
+        return (
+          <span key={"parseAsterisk" + index} style={{ color: "red" }}>
+            {item}
+          </span>
+        );
+      }
+      return <span key={"parseAsterisk" + index}>{parseQuote(item)}</span>;
+    });
+  };
+
+  const parseDetail = (str) => {
+    if (str === undefined) return "";
+    const detailSplit = str.split("\n");
+    return detailSplit.map((item, index) => {
+      if (item === "") return <div key={"parseDetail" + index}>&#8205;</div>;
+
+      return <div key={"parseDetail" + index}>{parseAsterisk(item)}</div>;
+    });
+  };
+
+  const getImage = (str) => {
+    return str.substring(str.indexOf("<") + 1, str.lastIndexOf(">"));
+  };
+
+  const skillInstance = (data, index, itemIndex) => {
+    let propsString = JSON.stringify(data);
+    const imageURL = getImage(propsString);
+
+    if (imageURL) {
+      propsString = propsString.replace("<" + imageURL + ">", "");
+    }
+
+    const item = JSON.parse(propsString);
+    return (
+      <div
+        key={"skillInstance" + itemIndex}
+        style={{ marginTop: 10, marginBottom: 10 }}
+      >
+        <div className="skill-detail">
+          <div
+            style={{
+              fontSize: 13,
+              color: "darkorange",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>
+              <div>{item.name}</div>
+              {item.info ? (
+                <div
+                  style={{ color: "darkgrey", cursor: "copy", fontSize: 10 }}
+                >
+                  {item.info}
+                </div>
+              ) : (
+                ""
+              )}
+            </div>
+            <div>
+              <button
+                className="button"
+                style={{
+                  float: "right",
+                  font: 10,
+                  padding: 4,
+                  marginLeft: 8,
+                }}
+                onClick={() => {
+                  sendSkill(data);
+                }}
+              >
+                Send
+              </button>
+            </div>
+          </div>
+
+          <hr
+            style={{
+              marginTop: 6,
+              marginBottom: 6,
+              borderColor: "grey",
+              backgroundColor: "grey",
+              color: "grey",
+            }}
+          ></hr>
+          <div style={{ display: "flex", gap: 10 }}>
+            <div style={{ flex: 3 }}>{parseDetail(item.detail.trim())}</div>
+            {imageURL && (
+              <div
+                style={{
+                  flex: 1,
+                  backgroundImage: `url(${imageURL})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  height: 80,
+                  overflow: "hidden",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  borderRadius: 5,
+                }}
+              ></div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
   };
 
   const skill = (data, index, itemIndex) => {
@@ -3376,9 +3510,11 @@ function App() {
           <button
             className="button"
             style={{ marginRight: 4 }}
-            onClick={() => sendSkill(data)}
+            onClick={() => {
+              sendSkill(data);
+            }}
           >
-            Show
+            Send
           </button>
           <button
             className="button"
@@ -3415,11 +3551,113 @@ function App() {
     );
   };
 
+  const categoryInstance = (data, index) => {
+    const categorySearched =
+      searchSkills !== "" &&
+      data.categoryName.toLowerCase().includes(searchSkills.toLowerCase());
+
+    let items = [];
+
+    if (categorySearched) {
+      items = data.items;
+    } else {
+      items = data.items.filter((item) => {
+        if (searchSkills !== "") {
+          if (item.name.toLowerCase().includes(searchSkills.toLowerCase())) {
+            return true;
+          } else return false;
+        } else {
+          return true;
+        }
+      });
+    }
+
+    if (searchSkills !== "" && items.length < 1 && searchSkills) {
+      return "";
+    }
+
+    return (
+      <div
+        className="skill-detail"
+        style={{ marginTop: 20, backgroundColor: "#333" }}
+        key={index}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginBottom: 5,
+            marginLeft: 2,
+            cursor: "pointer",
+          }}
+          onClick={() => {
+            const playerGet = { ...player };
+            playerGet.skills[index].collapse =
+              !playerGet.skills[index].collapse;
+            updatePlayer(playerGet);
+          }}
+        >
+          <span
+            className="outline"
+            style={{
+              fontSize: 16,
+              color: "red",
+              marginRight: 5,
+            }}
+          >
+            {data.categoryName}
+          </span>
+          <span className="outline" style={{ fontSize: 11 }}>
+            {data.categoryInfo}
+          </span>
+
+          <button
+            className="button"
+            style={{ marginLeft: "auto", marginRight: 8 }}
+            onClick={() => {
+              const playerGet = { ...player };
+              playerGet.skills[index].edit = true;
+              updatePlayer(playerGet);
+            }}
+          >
+            Edit
+          </button>
+
+          {data.collapse ? (
+            <span className="outline" style={{ fontSize: 12 }}>
+              ▼
+            </span>
+          ) : (
+            <span className="outline" style={{ fontSize: 12 }}>
+              ▲
+            </span>
+          )}
+        </div>
+        {!data.collapse && (
+          <>
+            <hr
+              style={{
+                marginBottom: 8,
+                borderColor: "#666",
+                backgroundColor: "#666",
+                color: "#666",
+              }}
+            ></hr>
+            {items.map((item, itemIndex) => {
+              return skillInstance(item, index, itemIndex);
+            })}
+          </>
+        )}
+      </div>
+    );
+  };
+
   const addCategory = () => {
     const playerGet = { ...player };
     playerGet.skills.push({
       categoryName: "",
       categoryInfo: "",
+      edit: true,
       items: [{ name: "", info: "", detail: "" }],
     });
     updatePlayer(playerGet);
@@ -3461,14 +3699,14 @@ function App() {
     }
 
     return (
-      <div style={{ marginBottom: 20 }} key={index}>
+      <div style={{ marginTop: 20 }} key={index}>
         <hr />
         <div style={{ display: "flex", alignItems: "center" }}>
           <Text>Category: </Text>
           <input
             className="input-stat"
             style={{
-              width: 150,
+              width: 100,
               color: "lightgrey",
             }}
             value={data.categoryName}
@@ -3523,6 +3761,19 @@ function App() {
               +
             </button>
           </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <button
+              className="button"
+              style={{ fontWeight: "bolder", width: 50, marginRight: 4 }}
+              onClick={() => {
+                const playerGet = { ...player };
+                playerGet.skills[index].edit = false;
+                updatePlayer(playerGet);
+              }}
+            >
+              Done
+            </button>
+          </div>
           <button
             className="button"
             style={{ fontWeight: "bolder", width: 25, color: "darkred" }}
@@ -3542,6 +3793,8 @@ function App() {
   };
 
   const [searchSkills, setSearchSkills] = useState("");
+
+  const [collapseAll, setCollapseAll] = useState(true);
 
   const renderCategory = () => {
     return (
@@ -3577,6 +3830,28 @@ function App() {
               width: 80,
               float: "right",
               marginTop: 2,
+              marginLeft: 4,
+            }}
+            onClick={() => {
+              const playerGet = { ...player };
+
+              playerGet.skills.forEach((_, index) => {
+                playerGet.skills[index].collapse = collapseAll;
+              });
+
+              updatePlayer(playerGet);
+              setCollapseAll(!collapseAll);
+            }}
+          >
+            {collapseAll ? "Collapse" : "Uncollapse"}
+          </button>
+          <button
+            className="button"
+            style={{
+              fontWeight: "bolder",
+              width: 80,
+              float: "right",
+              marginTop: 2,
             }}
             onClick={() => addCategory()}
           >
@@ -3585,8 +3860,240 @@ function App() {
         </div>
 
         {player.skills.map((item, index) => {
-          return category(item, index);
+          if (!item.edit) {
+            return categoryInstance(item, index);
+          } else {
+            return category(item, index);
+          }
         })}
+      </div>
+    );
+  };
+
+  const actionInstance = (data, index) => {
+    let propsString = JSON.stringify(data);
+    const imageURL = getImage(propsString);
+
+    if (imageURL) {
+      propsString = propsString.replace("<" + imageURL + ">", "");
+    }
+
+    const item = JSON.parse(propsString);
+
+    return (
+      <div key={index} style={{ marginBottom: 10 }}>
+        <div className="skill-detail" style={{ backgroundColor: "#111" }}>
+          <div
+            style={{
+              fontSize: 13,
+              color: "darkorange",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>
+              <div>{data.name}</div>
+              {data.info ? (
+                <div
+                  style={{ color: "darkgrey", cursor: "copy", fontSize: 10 }}
+                >
+                  {data.info}
+                </div>
+              ) : (
+                ""
+              )}
+            </div>
+            <div>
+              {data.noDice ? (
+                <button
+                  className="button"
+                  style={{
+                    float: "right",
+                    font: 10,
+                    padding: 4,
+                    marginLeft: 8,
+                    backgroundColor: "darkred",
+                    color: "white",
+                  }}
+                  onClick={() => {
+                    sendSkill(data);
+                  }}
+                >
+                  Send
+                </button>
+              ) : (
+                <button
+                  className="button"
+                  style={{
+                    float: "right",
+                    font: 10,
+                    padding: 4,
+                    marginLeft: 8,
+                    backgroundColor: "darkred",
+                    color: "white",
+                  }}
+                  onClick={() => sendRoll(data)}
+                >
+                  Roll
+                </button>
+              )}
+              <button
+                className="button"
+                style={{
+                  float: "right",
+                  font: 10,
+                  padding: 4,
+                  marginLeft: 8,
+                }}
+                onClick={() => {
+                  const playerGet = { ...player };
+                  playerGet.actions[index].edit = true;
+                  updatePlayer(playerGet);
+                }}
+              >
+                Edit
+              </button>
+            </div>
+          </div>
+
+          <hr
+            style={{
+              marginTop: 6,
+              marginBottom: 6,
+              borderColor: "grey",
+              backgroundColor: "grey",
+              color: "grey",
+            }}
+          ></hr>
+
+          {!data.noDice && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginTop: 4,
+                backgroundColor: "#222",
+                padding: "5px 10px",
+                borderRadius: 10,
+                justifyContent: "space-between",
+              }}
+            >
+              <Text>Dice 1: </Text>
+              <select
+                className="attribute-stat"
+                value={data.diceOne}
+                onChange={(evt) => {
+                  const playerGet = { ...player };
+                  playerGet.actions[index].diceOne = evt.target.value;
+                  updatePlayer(playerGet);
+                }}
+              >
+                <option value="dex">DEX</option>
+                <option value="ins">INS</option>
+                <option value="mig">MIG</option>
+                <option value="wil">WIL</option>
+                <option value="d12">d12</option>
+                <option value="d10">d10</option>
+                <option value="d8">d8</option>
+                <option value="d6">d6</option>
+              </select>
+              <Text>Dice 2: </Text>
+              <select
+                className="attribute-stat"
+                value={data.diceTwo}
+                onChange={(evt) => {
+                  const playerGet = { ...player };
+                  playerGet.actions[index].diceTwo = evt.target.value;
+                  updatePlayer(playerGet);
+                }}
+              >
+                <option value="dex">DEX</option>
+                <option value="ins">INS</option>
+                <option value="mig">MIG</option>
+                <option value="wil">WIL</option>
+                <option value="d12">d12</option>
+                <option value="d10">d10</option>
+                <option value="d8">d8</option>
+                <option value="d6">d6</option>
+              </select>
+              <Text>Modifier:</Text>
+              <input
+                className="input-stat"
+                type="number"
+                style={{
+                  width: 20,
+                  color: "lightblue",
+                }}
+                value={data.bonus}
+                onChange={(evt) => {
+                  const playerGet = { ...player };
+                  playerGet.actions[index].bonus = evt.target.value;
+                  updatePlayer(playerGet);
+                }}
+                onBlur={() => {
+                  const playerGet = { ...player };
+                  if (isNaN(parseInt(playerGet.actions[index].bonus))) {
+                    playerGet.actions[index].bonus = 0;
+                    updatePlayer(playerGet);
+                  }
+                }}
+              />
+              <button
+                className="button"
+                style={{ marginRight: 4, backgroundColor: "#333" }}
+                onClick={() => {
+                  const playerGet = { ...player };
+                  playerGet.actions[index].useHR =
+                    !playerGet.actions[index].useHR;
+                  updatePlayer(playerGet);
+                }}
+              >
+                {data.useHR ? "With HR" : "No HR"}
+              </button>
+              <Text>Damage:</Text>
+              <input
+                className="input-stat"
+                type="number"
+                style={{
+                  width: 20,
+                  color: "red",
+                }}
+                value={data.damage}
+                onChange={(evt) => {
+                  const playerGet = { ...player };
+                  playerGet.actions[index].damage = evt.target.value;
+                  updatePlayer(playerGet);
+                }}
+                onBlur={() => {
+                  const playerGet = { ...player };
+                  if (isNaN(parseInt(playerGet.actions[index].damage))) {
+                    playerGet.actions[index].damage = 0;
+                    updatePlayer(playerGet);
+                  }
+                }}
+              />
+            </div>
+          )}
+          <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
+            <div style={{ flex: 3 }}>{parseDetail(item.detail.trim())}</div>
+            {imageURL && (
+              <div
+                style={{
+                  flex: 1,
+                  backgroundImage: `url(${imageURL})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  height: 80,
+                  overflow: "hidden",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  borderRadius: 5,
+                }}
+              ></div>
+            )}
+          </div>
+        </div>
       </div>
     );
   };
@@ -3730,9 +4237,13 @@ function App() {
               <button
                 className="button"
                 style={{ marginRight: 4, width: 50 }}
-                onClick={() => sendSkill(data)}
+                onClick={() => {
+                  const playerGet = { ...player };
+                  playerGet.actions[index].edit = false;
+                  updatePlayer(playerGet);
+                }}
               >
-                Show
+                Done
               </button>
             </>
           )}
@@ -3864,9 +4375,13 @@ function App() {
             <button
               className="button"
               style={{ marginLeft: 4, width: 50 }}
-              onClick={() => sendRoll(data)}
+              onClick={() => {
+                const playerGet = { ...player };
+                playerGet.actions[index].edit = false;
+                updatePlayer(playerGet);
+              }}
             >
-              Roll
+              Done
             </button>
           </div>
         )}
@@ -4239,7 +4754,9 @@ function App() {
         <hr />
 
         {items.map((item, index) => {
-          return action(item, index);
+          if (!item.edit) {
+            return actionInstance(item, index);
+          } else return action(item, index);
         })}
       </div>
     );
