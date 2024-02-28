@@ -4783,7 +4783,7 @@ function App() {
               y: items[0].position.y - 90,
             },
             attachedTo: playerGet.linkedStats.currentStats,
-            disableAttachmentBehavior: ["VISIBLE"],
+            disableAttachmentBehavior: ["VISIBLE", "SCALE", "ROTATION"],
             rotation: 0,
             scale: { x: 0.7, y: 0.7 },
             visible: true,
