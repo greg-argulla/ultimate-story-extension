@@ -1746,27 +1746,30 @@ function App() {
             Characters:
           </span>
 
-          <button
-            type="button"
-            className="button"
-            style={{
-              fontWeight: "bolder",
-              width: 100,
-              float: "right",
-              marginRight: 4,
-            }}
-            onClick={() => {
-              OBR.popover.open({
-                id: "second-instance",
-                url: "/",
-                height: 540,
-                width: 550,
-                anchorOrigin: { horizontal: "LEFT", vertical: "BOTTOM" },
-              });
-            }}
-          >
-            Open Second Screen
-          </button>
+          {!editMode && role == "GM" && (
+            <button
+              type="button"
+              className="button"
+              style={{
+                fontWeight: "bolder",
+                width: 100,
+                float: "right",
+                marginLeft: 4,
+              }}
+              onClick={() => {
+                OBR.popover.open({
+                  id: "second-instance",
+                  url: "/",
+                  height: 540,
+                  width: 550,
+                  anchorOrigin: { horizontal: "LEFT", vertical: "BOTTOM" },
+                  disableClickAway: true,
+                });
+              }}
+            >
+              Open Second Screen
+            </button>
+          )}
 
           <button
             className="button"
