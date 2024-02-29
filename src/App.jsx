@@ -246,7 +246,8 @@ const getDiceStat = (dice) => {
   }
 };
 
-function App() {
+function App(props) {
+  const { adversaryOnly } = props;
   const [isOBRReady, setIsOBRReady] = useState(false);
   const [name, setName] = useState("");
   const [id, setId] = useState("");
@@ -269,6 +270,26 @@ function App() {
   const [message, setMessage] = useState("");
   const [ignoreFirstUpdate, setIgnoreFirstUpdate] = useState(false);
   const uploaderRef = useRef(null);
+
+  useEffect(() => {
+    if (adversaryOnly && !player && playerList) {
+      const adversaries = playerList
+        .filter((item) => item.isGMPlayer)
+        .sort((a, b) => a.traits.name.localeCompare(b.traits.name));
+
+      if (adversaries.length === 0) return;
+
+      setTab("actions");
+      setDiceOne("");
+      setDiceTwo("");
+      setHealthModifier(0);
+      setMindModifier(0);
+      setBonus(0);
+      setEditMode(false);
+      setPlayer(adversaries[0]);
+      sendCharacter(adversaries[0]);
+    }
+  }, [playerList]);
 
   useEffect(() => {
     OBR.onReady(async () => {
@@ -1746,31 +1767,6 @@ function App() {
             Characters:
           </span>
 
-          {!editMode && role == "GM" && (
-            <button
-              type="button"
-              className="button"
-              style={{
-                fontWeight: "bolder",
-                width: 100,
-                float: "right",
-                marginLeft: 4,
-              }}
-              onClick={() => {
-                OBR.popover.open({
-                  id: "second-instance",
-                  url: "/",
-                  height: 540,
-                  width: 550,
-                  anchorOrigin: { horizontal: "LEFT", vertical: "BOTTOM" },
-                  disableClickAway: true,
-                });
-              }}
-            >
-              Open Second Screen
-            </button>
-          )}
-
           <button
             className="button"
             style={{
@@ -1914,6 +1910,30 @@ function App() {
               }}
             >
               Add Adversary
+            </button>
+          )}
+          {role == "GM" && (
+            <button
+              type="button"
+              className="button"
+              style={{
+                fontWeight: "bolder",
+                width: 100,
+                float: "right",
+                marginRight: 4,
+              }}
+              onClick={() => {
+                OBR.popover.open({
+                  id: "adversary",
+                  url: "/adversary",
+                  height: 540,
+                  width: 550,
+                  anchorOrigin: { horizontal: "LEFT", vertical: "BOTTOM" },
+                  disableClickAway: true,
+                });
+              }}
+            >
+              Open Adversary Only
             </button>
           )}
         </div>
@@ -5016,7 +5036,9 @@ function App() {
               color: "red",
             }}
             onClick={() => {
-              setPlayer(null);
+              if (adversaryOnly) {
+                OBR.popover.close("adversary");
+              } else setPlayer(null);
             }}
           >
             Close
