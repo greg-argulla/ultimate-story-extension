@@ -1923,17 +1923,21 @@ function App(props) {
                 marginRight: 4,
               }}
               onClick={() => {
-                OBR.popover.open({
-                  id: "adversary",
-                  url: "/adversary",
-                  height: 540,
-                  width: 550,
-                  anchorOrigin: { horizontal: "LEFT", vertical: "BOTTOM" },
-                  disableClickAway: true,
-                });
+                if (playerList.filter((item) => item.isGMPlayer).length > 0) {
+                  OBR.popover.open({
+                    id: "adversary",
+                    url: "/adversary",
+                    height: 540,
+                    width: 550,
+                    anchorOrigin: { horizontal: "LEFT", vertical: "BOTTOM" },
+                    disableClickAway: true,
+                  });
+                } else {
+                  showMessage("You need to have adversaries to open.");
+                }
               }}
             >
-              Open Adversary Only
+              Open Adversaries
             </button>
           )}
         </div>
