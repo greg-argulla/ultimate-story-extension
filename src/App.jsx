@@ -1842,6 +1842,27 @@ function App() {
             className="button"
             style={{
               fontWeight: "bolder",
+              width: 100,
+              float: "right",
+              marginRight: 4,
+            }}
+            onClick={() => {
+              OBR.popover.open({
+                id: "second-instance",
+                url: "/",
+                height: 540,
+                width: 550,
+                anchorOrigin: { horizontal: "LEFT", vertical: "BOTTOM" },
+              });
+            }}
+          >
+            Open Second Screen
+          </button>
+          <button
+            type="button"
+            className="button"
+            style={{
+              fontWeight: "bolder",
               width: 60,
               float: "right",
               marginRight: 4,
@@ -5178,6 +5199,7 @@ function App() {
                           x: items[0].position.x - items[0].grid.offset.x,
                           y: items[0].position.y - items[0].grid.offset.y,
                         },
+                        disableAttachmentBehavior: ["SCALE", "ROTATION"],
                         rotation: 0,
                         scale: { x: 1, y: 1 },
                         visible: true,
