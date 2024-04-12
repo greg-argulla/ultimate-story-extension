@@ -3501,7 +3501,9 @@ function App(props) {
             }}
           ></hr>
           <div style={{ display: "flex", gap: 10 }}>
-            <div style={{ flex: 3 }}>{parseDetail(item.detail.trim())}</div>
+            <div style={{ flex: 3 }}>
+              {parseDetail(item.detail ? item.detail.trim() : "")}
+            </div>
             {imageURL && (
               <div
                 style={{
@@ -4124,7 +4126,9 @@ function App(props) {
             </div>
           )}
           <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
-            <div style={{ flex: 3 }}>{parseDetail(item.detail.trim())}</div>
+            <div style={{ flex: 3 }}>
+              {parseDetail(item.detail ? item.detail.trim() : "")}
+            </div>
             {imageURL && (
               <div
                 style={{
