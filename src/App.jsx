@@ -1927,7 +1927,7 @@ function App(props) {
                   OBR.popover.open({
                     id: "adversary",
                     url: "/adversary",
-                    height: 540 * 0.8 * 0.75,
+                    height: 540 * 0.8,
                     width: 550 * 0.8,
                     anchorOrigin: { horizontal: "LEFT", vertical: "BOTTOM" },
                     disableClickAway: true,
