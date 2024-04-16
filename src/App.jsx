@@ -4755,6 +4755,7 @@ function App(props) {
               setSearchActions(evt.target.value);
             }}
           />
+
           {searchActions !== "" && (
             <button
               className="button"
@@ -4764,6 +4765,18 @@ function App(props) {
               }}
             >
               Clear
+            </button>
+          )}
+
+          {player.isGMPlayer && (
+            <button
+              className="button"
+              style={{ fontWeight: "bolder", width: 80 }}
+              onClick={() => {
+                sendRandomPlayer("");
+              }}
+            >
+              Random Target
             </button>
           )}
 
@@ -4926,6 +4939,31 @@ function App(props) {
       "ultimate.story.extension/sendskill": skillData,
     });
     showMessage("Affinity Info Sent!");
+  };
+
+  const sendRandomPlayer = (forGood) => {
+    const playerListFiltered = playerList.filter((item) => !item.isGMPlayer);
+    const numResult = Math.floor(Math.random() * playerListFiltered.length);
+
+    const playerSelected = playerListFiltered[numResult];
+
+    const skillData = {
+      skillName: forGood
+        ? playerSelected.traits.name + " has been selected!"
+        : playerSelected.traits.name + " has been targeted!",
+      info: "",
+      detail: forGood
+        ? '"Fate has chosen you."'
+        : '"Brace yourself, this might hurt!"',
+      characterName: "Random Player",
+      userId: id,
+      username: name,
+      id: Date.now(),
+    };
+    OBR.room.setMetadata({
+      "ultimate.story.extension/sendskill": skillData,
+    });
+    showMessage("Sent Random Adversary!");
   };
 
   const renderGMNav = () => {
