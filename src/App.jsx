@@ -5825,7 +5825,7 @@ function App(props) {
             {!player.isGMPlayer ? renderNav() : renderGMNav()}
             <hr />
             {tab === "stats" && (
-              <div>
+              <div style={{ marginBottom: 30 }}>
                 {renderInfo()}
                 <hr />
                 {renderBonds()}
