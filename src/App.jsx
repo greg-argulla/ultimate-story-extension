@@ -3437,12 +3437,21 @@ function App(props) {
     return str.substring(str.indexOf("<") + 1, str.lastIndexOf(">"));
   };
 
+  const getSFX = (str) => {
+    return str.substring(str.indexOf("$") + 1, str.lastIndexOf("$"));
+  };
+
   const skillInstance = (data, index, itemIndex) => {
     let propsString = JSON.stringify(data);
     const imageURL = getImage(propsString);
+    const sfxURL = getSFX(propsString);
 
     if (imageURL) {
       propsString = propsString.replace("<" + imageURL + ">", "");
+    }
+
+    if (sfxURL) {
+      propsString = propsString.replace("$" + imageURL + "$", "");
     }
 
     const item = JSON.parse(propsString);
@@ -3922,10 +3931,14 @@ function App(props) {
 
   const actionInstance = (data, index) => {
     let propsString = JSON.stringify(data);
-    const imageURL = getImage(propsString);
+    const sfxURL = getSFX(propsString);
 
     if (imageURL) {
       propsString = propsString.replace("<" + imageURL + ">", "");
+    }
+
+    if (sfxURL) {
+      propsString = propsString.replace("$" + imageURL + "$", "");
     }
 
     const item = JSON.parse(propsString);
