@@ -3451,7 +3451,7 @@ function App(props) {
     }
 
     if (sfxURL) {
-      propsString = propsString.replace("$" + sfxURL + "$", "");
+      propsString = propsString.replace("$" + sfxURL + "$", " ♫ ");
     }
 
     const item = JSON.parse(propsString);
@@ -3939,7 +3939,7 @@ function App(props) {
     }
 
     if (sfxURL) {
-      propsString = propsString.replace("$" + sfxURL + "$", "");
+      propsString = propsString.replace("$" + sfxURL + "$", " ♫ ");
     }
 
     const item = JSON.parse(propsString);
