@@ -3451,7 +3451,7 @@ function App(props) {
     }
 
     if (sfxURL) {
-      propsString = propsString.replace("$" + imageURL + "$", "");
+      propsString = propsString.replace("$" + sfxURL + "$", "");
     }
 
     const item = JSON.parse(propsString);
@@ -3931,6 +3931,7 @@ function App(props) {
 
   const actionInstance = (data, index) => {
     let propsString = JSON.stringify(data);
+    const imageURL = getImage(propsString);
     const sfxURL = getSFX(propsString);
 
     if (imageURL) {
@@ -3938,7 +3939,7 @@ function App(props) {
     }
 
     if (sfxURL) {
-      propsString = propsString.replace("$" + imageURL + "$", "");
+      propsString = propsString.replace("$" + sfxURL + "$", "");
     }
 
     const item = JSON.parse(propsString);
