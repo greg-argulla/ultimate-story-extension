@@ -1831,7 +1831,7 @@ function App(props) {
         <hr />
         {playerList
           .filter((item) => !item.isGMPlayer)
-          .sort((a, b) => a.traits.name.localeCompare(b.traits.name))
+
           .map((data, index) => {
             return playerItem(data, index);
           })}
