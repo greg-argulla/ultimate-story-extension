@@ -1831,7 +1831,7 @@ function App(props) {
         <hr />
         {playerList
           .filter((item) => !item.isGMPlayer)
-
+          .sort((a, b) => a.id < b.id)
           .map((data, index) => {
             return playerItem(data, index);
           })}
