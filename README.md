@@ -9,6 +9,8 @@ tags:
 manifest: https://fabula-ultima-character-extension.onrender.com/manifest.json
 ---
 
+![Image](https://media.discordapp.net/attachments/1209736150814695434/1282238591132635146/image.png?ex=66dea13e&is=66dd4fbe&hm=3ae1f3516a14628e91698ea0341abf5f550ed7674cbd5b5cc1646184e1e583cd&=&format=webp&quality=lossless&width=1269&height=919)
+
 # Ultimate Story Extension
 
 - Stats and Equipments, attributes and debuffs.
