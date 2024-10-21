@@ -1819,7 +1819,7 @@ function App(props) {
                   layout.forEach((item, index) => {
                     setTimeout(async () => {
                       await OBR.scene.items.addItems([item]);
-                    }, 50 * index);
+                    }, 250 * index);
                   });
                 }
               }}
