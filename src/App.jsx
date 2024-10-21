@@ -5281,7 +5281,6 @@ function App(props) {
                   if (selected && selected[0]) {
                     const items = await OBR.scene.items.getItems([selected[0]]);
 
-                    console.log(JSON.stringify(items));
                     const healthBarId = items[0].id + "_healthbar";
 
                     OBR.scene.items.addItems([
