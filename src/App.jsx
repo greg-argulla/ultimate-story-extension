@@ -4890,7 +4890,7 @@ function App(props) {
             type: "RICH",
             style: {
               padding: 16,
-              fontSize: 24,
+              fontSize: 20,
               fillColor: "#ffd433",
               textAlign: "CENTER",
               fontFamily: "Roboto",
