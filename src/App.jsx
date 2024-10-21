@@ -733,7 +733,7 @@ function App(props) {
           const format =
             valueGet > 9 ? valueGet.toString() : " " + valueGet.toString();
 
-          const fontSize = valueGet > 9 ? 16 : 18;
+          const fontSize = valueGet > 9 ? 13 : 15;
           image.text.richText[0].children[0].text = format;
           image.text.style.fontSize = fontSize;
         } else if (key === "fabula") {
@@ -2521,68 +2521,71 @@ function App(props) {
 
     if (!items.length) return;
 
-    let statusTrue = 0;
+    const debuffToPush = [];
+    const debuffToDelete = [];
+    let debuffCount = 0;
 
-    debuffList.forEach((debuff) => {
+    debuffList.forEach(async (debuff, index) => {
       if (playerGet.debuff[debuff.name]) {
-        OBR.scene.items.addItems([
-          {
-            type: "IMAGE",
-            id: playerGet.linkedStats.currentHP + "_" + debuff.name,
-            name: debuff.name,
-            position: {
-              x: items[0].position.x + statusTrue * 80 - 50,
-              y: items[0].position.y - 120,
-            },
-            attachedTo: playerGet.linkedStats.currentHP,
-            rotation: 0,
-            scale: { x: 0.7, y: 0.7 },
-            visible: true,
-            locked: true,
-            createdUserId: "691aa845-022d-4c0f-948f-4bfc5a4037f3",
-            zIndex: 2708870140636,
-            lastModified: "2024-02-25T14:09:00.636Z",
-            lastModifiedUserId: "691aa845-022d-4c0f-948f-4bfc5a4037f3",
-            metadata: {},
-            image: {
-              url: debuff.url,
-              mime: "image/png",
-              width: 126,
-              height: 117,
-            },
-            grid: { dpi: 150, offset: { x: 2, y: -42 } },
-            text: {
-              type: "RICH",
-              style: {
-                padding: 16,
-                fontSize: 24,
-                fillColor: "#ffd433",
-                textAlign: "CENTER",
-                fontFamily: "Roboto",
-                fontWeight: 400,
-                lineHeight: 1.5,
-                fillOpacity: 1,
-                strokeColor: "#222222",
-                strokeWidth: 5,
-                strokeOpacity: 1,
-                textAlignVertical: "TOP",
-              },
-              width: "AUTO",
-              height: "AUTO",
-              richText: [{ type: "paragraph", children: [{ text: "" }] }],
-              plainText: "",
-            },
-            textItemType: "TEXT",
-            layer: "TEXT",
+        debuffToPush.push({
+          type: "IMAGE",
+          id: playerGet.linkedStats.currentHP + "_" + debuff.name,
+          name: debuff.name,
+          position: {
+            x: items[0].position.x + debuffCount * 80 - 50,
+            y: items[0].position.y - 120,
           },
-        ]);
-        statusTrue++;
+          attachedTo: playerGet.linkedStats.currentHP,
+          rotation: 0,
+          scale: { x: 0.7, y: 0.7 },
+          visible: true,
+          locked: true,
+          createdUserId: "691aa845-022d-4c0f-948f-4bfc5a4037f3",
+          zIndex: 2708870140636,
+          lastModified: "2024-02-25T14:09:00.636Z",
+          lastModifiedUserId: "691aa845-022d-4c0f-948f-4bfc5a4037f3",
+          metadata: {},
+          image: {
+            url: debuff.url,
+            mime: "image/png",
+            width: 126,
+            height: 117,
+          },
+          grid: { dpi: 150, offset: { x: 2, y: -42 } },
+          text: {
+            type: "RICH",
+            style: {
+              padding: 16,
+              fontSize: 24,
+              fillColor: "#ffd433",
+              textAlign: "CENTER",
+              fontFamily: "Roboto",
+              fontWeight: 400,
+              lineHeight: 1.5,
+              fillOpacity: 1,
+              strokeColor: "#222222",
+              strokeWidth: 5,
+              strokeOpacity: 1,
+              textAlignVertical: "TOP",
+            },
+            width: "AUTO",
+            height: "AUTO",
+            richText: [{ type: "paragraph", children: [{ text: "" }] }],
+            plainText: "",
+          },
+          textItemType: "TEXT",
+          layer: "TEXT",
+        });
+        debuffCount++;
       } else {
-        OBR.scene.items.deleteItems([
-          playerGet.linkedStats.currentHP + "_" + debuff.name,
-        ]);
+        debuffToDelete.push(
+          playerGet.linkedStats.currentHP + "_" + debuff.name
+        );
       }
     });
+
+    await OBR.scene.items.addItems(debuffToPush);
+    await OBR.scene.items.deleteItems(debuffToDelete);
   };
 
   const Attribute = (props) => {
@@ -4852,69 +4855,72 @@ function App(props) {
 
     let statusTrue = 0;
 
+    const debuffToAdd = [];
+    const debuffToRemove = [];
+
     debuffList.forEach((debuff) => {
       if (playerGet.debuff[debuff.name]) {
-        OBR.scene.items.addItems([
-          {
-            type: "IMAGE",
-            id: playerGet.linkedStats.currentStats + "_" + debuff.name,
-            name: debuff.name,
-            position: {
-              x: items[0].position.x + statusTrue * 80,
-              y: items[0].position.y - 90,
-            },
-            attachedTo: playerGet.linkedStats.currentStats,
-            disableAttachmentBehavior: ["VISIBLE", "SCALE", "ROTATION"],
-            rotation: 0,
-            scale: { x: 0.7, y: 0.7 },
-            visible: true,
-            locked: true,
-            createdUserId: "691aa845-022d-4c0f-948f-4bfc5a4037f3",
-            zIndex: 1708870140636,
-            lastModified: "2024-02-25T14:09:00.636Z",
-            lastModifiedUserId: "691aa845-022d-4c0f-948f-4bfc5a4037f3",
-            metadata: {},
-            image: {
-              url: debuff.url,
-              mime: "image/png",
-              width: 126,
-              height: 117,
-            },
-            grid: { dpi: 150, offset: { x: 2, y: -42 } },
-            text: {
-              type: "RICH",
-              style: {
-                padding: 16,
-                fontSize: 24,
-                fillColor: "#ffd433",
-                textAlign: "CENTER",
-                fontFamily: "Roboto",
-                fontWeight: 400,
-                lineHeight: 1.5,
-                fillOpacity: 1,
-                strokeColor: "#222222",
-                strokeWidth: 5,
-                strokeOpacity: 1,
-                textAlignVertical: "TOP",
-              },
-              width: "AUTO",
-              height: "AUTO",
-              richText: [
-                { type: "paragraph", children: [{ text: debuff.label }] },
-              ],
-              plainText: "",
-            },
-            textItemType: "TEXT",
-            layer: "ATTACHMENT",
+        debuffToAdd.push({
+          type: "IMAGE",
+          id: playerGet.linkedStats.currentStats + "_" + debuff.name,
+          name: debuff.name,
+          position: {
+            x: items[0].position.x + statusTrue * 80,
+            y: items[0].position.y - 90,
           },
-        ]);
+          attachedTo: playerGet.linkedStats.currentStats,
+          disableAttachmentBehavior: ["VISIBLE", "SCALE", "ROTATION"],
+          rotation: 0,
+          scale: { x: 0.7, y: 0.7 },
+          visible: true,
+          locked: true,
+          createdUserId: "691aa845-022d-4c0f-948f-4bfc5a4037f3",
+          zIndex: 1708870140636,
+          lastModified: "2024-02-25T14:09:00.636Z",
+          lastModifiedUserId: "691aa845-022d-4c0f-948f-4bfc5a4037f3",
+          metadata: {},
+          image: {
+            url: debuff.url,
+            mime: "image/png",
+            width: 126,
+            height: 117,
+          },
+          grid: { dpi: 150, offset: { x: 2, y: -42 } },
+          text: {
+            type: "RICH",
+            style: {
+              padding: 16,
+              fontSize: 24,
+              fillColor: "#ffd433",
+              textAlign: "CENTER",
+              fontFamily: "Roboto",
+              fontWeight: 400,
+              lineHeight: 1.5,
+              fillOpacity: 1,
+              strokeColor: "#222222",
+              strokeWidth: 5,
+              strokeOpacity: 1,
+              textAlignVertical: "TOP",
+            },
+            width: "AUTO",
+            height: "AUTO",
+            richText: [
+              { type: "paragraph", children: [{ text: debuff.label }] },
+            ],
+            plainText: "",
+          },
+          textItemType: "TEXT",
+          layer: "ATTACHMENT",
+        });
         statusTrue++;
       } else {
-        OBR.scene.items.deleteItems([
-          playerGet.linkedStats.currentStats + "_" + debuff.name,
-        ]);
+        debuffToRemove.push(
+          playerGet.linkedStats.currentStats + "_" + debuff.name
+        );
       }
     });
+    OBR.scene.items.addItems(debuffToAdd);
+    OBR.scene.items.deleteItems(debuffToRemove);
   };
 
   const [damageTypeSelected, setSelectedDamageType] = useState("physical");
