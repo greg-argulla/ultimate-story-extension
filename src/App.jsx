@@ -5280,49 +5280,20 @@ function App(props) {
                   const selected = await OBR.player.getSelection();
                   if (selected && selected[0]) {
                     const items = await OBR.scene.items.getItems([selected[0]]);
+
+                    console.log(JSON.stringify(items));
                     const healthBarId = items[0].id + "_healthbar";
 
                     OBR.scene.items.addItems([
                       {
-                        type: "IMAGE",
-                        attachedTo: items[0].id,
-                        id: healthBarId,
-                        name: "Healthbox",
-                        position: {
-                          x: items[0].position.x - items[0].grid.offset.x,
-                          y: items[0].position.y - items[0].grid.offset.y,
-                        },
-                        disableAttachmentBehavior: ["SCALE", "ROTATION"],
-                        rotation: 0,
-                        scale: { x: 1, y: 1 },
-                        visible: true,
-                        locked: false,
-                        createdUserId: id,
-                        zIndex: 1707801869642,
-                        lastModifiedUserId: id,
-                        metadata: {},
-                        image: {
-                          width: 312,
-                          height: 164,
-                          mime: "image/png",
-                          url: "https://images.owlbear.rodeo/691aa845-022d-4c0f-948f-4bfc5a4037f3/items/8e51ab1b-300b-477a-bd43-fcfdad184063.png",
-                        },
-                        grid: {
-                          dpi: 286.3961813842481,
-                          offset: {
-                            x: -7.251733151494488,
-                            y: -55.42646714987139,
-                          },
-                        },
                         text: {
                           richText: [
                             { type: "paragraph", children: [{ text: "" }] },
                           ],
-                          plainText: "",
                           style: {
+                            fontSize: 42,
                             padding: 16,
                             fontFamily: "Roboto",
-                            fontSize: 18,
                             fontWeight: 400,
                             textAlign: "LEFT",
                             textAlignVertical: "TOP",
@@ -5330,15 +5301,48 @@ function App(props) {
                             fillOpacity: 1,
                             strokeColor: "#222222",
                             strokeOpacity: 1,
-                            strokeWidth: 5,
                             lineHeight: 1.5,
+                            strokeWidth: 9,
                           },
+                          plainText: "",
                           type: "RICH",
                           width: "AUTO",
                           height: "AUTO",
                         },
+                        grid: {
+                          dpi: 150,
+                          offset: {
+                            y: -60.8902729235092,
+                            x: -6.6444149389321865,
+                          },
+                        },
+                        scale: { y: 0.6146155680182349, x: 0.6146155680182349 },
+                        position: {
+                          x: items[0].position.x - items[0].grid.offset.x,
+                          y: items[0].position.y - items[0].grid.offset.y,
+                        },
+                        type: "IMAGE",
+                        attachedTo: items[0].id,
+                        id: healthBarId,
+                        name: "Healthbox",
+                        disableAttachmentBehavior: ["SCALE", "ROTATION"],
+                        rotation: 0,
+                        visible: true,
+                        locked: false,
+                        createdUserId: "691aa845-022d-4c0f-948f-4bfc5a4037f3",
+                        lastModifiedUserId:
+                          "691aa845-022d-4c0f-948f-4bfc5a4037f3",
+                        metadata: {},
+                        image: {
+                          width: 312,
+                          height: 164,
+                          mime: "image/png",
+                          url: "https://images.owlbear.rodeo/691aa845-022d-4c0f-948f-4bfc5a4037f3/items/8e51ab1b-300b-477a-bd43-fcfdad184063.png",
+                        },
                         textItemType: "TEXT",
                         layer: "ATTACHMENT",
+                        zIndex: 1729524067173,
+                        lastModified: "2024-10-21T15:24:14.937Z",
                       },
                     ]);
 
