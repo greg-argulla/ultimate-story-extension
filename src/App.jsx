@@ -3961,7 +3961,7 @@ function App(props) {
     if (animation) {
       propsString = propsString.replace(
         "@" + animation + "@",
-        " ⚡FX: " + animation
+        "⚡: " + animation
       );
     }
 
