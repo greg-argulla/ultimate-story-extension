@@ -187,7 +187,7 @@ const newPlayer = (isGMPlayer) => {
             name: "Sample Item",
             info: '"Come at me!"',
             detail:
-              "Add your details here. \n\n *This text is highlighted in red* \n\n `This text is highlighted in yellow` \n\n Use the format below to add images \n <https://64.media.tumblr.com/65b2b9c388b86da9e30c14778600f2ff/tumblr_ncxgi0ieoI1qkye4lo4_400.gif>",
+              "Add your details here. \n\n *This text is highlighted in red* \n\n `This text is highlighted in yellow` \n\n Use the format below to add images \n <https://64.media.tumblr.com/65b2b9c388b86da9e30c14778600f2ff/tumblr_ncxgi0ieoI1qkye4lo4_400.gif> \n use the format below to add animations \n @83@",
           },
         ],
       },
@@ -202,7 +202,7 @@ const newPlayer = (isGMPlayer) => {
         name: "Sample Action",
         info: '"You are dead!"',
         detail:
-          "Add your details here. \n\n *This text is highlighted in red* \n\n `This text is highlighted in yellow` \n\n Use the format below to add images \n <https://i0.wp.com/drunkenanimeblog.com/wp-content/uploads/2019/06/log-horizon.gif?fit=500%2C247>",
+          "Add your details here. \n\n *This text is highlighted in red* \n\n `This text is highlighted in yellow` \n\n Use the format below to add images \n <https://i0.wp.com/drunkenanimeblog.com/wp-content/uploads/2019/06/log-horizon.gif?fit=500%2C247> \n use the format below to add animations \n @83@",
         diceOne: "dex",
         diceTwo: "dex",
         bonus: 1,
@@ -3444,10 +3444,15 @@ function App(props) {
     return str.substring(str.indexOf("$") + 1, str.lastIndexOf("$"));
   };
 
+  const getAnimation = (str) => {
+    return str.substring(str.indexOf("@") + 1, str.lastIndexOf("@"));
+  };
+
   const skillInstance = (data, index, itemIndex) => {
     let propsString = JSON.stringify(data);
     const imageURL = getImage(propsString);
     const sfxURL = getSFX(propsString);
+    const animation = getAnimation(propsString);
 
     if (imageURL) {
       propsString = propsString.replace("<" + imageURL + ">", "");
@@ -3455,6 +3460,13 @@ function App(props) {
 
     if (sfxURL) {
       propsString = propsString.replace("$" + sfxURL + "$", " ♫ ");
+    }
+
+    if (animation) {
+      propsString = propsString.replace(
+        "@" + animation + "@",
+        "⚡: " + animation
+      );
     }
 
     const item = JSON.parse(propsString);
@@ -3936,6 +3948,7 @@ function App(props) {
     let propsString = JSON.stringify(data);
     const imageURL = getImage(propsString);
     const sfxURL = getSFX(propsString);
+    const animation = getAnimation(propsString);
 
     if (imageURL) {
       propsString = propsString.replace("<" + imageURL + ">", "");
@@ -3943,6 +3956,13 @@ function App(props) {
 
     if (sfxURL) {
       propsString = propsString.replace("$" + sfxURL + "$", " ♫ ");
+    }
+
+    if (animation) {
+      propsString = propsString.replace(
+        "@" + animation + "@",
+        " ⚡FX: " + animation
+      );
     }
 
     const item = JSON.parse(propsString);
