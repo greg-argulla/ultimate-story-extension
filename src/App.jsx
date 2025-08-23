@@ -1,8 +1,10 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect, useRef } from "react";
 import OBR from "@owlbear-rodeo/sdk";
-import landingBG from "./assets/bg.jpg";
-import layout from "../layout.json";
+import landingTechnoBG from "./assets/bgtechno.jpg";
+import landingFantasyBG from "./assets/bgfantasy.jpg";
+import fantasyLayout from "../fantasy-layout.json";
+import technoLayout from "../techno-layout.json";
 import "./App.css";
 
 const debuffList = [
@@ -269,6 +271,7 @@ function App(props) {
   const [diceTwo, setDiceTwo] = useState("");
   const [message, setMessage] = useState("");
   const [ignoreFirstUpdate, setIgnoreFirstUpdate] = useState(false);
+  const [theme, setTheme] = useState("fantasy");
   const uploaderRef = useRef(null);
 
   useEffect(() => {
@@ -300,6 +303,10 @@ function App(props) {
             const playerListGet = await createPlayerList(metadata);
             setPlayerList(playerListGet);
           }
+
+          if (metadata["ultimate.story.extension.theme"]) {
+            setTheme(metadata["ultimate.story.extension.theme"]);
+          }
           setIsOBRReady(true);
           setName(await OBR.player.getName());
           setId(await OBR.player.getId());
@@ -319,6 +326,9 @@ function App(props) {
         if (metadata["ultimate.story.extension/metadata"]) {
           const playerListGet = await createPlayerList(metadata);
           setPlayerList(playerListGet);
+        }
+        if (metadata["ultimate.story.extension.theme"]) {
+          setTheme(metadata["ultimate.story.extension.theme"]);
         }
         setIsOBRReady(true);
         setName(await OBR.player.getName());
@@ -362,6 +372,9 @@ function App(props) {
           if (metadata["ultimate.story.extension/metadata"]) {
             const playerListGet = await createPlayerList(metadata);
             setPlayerList(playerListGet);
+          }
+          if (metadata["ultimate.story.extension.theme"]) {
+            setTheme(metadata["ultimate.story.extension.theme"]);
           }
         }
       });
@@ -450,6 +463,13 @@ function App(props) {
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
+
+  const changeTheme = async (theme) => {
+    OBR.scene.setMetadata({
+      "ultimate.story.extension.theme": theme,
+    });
+    showMessage(`Changed theme!`);
+  };
 
   const addGMCharacter = async () => {
     const playerGet = newPlayer(true);
@@ -1784,6 +1804,24 @@ function App(props) {
             {editMode ? "Done Edit" : "Edit"}
           </button>
 
+          {editMode && (
+            <button
+              className="button"
+              style={{
+                fontWeight: "bolder",
+                width: 80,
+                float: "right",
+                marginRight: 4,
+              }}
+              onClick={() => {
+                changeTheme(theme === "fantasy" ? "techno" : "fantasy");
+                setTheme(theme === "fantasy" ? "techno" : "fantasy");
+              }}
+            >
+              Change Theme
+            </button>
+          )}
+
           {!editMode && (
             <button
               className="button"
@@ -1816,7 +1854,7 @@ function App(props) {
                 if (allItems.length > 0) {
                   showMessage("Need empty scene in order to add game layout!");
                 } else {
-                  layout.forEach((item, index) => {
+                  fantasyLayout.forEach((item, index) => {
                     setTimeout(async () => {
                       await OBR.scene.items.addItems([item]);
                     }, 250 * index);
@@ -1824,9 +1862,52 @@ function App(props) {
                 }
               }}
             >
-              Create Game Layout
+              Create Fantasy Layout
             </button>
           )}
+          {editMode && (
+            <button
+              className="button"
+              style={{
+                fontWeight: "bolder",
+                width: 110,
+                float: "right",
+                marginRight: 4,
+              }}
+              onClick={async () => {
+                const allItems = await OBR.scene.items.getItems((item) => true);
+
+                if (allItems.length > 0) {
+                  showMessage("Need empty scene in order to add game layout!");
+                } else {
+                  technoLayout.forEach((item, index) => {
+                    setTimeout(async () => {
+                      await OBR.scene.items.addItems([item]);
+                    }, 250 * index);
+                  });
+                }
+              }}
+            >
+              Create Techno Layout
+            </button>
+          )}
+          {/* {editMode && (
+            <button
+              className="button"
+              style={{
+                fontWeight: "bolder",
+                width: 110,
+                float: "right",
+                marginRight: 4,
+              }}
+              onClick={async () => {
+                const allItems = await OBR.scene.items.getItems();
+                console.log(JSON.stringify(allItems));
+              }}
+            >
+              Print Layout
+            </button>
+          )} */}
         </div>
         <hr />
         {playerList
@@ -5780,7 +5861,9 @@ function App(props) {
     return (
       <div
         style={{
-          backgroundImage: `url(${landingBG})`,
+          backgroundImage: `url(${
+            theme === "fantasy" ? landingFantasyBG : landingTechnoBG
+          })`,
           backgroundSize: "contain",
           height: 540,
           width: 550,
@@ -5814,7 +5897,9 @@ function App(props) {
     return (
       <div
         style={{
-          backgroundImage: `url(${landingBG})`,
+          backgroundImage: `url(${
+            theme === "fantasy" ? landingFantasyBG : landingTechnoBG
+          })`,
           backgroundSize: "contain",
           height: 540,
           width: 550,
@@ -5846,7 +5931,9 @@ function App(props) {
   return (
     <div
       style={{
-        backgroundImage: `url(${landingBG})`,
+        backgroundImage: `url(${
+          theme === "fantasy" ? landingFantasyBG : landingTechnoBG
+        })`,
         backgroundSize: "contain",
         height: 540,
         width: 550,
