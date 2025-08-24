@@ -1814,6 +1814,9 @@ function App(props) {
                 marginRight: 4,
               }}
               onClick={() => {
+                showMessage(
+                  "Refresh the page to reflect the change on other fabula extensions"
+                );
                 changeTheme(theme === "fantasy" ? "techno" : "fantasy");
                 setTheme(theme === "fantasy" ? "techno" : "fantasy");
               }}
