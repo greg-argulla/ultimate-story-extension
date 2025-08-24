@@ -468,7 +468,6 @@ function App(props) {
     OBR.scene.setMetadata({
       "ultimate.story.extension.theme": theme,
     });
-    showMessage(`Changed theme!`);
   };
 
   const addGMCharacter = async () => {
