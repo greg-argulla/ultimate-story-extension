@@ -1903,6 +1903,13 @@ function App(props) {
                 marginRight: 4,
               }}
               onClick={async () => {
+                const selected = await OBR.player.getSelection();
+
+                if (selected && selected[0]) {
+                  const items = await OBR.scene.items.getItems([selected[0]]);
+                  console.log(items);
+                }
+
                 const allItems = await OBR.scene.items.getItems();
                 console.log(JSON.stringify(allItems));
               }}
@@ -5399,7 +5406,8 @@ function App(props) {
                             fontWeight: 400,
                             textAlign: "LEFT",
                             textAlignVertical: "TOP",
-                            fillColor: "#ffffff",
+                            fillColor:
+                              theme === "fantasy" ? "#ffffff" : "#ff9f01",
                             fillOpacity: 1,
                             strokeColor: "#222222",
                             strokeOpacity: 1,
@@ -5439,7 +5447,10 @@ function App(props) {
                           width: 312,
                           height: 164,
                           mime: "image/png",
-                          url: "https://images.owlbear.rodeo/691aa845-022d-4c0f-948f-4bfc5a4037f3/items/8e51ab1b-300b-477a-bd43-fcfdad184063.png",
+                          url:
+                            theme === "fantasy"
+                              ? "https://images.owlbear.rodeo/691aa845-022d-4c0f-948f-4bfc5a4037f3/items/8e51ab1b-300b-477a-bd43-fcfdad184063.png"
+                              : "https://images.owlbear.rodeo/691aa845-022d-4c0f-948f-4bfc5a4037f3/items/caa00389-12e9-4094-82d7-a94a89ac703a.png",
                         },
                         textItemType: "TEXT",
                         layer: "ATTACHMENT",
