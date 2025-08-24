@@ -5407,7 +5407,7 @@ function App(props) {
                             textAlign: "LEFT",
                             textAlignVertical: "TOP",
                             fillColor:
-                              theme === "fantasy" ? "#ffffff" : "#ff9f01",
+                              theme === "fantasy" ? "#ffffff" : "#ff4d4d",
                             fillOpacity: 1,
                             strokeColor: "#222222",
                             strokeOpacity: 1,
