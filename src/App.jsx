@@ -6056,23 +6056,6 @@ function App(props) {
                   >
                     Room Saved Character:
                   </span>
-
-                  <button
-                    className="button"
-                    style={{
-                      fontWeight: "bolder",
-                      width: 100,
-                      float: "right",
-                      marginRight: 4,
-                    }}
-                    onClick={() => {
-                      setTab("import");
-                      setExportData("");
-                      setCopyText(false);
-                    }}
-                  >
-                    Import Character
-                  </button>
                 </div>
                 <hr />
                 {renderLocalPlayerList()}
