@@ -41,10 +41,20 @@ body {
   overflow-x: scroll;
   height: 540px;
   width: 550px;
-  scrollbar-width: 0px;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
 }
 
+/* Hide scrollbar for WebKit browsers (Chrome, Safari, Edge) */
 body::-webkit-scrollbar {
+  display: none;
+}
+
+body::-webkit-scrollbar-track {
+  display: none;
+}
+
+body::-webkit-scrollbar-thumb {
   display: none;
 }
 

@@ -51,12 +51,22 @@ hr {
   background-color: #222;
 }
 
+.scrollable-container {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+/* Hide scrollbar for WebKit browsers (Chrome, Safari, Edge) */
 .scrollable-container::-webkit-scrollbar {
   display: none;
 }
 
-.scrollable-container {
-  scrollbar-width: none;
+.scrollable-container::-webkit-scrollbar-track {
+  display: none;
+}
+
+.scrollable-container::-webkit-scrollbar-thumb {
+  display: none;
 }
 
 .crit {
