@@ -2685,7 +2685,7 @@ function App(props) {
   const Attribute = (props) => {
     const { stat, condition, label } = props;
     return (
-      <div style={{ width: 95 }}>
+      <div style={{ width: 100 }}>
         <div>
           <Text>{label}:</Text>
         </div>

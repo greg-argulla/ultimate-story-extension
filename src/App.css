@@ -51,22 +51,31 @@ hr {
   background-color: #222;
 }
 
+/* Firefox scrollbar hiding - more specific targeting */
 .scrollable-container {
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none !important; /* Firefox - with !important to override inline styles */
   -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+/* Additional Firefox targeting */
+@-moz-document url-prefix() {
+  .scrollable-container {
+    scrollbar-width: none !important;
+    overflow: -moz-scrollbars-none !important;
+  }
 }
 
 /* Hide scrollbar for WebKit browsers (Chrome, Safari, Edge) */
 .scrollable-container::-webkit-scrollbar {
-  display: none;
+  display: none !important;
 }
 
 .scrollable-container::-webkit-scrollbar-track {
-  display: none;
+  display: none !important;
 }
 
 .scrollable-container::-webkit-scrollbar-thumb {
-  display: none;
+  display: none !important;
 }
 
 .crit {
